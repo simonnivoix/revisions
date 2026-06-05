@@ -212,7 +212,7 @@ let current = null;       // index matière ouverte, ou null = accueil
 let chartDom = [0,1];     // [tmin,tmax] (rembourré) partagé par les graphes de la matière ouverte
 let chartReal = [0,0];    // vraie plage [min,max] des points, avant rembourrage
 
-function load(){ try{const r=localStorage.getItem(STORE_KEY); if(r) return prepare(JSON.parse(r));}catch(e){} return prepare(clone(DEFAULT)); }
+function load(){ try{const r=localStorage.getItem(STORE_KEY); if(r) return backfillDaily(prepare(JSON.parse(r)));}catch(e){} return prepare(clone(DEFAULT)); }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 // Garantit que chaque chapitre a un historique de points {t,p} ; nettoie l'ancien champ "last".
@@ -220,6 +220,24 @@ function prepare(d){
   (d.matieres||[]).forEach(m=>(m.chapitres||[]).forEach(c=>{
     if(!Array.isArray(c.hist)) c.hist=[{t:new Date().toISOString(), p:+c.pct||0}];
     delete c.last;
+  }));
+  return d;
+}
+// La courbe se construit toute seule dans le temps : pour chaque chapitre, on ajoute
+// un point par jour (à la dernière valeur connue) entre le dernier point enregistré et
+// aujourd'hui. Ainsi, même sans toucher aux %, le graphe avance jour après jour.
+// Idempotent : ne comble que les jours manquants. Lancé à chaque chargement/import.
+function backfillDaily(d){
+  const todayMs=Date.parse(new Date().toISOString().slice(0,10)+'T12:00:00.000Z');
+  (d.matieres||[]).forEach(m=>(m.chapitres||[]).forEach(c=>{
+    if(!Array.isArray(c.hist)||!c.hist.length) return;
+    c.hist.sort((a,b)=>new Date(a.t)-new Date(b.t));
+    const last=c.hist[c.hist.length-1];
+    let dayMs=Date.parse(last.t.slice(0,10)+'T12:00:00.000Z');
+    while(dayMs+86400000<=todayMs){
+      dayMs+=86400000;
+      c.hist.push({t:new Date(dayMs).toISOString().slice(0,10)+'T12:00:00.000Z', p:last.p});
+    }
   }));
   return d;
 }
@@ -305,37 +323,53 @@ function open_(i){ current=i; render(); window.scrollTo({top:0,behavior:'smooth'
 function goHome(){ current=null; render(); window.scrollTo({top:0}); }
 
 // ---------- Actions ----------
-// Patch DOM en place pendant l'édition : pas de re-render (sinon le curseur
-// est détruit en plein glissement) ni de re-tri (sinon les lignes sautent).
+// Enregistre la valeur du jour (un seul point par jour, écrasé si on rebouge le même jour).
+function recordToday(c,v){
+  const h=c.hist||(c.hist=[]);
+  const today=new Date().toISOString();
+  if(h.length && h[h.length-1].t.slice(0,10)===today.slice(0,10)) h[h.length-1].p=v;
+  else h.push({t:today,p:v});
+}
+// Redessine les graphes EN PLACE (graphe du haut + mini-graphe du chapitre). On ne
+// touche QUE des conteneurs SVG (#chart, #mc-ci) qui ne contiennent pas le curseur,
+// donc c'est sûr même pendant le glissement (≠ render() qui détruirait le curseur).
+function redrawCharts(ci){
+  const c=data.matieres[current].chapitres[ci];
+  const mc=document.getElementById('mc-'+ci);
+  if(mc) mc.innerHTML=lineChart(c.hist, couleur(c.pct), {w:480,h:165,labels:true});
+  renderChartAvg();
+}
+// Pendant le glissement (oninput) : on patche le DOM en place (pas de re-render qui
+// casserait le curseur, pas de re-tri qui ferait sauter les lignes) ET on met les
+// graphes à jour EN TEMPS RÉEL.
 function setPct(ci,v){
   v=+v;
-  data.matieres[current].chapitres[ci].pct=v;
+  const c=data.matieres[current].chapitres[ci];
+  c.pct=v;
   const col=couleur(v);
   const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
   if(card){
     const p=card.querySelector('.cpct'); p.textContent=v+'%'; p.style.color=col;
     const bar=card.querySelector('.bar>span'); bar.style.width=v+'%'; bar.style.background=col;
   }
+  recordToday(c,v);
+  redrawCharts(ci);
   refreshBadge(); save();
 }
-// Enregistre un point d'historique (un seul par jour) quand on relâche le curseur,
-// puis redessine le graphe. Pas de re-tri de la liste (les lignes ne sautent pas).
+// Au relâchement (onchange) : on finalise le point du jour et on redessine. Pas de re-tri.
 function commitPct(ci,v){
   v=+v;
   const c=data.matieres[current].chapitres[ci];
   c.pct=v;
-  const h=c.hist||(c.hist=[]);
-  const today=new Date().toISOString();
-  if(h.length && h[h.length-1].t.slice(0,10)===today.slice(0,10)) h[h.length-1].p=v;
-  else h.push({t:today,p:v});
-  const mc=document.getElementById('mc-'+ci); if(mc) mc.innerHTML=lineChart(c.hist, couleur(v), {w:480,h:165,labels:true}); // mini-graphe du chapitre
-  renderChartAvg(); // graphe de moyenne de la matière (en haut)
+  recordToday(c,v);
+  redrawCharts(ci);
   save();
 }
 function subText(m){ return `Maîtrise moyenne sur ${m.chapitres.length} chapitre${m.chapitres.length>1?'s':''}.`; }
 
 // ---------- Graphes : temps (x) × % de maîtrise (y) ----------
-// Domaine de temps commun à tous les graphes d'une matière (calé sur aujourd'hui à droite).
+// Domaine de temps commun à tous les graphes d'une matière. Le 1er point se cale à
+// GAUCHE (= le début du suivi) et la courbe se remplit vers la droite avec le temps.
 function chartDomain(m){
   let tmin=Infinity,tmax=-Infinity;
   m.chapitres.forEach(c=>(c.hist||[]).forEach(pt=>{const t=new Date(pt.t).getTime(); if(t<tmin)tmin=t; if(t>tmax)tmax=t;}));
@@ -343,7 +377,7 @@ function chartDomain(m){
   chartReal = isFinite(tmin) ? [tmin,tmax] : [now,now];   // vraie plage avant rembourrage
   if(!isFinite(tmin)){ tmin=now; tmax=now; }
   if(now>tmax) tmax=now;
-  if(tmax-tmin<86400000) tmin=tmax-86400000;   // au moins 1 jour de large
+  if(tmax-tmin<86400000) tmax=tmin+86400000;   // 1 seul jour → on rembourre à DROITE (point à gauche)
   return [tmin,tmax];
 }
 // Série de la maîtrise MOYENNE de la matière dans le temps (valeur reportée jour par jour).
@@ -376,10 +410,10 @@ function lineChart(points, color, o){
   let xl='';
   if(labels){
     const [rmin,rmax]=chartReal;
-    if(rmax-rmin < 86400000){            // un seul jour de données → une étiquette
+    if(rmax-rmin < 86400000){            // un seul jour de données → une étiquette, calée à gauche (sous le point)
       const today=new Date().toDateString()===new Date(rmax).toDateString();
       const lab=today?"aujourd'hui":fmtDate(new Date(rmax).toISOString());
-      xl=`<text x="${(padL+plotW/2).toFixed(1)}" y="${H-7}" class="cxl">${lab}</text>`;
+      xl=`<text x="${padL}" y="${H-7}" class="cxl" style="text-anchor:start">${lab}</text>`;
     } else {                             // plusieurs jours → graduations, sans doublon
       // période longue (> ~6 mois) ou à cheval sur 2 années → on affiche l'année (mois + année)
       const longSpan=(tmax-tmin)/86400000>182 || new Date(tmin).getFullYear()!==new Date(tmax).getFullYear();
@@ -444,7 +478,7 @@ function resetData(){ if(confirm("Revenir aux données de départ ? Tes changeme
 function exportData(){ const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='revisions-sauvegarde.json'; a.click(); }
 function importData(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader();
-  r.onload=()=>{ try{ data=prepare(JSON.parse(r.result)); current=null; render(); alert("Importé ✅"); }catch(e){ alert("Fichier invalide."); } };
+  r.onload=()=>{ try{ data=backfillDaily(prepare(JSON.parse(r.result))); current=null; render(); alert("Importé ✅"); }catch(e){ alert("Fichier invalide."); } };
   r.readAsText(f); }
 
 const savedTheme = localStorage.getItem(THEME_KEY) || 'bleuvert';
