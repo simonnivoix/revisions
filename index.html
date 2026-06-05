@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache">
 <title>Mes révisions</title>
 <!-- iPad : permet « Sur l'écran d'accueil » → app plein écran -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,6 +172,7 @@
 </div>
 
 <script>
+const VERSION = '20260605-131216';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 
@@ -485,6 +487,26 @@ const savedTheme = localStorage.getItem(THEME_KEY) || 'bleuvert';
 buildThemeBar(savedTheme);
 applyTheme(savedTheme);
 render();
+
+// --- Mise à jour automatique ---
+// À l'ouverture, si on est EN LIGNE, on vérifie discrètement s'il existe une version
+// plus récente publiée et on la charge (en contournant le cache). Hors-ligne ou en
+// local (file://), on ne fait rien : l'app reste 100% utilisable avec sa version en cache.
+(function checkUpdate(){
+  try{
+    if(location.protocol==='file:') return;
+    fetch('index.html?_='+Date.now(), {cache:'no-store'})
+      .then(r=>r.ok?r.text():null)
+      .then(t=>{
+        if(!t) return;
+        const m=t.match(/const VERSION = '([^']+)'/);
+        if(m && m[1] && m[1]!==VERSION && sessionStorage.getItem('vseen')!==m[1]){
+          sessionStorage.setItem('vseen', m[1]);   // garde-fou anti-boucle
+          location.replace(location.pathname+'?v='+encodeURIComponent(m[1]));
+        }
+      }).catch(()=>{});
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
