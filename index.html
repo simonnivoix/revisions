@@ -72,7 +72,17 @@
   .chap .bar{height:8px;border-radius:5px;background:var(--bg2);overflow:hidden;margin:9px 0 0}
   .chap .bar>span{display:block;height:100%;border-radius:5px;transition:width .3s}
   .chap .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:9px}
-  .chap input[type=range]{flex:1;min-width:130px;accent-color:var(--primary)}
+  /* Curseur 100% gris neutre, rendu IDENTIQUE sur tous les navigateurs
+     (pas de remplissage coloré à gauche) — la couleur reste sur la barre + le %. */
+  .chap input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:130px;
+        height:32px;background:transparent;cursor:pointer;margin:0}
+  .chap input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:5px;background:var(--bg2)}
+  .chap input[type=range]::-moz-range-track{height:6px;border-radius:5px;background:var(--bg2)}
+  .chap input[type=range]::-moz-range-progress{height:6px;border-radius:5px;background:var(--bg2)} /* neutralise le remplissage Firefox */
+  .chap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;
+        border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.25);margin-top:-8px}
+  .chap input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+        background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.25)}
   .seegraph{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;
             padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
   .seegraph:hover{border-color:var(--primary);color:var(--primary)}
@@ -116,9 +126,6 @@
   /* ---------- Optimisations tactiles (iPad / iPhone) ---------- */
   button,.swatch,input,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .cname,.dhead h2{touch-action:manipulation;-webkit-user-select:none;user-select:none}
-  /* curseur plus épais et plus facile à attraper au doigt */
-  .chap input[type=range]{height:32px}
-  .chap input[type=range]::-webkit-slider-thumb{transform:scale(1.25)}
   /* cibles de touche d'au moins ~40px (boutons supprimer, graphe, footer) */
   .chap .delc,.dhead .delc{min-width:40px;min-height:40px;display:inline-flex;
         align-items:center;justify-content:center;padding:0}
