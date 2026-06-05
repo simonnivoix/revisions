@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Révisions Romane</title>
+<!-- iPad : permet « Sur l'écran d'accueil » → app plein écran -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Révisions">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d4e6e6">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%232e8a8a'/%3E%3Ctext x='90' y='128' font-size='104' text-anchor='middle'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<style>
+  /* Palette pensée pour la concentration : fond bleu-vert doux (anti-fatigue),
+     accent bleu (focus), couleurs de maîtrise adoucies. */
+  :root{
+    --bg:#e8eef0;          /* fond pâle bleu-vert, reposant */
+    --bg2:#dde6e8;
+    --card:#ffffff;
+    --ink:#26323f;         /* texte : slate foncé, pas de noir pur */
+    --muted:#6c7c8c;
+    --line:#d8e0e3;
+    --primary:#3f6f9f;     /* bleu focus */
+    --sage:#6f9b7d;        /* vert sauge */
+    --rouge:#d65a5a; --orange:#e0915a; --jaune:#e7c44e; --vert:#5fa971;
+    --shadow:0 6px 22px rgba(38,50,63,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:linear-gradient(170deg,var(--bg),var(--bg2));color:var(--ink);min-height:100vh}
+  .wrap{max-width:920px;margin:0 auto;padding:34px 22px 60px}
+
+  header{margin-bottom:26px}
+  h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
+  .tagline{color:var(--muted);font-size:14px;margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .gpill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:600;font-size:13px}
+
+  /* ---------- Vue accueil : grille de matières ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;cursor:pointer;color:var(--ink);
+         box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s;position:relative;text-align:left}
+  .mcard:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(38,50,63,.14)}
+  .mcard .name{font-size:17px;font-weight:600;margin-bottom:14px;padding-right:20px}
+  .mcard .pct{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.02em}
+  .mcard .pbar{height:8px;border-radius:6px;background:var(--bg2);margin:14px 0 10px;overflow:hidden}
+  .mcard .pbar>span{display:block;height:100%;border-radius:6px;transition:width .4s}
+  .mcard .meta{font-size:12.5px;color:var(--muted)}
+  .mcard .meta b{color:var(--orange);font-weight:600}
+  .mcard .go{position:absolute;top:18px;right:18px;color:var(--muted);font-size:18px}
+  .addcard{display:flex;align-items:center;justify-content:center;border:2px dashed var(--line);
+           background:transparent;box-shadow:none;color:var(--muted);font-size:15px;font-weight:600;min-height:150px}
+  .addcard:hover{border-color:var(--primary);color:var(--primary);transform:none}
+
+  /* ---------- Vue détail matière ---------- */
+  .back{background:none;border:none;color:var(--primary);font-size:15px;font-weight:600;cursor:pointer;
+        padding:6px 0;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px}
+  .back:hover{text-decoration:underline}
+  .dhead{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .dhead h2{margin:0;font-size:22px;flex:1}
+  .badge{font-weight:800;font-size:18px;color:#fff;padding:6px 16px;border-radius:999px}
+  .dsub{color:var(--muted);font-size:13px;margin:0 0 22px}
+
+  .chap{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 14px;margin-bottom:9px;
+        box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+  .chap:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(38,50,63,.10)}
+  .chap .top{display:flex;align-items:center;gap:10px}
+  .chap .cname{font-size:15px;font-weight:600;flex:1;line-height:1.3}
+  .chap .cpct{font-size:16px;font-weight:800;min-width:42px;text-align:right}
+  .chap .delc{background:none;border:none;color:#c3ccd3;cursor:pointer;font-size:15px;padding:2px 4px}
+  .chap .delc:hover{color:var(--rouge)}
+  .chap .bar{height:8px;border-radius:5px;background:var(--bg2);overflow:hidden;margin:9px 0 0}
+  .chap .bar>span{display:block;height:100%;border-radius:5px;transition:width .3s}
+  .chap .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:9px}
+  .chap input[type=range]{flex:1;min-width:130px;accent-color:var(--primary)}
+  .seegraph{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;
+            padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .seegraph:hover{border-color:var(--primary);color:var(--primary)}
+
+  /* ---------- Graphe d'évolution de la maîtrise ---------- */
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 12px;
+            margin-bottom:20px;box-shadow:var(--shadow)}
+  .chartbox h3{margin:0 0 12px;font-size:14px;font-weight:600;color:var(--muted)}
+  .chartsvg{width:100%;height:auto;display:block;font-family:inherit}
+  .chartsvg .cg{stroke:var(--line);stroke-width:1}
+  .chartsvg .cyl{fill:var(--muted);font-size:11px;text-anchor:end}
+  .chartsvg .cxl{fill:var(--muted);font-size:11px;text-anchor:middle}
+  .chartempty{color:var(--muted);font-size:13px;margin:6px 0 2px}
+  /* mini-graphe d'évolution dans chaque carte de chapitre (caché par défaut) */
+  .minichart{display:none;margin-top:10px;padding-top:9px;border-top:1px dashed var(--line)}
+  .minichart.open{display:block}
+  .minichart .chartsvg{width:100%;height:auto;display:block}
+  .chartsvg circle{cursor:pointer}
+  .cname,.dhead h2{cursor:text}
+  .addchap{width:100%;background:var(--card);border:2px dashed var(--line);border-radius:14px;padding:14px;
+           font-size:14px;color:var(--ink);font-family:inherit;margin-bottom:14px}
+  .addchap::placeholder{color:var(--muted)}
+  .addchap:focus{outline:none;border-color:var(--primary)}
+
+  /* ---------- footer outils ---------- */
+  footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  footer button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:7px 12px;
+                font-size:13px;cursor:pointer;font-family:inherit}
+  footer button:hover{border-color:var(--primary);color:var(--primary)}
+  .hint{color:var(--muted);font-size:12px;margin-left:auto}
+
+  /* Sélecteur d'ambiance (l'élève choisit selon sa révision) */
+  .themebar{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;align-items:center}
+  .themebar .lbl{font-size:12.5px;color:var(--muted);margin-right:2px}
+  .swatch{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:var(--card);
+          border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--ink);cursor:pointer;font-family:inherit;transition:.15s}
+  .swatch:hover{border-color:var(--primary)}
+  .swatch.on{border-color:var(--primary);font-weight:700;box-shadow:0 0 0 3px rgba(63,111,159,.18)}
+  .swatch .dot{width:13px;height:13px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+
+  /* ---------- Optimisations tactiles (iPad / iPhone) ---------- */
+  button,.swatch,input,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .cname,.dhead h2{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+  /* curseur plus épais et plus facile à attraper au doigt */
+  .chap input[type=range]{height:32px}
+  .chap input[type=range]::-webkit-slider-thumb{transform:scale(1.25)}
+  /* cibles de touche d'au moins ~40px (boutons supprimer, graphe, footer) */
+  .chap .delc,.dhead .delc{min-width:40px;min-height:40px;display:inline-flex;
+        align-items:center;justify-content:center;padding:0}
+  .seegraph{padding:9px 14px;font-size:13px}
+  footer button{padding:10px 14px;font-size:14px}
+  .swatch{padding:8px 14px;font-size:13px}
+  .addchap{font-size:16px;padding:16px}  /* 16px = pas de zoom auto iOS au focus */
+  /* pas d'effet de survol « collé » sur écran tactile */
+  @media (hover:none){
+    .mcard:hover,.chap:hover{transform:none}
+    .mcard:hover{box-shadow:var(--shadow)}
+  }
+
+  .hidden{display:none}
+  .fade{animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📚 Mes révisions</h1>
+    <div class="tagline">
+      <span>Clique sur une matière pour voir tes chapitres.</span>
+      <span class="gpill" id="globalPill"></span>
+    </div>
+    <div class="themebar" id="themebar"></div>
+  </header>
+
+  <!-- ACCUEIL -->
+  <div id="home" class="fade"></div>
+
+  <!-- DÉTAIL -->
+  <div id="detail" class="hidden"></div>
+
+  <footer>
+    <button onclick="exportData()">⬇️ Sauvegarder</button>
+    <button onclick="document.getElementById('importFile').click()">⬆️ Importer</button>
+    <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
+    <button onclick="resetData()">♻️ Réinitialiser</button>
+    <span class="hint">Tout est enregistré sur cet ordinateur, sans internet.</span>
+  </footer>
+</div>
+
+<script>
+const STORE_KEY = "suivi-revisions-bac";
+const THEME_KEY = "suivi-revisions-bac-theme";
+
+// ---- Ambiances (l'élève choisit selon son type de révision) ----
+const THEMES = {
+  bleu:    {label:"Bleu focus",  hint:"Pour se concentrer (révision intense)",
+            vars:{'--bg':'#dce8f2','--bg2':'#caddee','--primary':'#2f6fae','--sage':'#5d96c4'}},
+  sauge:   {label:"Vert sauge",  hint:"Longues sessions, repose les yeux",
+            vars:{'--bg':'#dfe9df','--bg2':'#cfe0cf','--primary':'#4f8f6a','--sage':'#6f9b7d'}},
+  bleuvert:{label:"Bleu-vert",   hint:"Frais et apaisant",
+            vars:{'--bg':'#d4e6e6','--bg2':'#c3dcdc','--primary':'#2e8a8a','--sage':'#3f9f8f'}},
+  sombre:  {label:"🌙 Sombre",   hint:"Pour réviser le soir, dans le noir",
+            vars:{'--bg':'#14202b','--bg2':'#1b2a38','--card':'#1e2d3b','--ink':'#e6eef5',
+                  '--muted':'#93a4b3','--line':'#2c3e4d','--primary':'#5aa0d8','--sage':'#6fb58f',
+                  '--shadow':'0 6px 22px rgba(0,0,0,.35)'}},
+};
+const LIGHT_DEFAULTS = {'--card':'#ffffff','--ink':'#26323f','--muted':'#6c7c8c','--line':'#d8e0e3','--shadow':'0 6px 22px rgba(38,50,63,.08)'};
+
+function applyTheme(name){
+  const t = THEMES[name] || THEMES.bleuvert;
+  const root = document.documentElement;
+  Object.entries(LIGHT_DEFAULTS).forEach(([k,v])=>root.style.setProperty(k,v)); // base claire
+  Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));          // puis l'ambiance
+  localStorage.setItem(THEME_KEY, name);
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('on', s.dataset.t===name));
+}
+function buildThemeBar(active){
+  const bar = document.getElementById('themebar');
+  bar.innerHTML = '<span class="lbl">🎨 Ambiance :</span>' + Object.entries(THEMES).map(([k,t])=>{
+    return `<button class="swatch${k===active?' on':''}" data-t="${k}" title="${t.hint}" onclick="applyTheme('${k}')">
+      <span class="dot" style="background:linear-gradient(135deg,${t.vars['--bg']},${t.vars['--primary']})"></span>${t.label}</button>`;
+  }).join('');
+}
+
+const DEFAULT = { matieres:[] };  // démarre vide (matières du bac à ajouter)
+
+let data = load();
+let current = null;       // index matière ouverte, ou null = accueil
+let chartDom = [0,1];     // [tmin,tmax] (rembourré) partagé par les graphes de la matière ouverte
+let chartReal = [0,0];    // vraie plage [min,max] des points, avant rembourrage
+
+function load(){ try{const r=localStorage.getItem(STORE_KEY); if(r) return prepare(JSON.parse(r));}catch(e){} return prepare(clone(DEFAULT)); }
+function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+// Garantit que chaque chapitre a un historique de points {t,p} ; nettoie l'ancien champ "last".
+function prepare(d){
+  (d.matieres||[]).forEach(m=>(m.chapitres||[]).forEach(c=>{
+    if(!Array.isArray(c.hist)) c.hist=[{t:new Date().toISOString(), p:+c.pct||0}];
+    delete c.last;
+  }));
+  return d;
+}
+
+function couleur(p){ if(p<=20)return getCSS('--rouge'); if(p<=40)return getCSS('--orange'); if(p<=60)return getCSS('--jaune'); return getCSS('--vert'); }
+function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function moyenne(ch){ return ch.length?Math.round(ch.reduce((s,c)=>s+(+c.pct||0),0)/ch.length):0; }
+function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):''; }
+function escapeH(s){ return (s+'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+// ---------- Rendu ----------
+function render(){
+  const all = data.matieres.flatMap(m=>m.chapitres);
+  document.getElementById('globalPill').textContent = `Maîtrise globale : ${moyenne(all)}%`;
+  if(current===null){ renderHome(); } else { renderDetail(); }
+  save();
+}
+
+function renderHome(){
+  document.getElementById('detail').classList.add('hidden');
+  const home = document.getElementById('home');
+  home.classList.remove('hidden'); home.classList.remove('fade'); void home.offsetWidth; home.classList.add('fade');
+  home.innerHTML = `<div class="grid">` + data.matieres.map((m,i)=>{
+    const moy = moyenne(m.chapitres);
+    const col = couleur(moy);
+    return `<button class="mcard" onclick="open_(${i})">
+      <span class="go">›</span>
+      <div class="name">${escapeH(m.nom)}</div>
+      <div class="pct" style="color:${col}">${moy}<span style="font-size:20px">%</span></div>
+      <div class="pbar"><span style="width:${moy}%;background:${col}"></span></div>
+      <div class="meta">${m.chapitres.length} chapitre${m.chapitres.length>1?'s':''}</div>
+    </button>`;
+  }).join('') + `<button class="mcard addcard" onclick="addMatiere()">+ Ajouter une matière</button></div>`;
+}
+
+function renderDetail(){
+  document.getElementById('home').classList.add('hidden');
+  const d = document.getElementById('detail');
+  d.classList.remove('hidden'); d.classList.remove('fade'); void d.offsetWidth; d.classList.add('fade');
+  const m = data.matieres[current];
+  const moy = moyenne(m.chapitres);
+  chartDom = chartDomain(m);   // échelle de temps partagée par tous les graphes de la matière
+  // chapitres triés du % le plus faible au plus élevé (les moins maîtrisés en haut)
+  const order = m.chapitres.map((c,ci)=>({c,ci})).sort((a,b)=>a.c.pct-b.c.pct);
+  d.innerHTML = `
+    <button class="back" onclick="goHome()">← Toutes les matières</button>
+    <div class="dhead">
+      <h2 ondblclick="renameMat()" title="Double-clic pour renommer">${escapeH(m.nom)}</h2>
+      <span class="badge" style="background:${couleur(moy)}">${moy}%</span>
+      <button class="delc" title="Supprimer la matière" onclick="delMatiere(${current})" style="font-size:18px">🗑</button>
+    </div>
+    <p class="dsub" id="dsub">${subText(m)}</p>
+    <div class="chartbox">
+      <h3>📈 Maîtrise moyenne de la matière</h3>
+      <div id="chart">${avgChartSVG(m)}</div>
+    </div>
+    <input class="addchap" type="text" placeholder="+ Ajouter un chapitre, puis Entrée"
+           onkeydown="if(event.key==='Enter'){addChapitre(${current},this.value);this.value=''}">
+    ${order.map(({c,ci})=>chapCard(ci,c)).join('')}
+  `;
+}
+
+function chapCard(ci,c){
+  const col = couleur(c.pct);
+  return `<div class="chap" data-ci="${ci}">
+    <div class="top">
+      <span class="cname" ondblclick="renameChap(${ci})" title="Double-clic pour renommer">${escapeH(c.nom)}</span>
+      <span class="cpct" style="color:${col}">${c.pct}%</span>
+      <button class="delc" title="Supprimer" onclick="delChapitre(${ci})">✕</button>
+    </div>
+    <div class="bar"><span style="width:${c.pct}%;background:${col}"></span></div>
+    <div class="ctrl">
+      <input type="range" min="0" max="100" step="5" value="${c.pct}"
+             oninput="setPct(${ci},this.value)" onchange="commitPct(${ci},this.value)">
+      <button class="seegraph" onclick="toggleChap(${ci})">📈 Graphe</button>
+    </div>
+    <div class="minichart" id="mc-${ci}">${lineChart(c.hist, col, {w:480,h:165,labels:true})}</div>
+  </div>`;
+}
+
+// ---------- Navigation ----------
+function open_(i){ current=i; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function goHome(){ current=null; render(); window.scrollTo({top:0}); }
+
+// ---------- Actions ----------
+// Patch DOM en place pendant l'édition : pas de re-render (sinon le curseur
+// est détruit en plein glissement) ni de re-tri (sinon les lignes sautent).
+function setPct(ci,v){
+  v=+v;
+  data.matieres[current].chapitres[ci].pct=v;
+  const col=couleur(v);
+  const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
+  if(card){
+    const p=card.querySelector('.cpct'); p.textContent=v+'%'; p.style.color=col;
+    const bar=card.querySelector('.bar>span'); bar.style.width=v+'%'; bar.style.background=col;
+  }
+  refreshBadge(); save();
+}
+// Enregistre un point d'historique (un seul par jour) quand on relâche le curseur,
+// puis redessine le graphe. Pas de re-tri de la liste (les lignes ne sautent pas).
+function commitPct(ci,v){
+  v=+v;
+  const c=data.matieres[current].chapitres[ci];
+  c.pct=v;
+  const h=c.hist||(c.hist=[]);
+  const today=new Date().toISOString();
+  if(h.length && h[h.length-1].t.slice(0,10)===today.slice(0,10)) h[h.length-1].p=v;
+  else h.push({t:today,p:v});
+  const mc=document.getElementById('mc-'+ci); if(mc) mc.innerHTML=lineChart(c.hist, couleur(v), {w:480,h:165,labels:true}); // mini-graphe du chapitre
+  renderChartAvg(); // graphe de moyenne de la matière (en haut)
+  save();
+}
+function subText(m){ return `Maîtrise moyenne sur ${m.chapitres.length} chapitre${m.chapitres.length>1?'s':''}.`; }
+
+// ---------- Graphes : temps (x) × % de maîtrise (y) ----------
+// Domaine de temps commun à tous les graphes d'une matière (calé sur aujourd'hui à droite).
+function chartDomain(m){
+  let tmin=Infinity,tmax=-Infinity;
+  m.chapitres.forEach(c=>(c.hist||[]).forEach(pt=>{const t=new Date(pt.t).getTime(); if(t<tmin)tmin=t; if(t>tmax)tmax=t;}));
+  const now=Date.now();
+  chartReal = isFinite(tmin) ? [tmin,tmax] : [now,now];   // vraie plage avant rembourrage
+  if(!isFinite(tmin)){ tmin=now; tmax=now; }
+  if(now>tmax) tmax=now;
+  if(tmax-tmin<86400000) tmin=tmax-86400000;   // au moins 1 jour de large
+  return [tmin,tmax];
+}
+// Série de la maîtrise MOYENNE de la matière dans le temps (valeur reportée jour par jour).
+function avgSeries(m){
+  const days=[...new Set(m.chapitres.flatMap(c=>(c.hist||[]).map(pt=>pt.t.slice(0,10))))].sort();
+  return days.map(day=>{
+    let sum=0,n=0;
+    m.chapitres.forEach(c=>{
+      const pts=(c.hist||[]).slice().sort((a,b)=>new Date(a.t)-new Date(b.t)).filter(pt=>pt.t.slice(0,10)<=day);
+      if(pts.length){ sum+=pts[pts.length-1].p; n++; }
+    });
+    return {t:day+'T12:00:00.000Z', p:n?Math.round(sum/n):0};
+  });
+}
+// Trace une seule courbe. opts: {w,h,labels} — labels=true => axes datés (graphe du haut).
+function lineChart(points, color, o){
+  o=o||{};
+  const [tmin,tmax]=chartDom, W=o.w, H=o.h, labels=!!o.labels;
+  const padL=labels?28:6, padR=8, padT=8, padB=labels?22:6, plotW=W-padL-padR, plotH=H-padT-padB;
+  const X=t=>padL+(tmax>tmin?(t-tmin)/(tmax-tmin):0)*plotW;
+  const Y=p=>padT+(100-p)/100*plotH;
+  // bandes de couleur par palier de maîtrise (rouge 0-20, orange 20-40, jaune 40-60, vert 60-100)
+  const zones=[[60,100,'--vert'],[40,60,'--jaune'],[20,40,'--orange'],[0,20,'--rouge']]
+    .map(([lo,hi,v])=>`<rect x="${padL}" y="${Y(hi).toFixed(1)}" width="${plotW.toFixed(1)}" height="${(Y(lo)-Y(hi)).toFixed(1)}" fill="${getCSS(v)}" opacity="0.14"/>`).join('');
+  let grid='';
+  [0,50,100].forEach(p=>{ const y=Y(p).toFixed(1);
+    grid+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" class="cg"/>`;
+    if(labels&&p%50===0) grid+=`<text x="${padL-5}" y="${(+y+3).toFixed(1)}" class="cyl">${p}</text>`;
+  });
+  let xl='';
+  if(labels){
+    const [rmin,rmax]=chartReal;
+    if(rmax-rmin < 86400000){            // un seul jour de données → une étiquette
+      const today=new Date().toDateString()===new Date(rmax).toDateString();
+      const lab=today?"aujourd'hui":fmtDate(new Date(rmax).toISOString());
+      xl=`<text x="${(padL+plotW/2).toFixed(1)}" y="${H-7}" class="cxl">${lab}</text>`;
+    } else {                             // plusieurs jours → graduations, sans doublon
+      // période longue (> ~6 mois) ou à cheval sur 2 années → on affiche l'année (mois + année)
+      const longSpan=(tmax-tmin)/86400000>182 || new Date(tmin).getFullYear()!==new Date(tmax).getFullYear();
+      const fmtX=t=>longSpan ? new Date(t).toLocaleDateString('fr-FR',{month:'short',year:'2-digit'}) : fmtDate(new Date(t).toISOString());
+      const nT=4; let prev=null;
+      for(let i=0;i<=nT;i++){ const t=tmin+(tmax-tmin)*i/nT, lab=fmtX(t);
+        if(lab!==prev){ const anc=i===0?'start':i===nT?'end':'middle';
+          xl+=`<text x="${X(t).toFixed(1)}" y="${H-7}" class="cxl" style="text-anchor:${anc}">${lab}</text>`; prev=lab; }
+      }
+    }
+  }
+  const pts=(points||[]).slice().sort((a,b)=>new Date(a.t)-new Date(b.t));
+  let path='';
+  if(pts.length){
+    const xy=pts.map(pt=>({x:X(new Date(pt.t).getTime()), p:pt.p}));
+    const sw=labels?2.6:2.2;
+    let segs='';
+    for(let i=0;i+1<xy.length;i++){
+      const a=xy[i], b=xy[i+1];
+      const cuts=[0,1];                                   // découpe aux seuils de palier traversés
+      [20,40,60].forEach(bd=>{ if((a.p-bd)*(b.p-bd)<0) cuts.push((bd-a.p)/(b.p-a.p)); });
+      cuts.sort((u,v)=>u-v);
+      for(let k=0;k+1<cuts.length;k++){
+        const f0=cuts[k], f1=cuts[k+1];
+        const p0=a.p+(b.p-a.p)*f0, p1=a.p+(b.p-a.p)*f1;
+        const x0=a.x+(b.x-a.x)*f0, x1=a.x+(b.x-a.x)*f1;
+        segs+=`<path d="M${x0.toFixed(1)} ${Y(p0).toFixed(1)} L${x1.toFixed(1)} ${Y(p1).toFixed(1)}" fill="none" stroke="${couleur((p0+p1)/2)}" stroke-width="${sw}" stroke-linecap="round"/>`;
+      }
+    }
+    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${couleur(q.p)}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p} %</title></circle>`).join('');
+    path=segs+dots;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" class="chartsvg">${zones}${grid}${xl}${path}</svg>`;
+}
+function avgChartSVG(m){
+  if(!m.chapitres.length) return '<p class="chartempty">Ajoute un chapitre pour suivre ta progression.</p>';
+  return lineChart(avgSeries(m), getCSS('--primary'), {w:600,h:210,labels:true});
+}
+function renderChartAvg(){ const el=document.getElementById('chart'); if(el) el.innerHTML=avgChartSVG(data.matieres[current]); }
+function refreshBadge(){
+  const m=data.matieres[current];
+  const badge=document.querySelector('#detail .badge');
+  if(badge){ const moy=moyenne(m.chapitres); badge.textContent=moy+'%'; badge.style.background=couleur(moy); }
+  const all=data.matieres.flatMap(x=>x.chapitres);
+  document.getElementById('globalPill').textContent=`Maîtrise globale : ${moyenne(all)}%`;
+}
+function addChapitre(mi,nom){ nom=nom.trim(); if(!nom)return; data.matieres[mi].chapitres.push({nom,pct:0,hist:[{t:new Date().toISOString(),p:0}]}); render(); }
+function renameChap(ci){ const c=data.matieres[current].chapitres[ci]; const n=prompt("Renommer le chapitre :",c.nom); if(n&&n.trim()){ c.nom=n.trim(); render(); } }
+function renameMat(){ const m=data.matieres[current]; const n=prompt("Renommer la matière :",m.nom); if(n&&n.trim()){ m.nom=n.trim(); render(); } }
+// Affiche/cache le graphe d'un chapitre (caché par défaut, à la demande)
+function toggleChap(ci){
+  const mc=document.getElementById('mc-'+ci); if(!mc) return;
+  const open=mc.classList.toggle('open');
+  const b=document.querySelector(`#detail .chap[data-ci="${ci}"] .seegraph`);
+  if(b) b.textContent = open ? '📉 Cacher' : '📈 Graphe';
+}
+function delChapitre(ci){ const m=data.matieres[current]; if(confirm("Supprimer « "+m.chapitres[ci].nom+" » ?")){ m.chapitres.splice(ci,1); render(); } }
+function addMatiere(){ const n=prompt("Nom de la matière ?"); if(n&&n.trim()){ data.matieres.push({nom:n.trim(),chapitres:[]}); render(); } }
+function delMatiere(i){ if(confirm("Supprimer « "+data.matieres[i].nom+" » et tous ses chapitres ?")){ data.matieres.splice(i,1); current=null; render(); } }
+function resetData(){ if(confirm("Revenir aux données de départ ? Tes changements seront perdus.")){ data=prepare(clone(DEFAULT)); current=null; render(); } }
+
+function exportData(){ const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='revisions-sauvegarde.json'; a.click(); }
+function importData(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader();
+  r.onload=()=>{ try{ data=prepare(JSON.parse(r.result)); current=null; render(); alert("Importé ✅"); }catch(e){ alert("Fichier invalide."); } };
+  r.readAsText(f); }
+
+const savedTheme = localStorage.getItem(THEME_KEY) || 'bleuvert';
+buildThemeBar(savedTheme);
+applyTheme(savedTheme);
+render();
+</script>
+</body>
+</html>
