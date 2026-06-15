@@ -29,7 +29,11 @@
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-       background:linear-gradient(170deg,var(--bg),var(--bg2));color:var(--ink);min-height:100vh}
+       background:var(--bg);color:var(--ink);min-height:100vh;
+       transition:background-color .5s ease,color .35s ease}
+  /* léger dégradé de profondeur, indépendant du thème (ne « claque » pas au changement d'ambiance) */
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+       background:linear-gradient(170deg,rgba(255,255,255,.05),rgba(0,0,0,.05))}
   .wrap{max-width:920px;margin:0 auto;padding:34px 22px 60px}
 
   header{margin-bottom:26px}
@@ -40,12 +44,16 @@
   /* ---------- Vue accueil : grille de matières ---------- */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
   .mcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;cursor:pointer;color:var(--ink);
-         box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s;position:relative;text-align:left}
-  .mcard:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(38,50,63,.14)}
+         box-shadow:var(--shadow);position:relative;text-align:left;
+         transition:transform .2s cubic-bezier(.22,.61,.36,1),box-shadow .25s ease,background-color .45s ease,border-color .35s ease,color .3s ease;
+         animation:rise .5s cubic-bezier(.22,.61,.36,1) backwards}
+  .mcard:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(38,50,63,.15)}
+  .mcard:active{transform:translateY(-1px) scale(.992)}
   .mcard .name{font-size:17px;font-weight:600;margin-bottom:14px;padding-right:20px}
   .mcard .pct{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.02em}
+  .mcard .pct .u{font-size:20px}
   .mcard .pbar{height:8px;border-radius:6px;background:var(--bg2);margin:14px 0 10px;overflow:hidden}
-  .mcard .pbar>span{display:block;height:100%;border-radius:6px;transition:width .4s}
+  .mcard .pbar>span{display:block;height:100%;border-radius:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:width .55s cubic-bezier(.22,.61,.36,1),background .3s}
   .mcard .meta{font-size:12.5px;color:var(--muted)}
   .mcard .meta b{color:var(--orange);font-weight:600}
   .mcard .go{position:absolute;top:18px;right:18px;color:var(--muted);font-size:18px}
@@ -55,15 +63,17 @@
 
   /* ---------- Vue détail matière ---------- */
   .back{background:none;border:none;color:var(--primary);font-size:15px;font-weight:600;cursor:pointer;
-        padding:6px 0;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px}
+        padding:6px 0;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px;transition:.15s}
   .back:hover{text-decoration:underline}
+  .back:active{transform:scale(.97)}
   .dhead{display:flex;align-items:center;gap:14px;margin-bottom:6px}
   .dhead h2{margin:0;font-size:22px;flex:1}
   .badge{font-weight:800;font-size:18px;color:#fff;padding:6px 16px;border-radius:999px}
   .dsub{color:var(--muted);font-size:13px;margin:0 0 22px}
 
   .chap{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 14px;margin-bottom:9px;
-        box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+        box-shadow:var(--shadow);animation:rise .5s cubic-bezier(.22,.61,.36,1) backwards;
+        transition:transform .18s cubic-bezier(.22,.61,.36,1),box-shadow .2s ease,background-color .45s ease,border-color .35s ease,color .3s ease}
   .chap:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(38,50,63,.10)}
   .chap .top{display:flex;align-items:center;gap:10px}
   .chap .cname{font-size:15px;font-weight:600;flex:1;line-height:1.3}
@@ -71,7 +81,7 @@
   .chap .delc{background:none;border:none;color:#c3ccd3;cursor:pointer;font-size:15px;padding:2px 4px}
   .chap .delc:hover{color:var(--rouge)}
   .chap .bar{height:8px;border-radius:5px;background:var(--bg2);overflow:hidden;margin:9px 0 0}
-  .chap .bar>span{display:block;height:100%;border-radius:5px;transition:width .3s}
+  .chap .bar>span{display:block;height:100%;border-radius:5px;box-shadow:inset 0 1px 0 rgba(255,255,255,.28);transition:width .5s cubic-bezier(.22,.61,.36,1),background .3s}
   .chap .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:9px}
   /* Curseur 100% gris neutre, rendu IDENTIQUE sur tous les navigateurs
      (pas de remplissage coloré à gauche) — la couleur reste sur la barre + le %. */
@@ -81,12 +91,20 @@
   .chap input[type=range]::-moz-range-track{height:6px;border-radius:5px;background:var(--bg2)}
   .chap input[type=range]::-moz-range-progress{height:6px;border-radius:5px;background:var(--bg2)} /* neutralise le remplissage Firefox */
   .chap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;
-        border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.25);margin-top:-8px}
+        border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.25);margin-top:-8px;
+        transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}
   .chap input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
-        background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+        background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.25);
+        transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}
+  /* le pouce grossit et s'entoure d'un halo quand on le saisit (retour tactile) */
+  .chap input[type=range]:active::-webkit-slider-thumb,.chap input[type=range]:focus-visible::-webkit-slider-thumb{
+        transform:scale(1.2);border-color:var(--primary);box-shadow:0 0 0 7px rgba(63,111,159,.14),0 1px 4px rgba(0,0,0,.3)}
+  .chap input[type=range]:active::-moz-range-thumb,.chap input[type=range]:focus-visible::-moz-range-thumb{
+        transform:scale(1.2);border-color:var(--primary);box-shadow:0 0 0 7px rgba(63,111,159,.14),0 1px 4px rgba(0,0,0,.3)}
   .seegraph{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;
-            padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+            padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:.15s}
   .seegraph:hover{border-color:var(--primary);color:var(--primary)}
+  .seegraph:active{transform:scale(.96)}
 
   /* ---------- Graphe d'évolution de la maîtrise ---------- */
   .chartbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 12px;
@@ -111,8 +129,9 @@
   /* ---------- footer outils ---------- */
   footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   footer button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:7px 12px;
-                font-size:13px;cursor:pointer;font-family:inherit}
+                font-size:13px;cursor:pointer;font-family:inherit;transition:.18s}
   footer button:hover{border-color:var(--primary);color:var(--primary)}
+  footer button:active{transform:scale(.95)}
   .hint{color:var(--muted);font-size:12px;margin-left:auto}
 
   /* Sélecteur d'ambiance (l'élève choisit selon sa révision) */
@@ -122,6 +141,7 @@
           border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--ink);cursor:pointer;font-family:inherit;transition:.15s}
   .swatch:hover{border-color:var(--primary)}
   .swatch.on{border-color:var(--primary);font-weight:700;box-shadow:0 0 0 3px rgba(63,111,159,.18)}
+  .swatch:active{transform:scale(.96)}
   .swatch .dot{width:13px;height:13px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 
   /* ---------- Optimisations tactiles (iPad / iPhone) ---------- */
@@ -142,7 +162,15 @@
 
   .hidden{display:none}
   .fade{animation:fade .25s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  /* entrée en cascade des cartes (matières & chapitres) : fondu qui monte */
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  /* anneau de focus clavier (accessibilité), sans gêner la souris/le tactile */
+  button:focus-visible,input:focus-visible,.addchap:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+  /* respecte le réglage « réduire les animations » du système */
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms!important;animation-delay:0!important;transition-duration:.001ms!important}
+  }
 </style>
 </head>
 <body>
@@ -172,7 +200,7 @@
 </div>
 
 <script>
-const VERSION = '20260605-131216';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260615-172929';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 
@@ -265,14 +293,29 @@ function renderHome(){
   home.innerHTML = `<div class="grid">` + data.matieres.map((m,i)=>{
     const moy = moyenne(m.chapitres);
     const col = couleur(moy);
-    return `<button class="mcard" onclick="open_(${i})">
+    return `<button class="mcard" style="animation-delay:${Math.min(i,8)*45}ms" onclick="open_(${i})">
       <span class="go">›</span>
       <div class="name">${escapeH(m.nom)}</div>
-      <div class="pct" style="color:${col}">${moy}<span style="font-size:20px">%</span></div>
+      <div class="pct" style="color:${col}"><span class="num" data-to="${moy}">${moy}</span><span class="u">%</span></div>
       <div class="pbar"><span style="width:${moy}%;background:${col}"></span></div>
       <div class="meta">${m.chapitres.length} chapitre${m.chapitres.length>1?'s':''}</div>
     </button>`;
-  }).join('') + `<button class="mcard addcard" onclick="addMatiere()">+ Ajouter une matière</button></div>`;
+  }).join('') + `<button class="mcard addcard" style="animation-delay:${Math.min(data.matieres.length,8)*45}ms" onclick="addMatiere()">+ Ajouter une matière</button></div>`;
+  home.querySelectorAll('.mcard .num').forEach(countUp);   // grand % qui s'incrémente de 0
+}
+// Anime un nombre de 0 jusqu'à sa valeur (ease-out cubique). Respecte « réduire les animations ».
+function prefersReduced(){ try{ return matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } }
+function countUp(el){
+  const to=+el.dataset.to||0;
+  if(prefersReduced()||to===0){ el.textContent=to; return; }
+  const dur=450; let start=null;
+  el.textContent='0';
+  requestAnimationFrame(function step(ts){
+    if(start===null) start=ts;
+    const k=Math.min(1,(ts-start)/dur), e=1-Math.pow(1-k,3);
+    el.textContent=Math.round(to*e);
+    if(k<1) requestAnimationFrame(step);
+  });
 }
 
 function renderDetail(){
@@ -298,13 +341,13 @@ function renderDetail(){
     </div>
     <input class="addchap" type="text" placeholder="+ Ajouter un chapitre, puis Entrée"
            onkeydown="if(event.key==='Enter'){addChapitre(${current},this.value);this.value=''}">
-    ${order.map(({c,ci})=>chapCard(ci,c)).join('')}
+    ${order.map(({c,ci},pos)=>chapCard(ci,c,pos)).join('')}
   `;
 }
 
-function chapCard(ci,c){
+function chapCard(ci,c,pos){
   const col = couleur(c.pct);
-  return `<div class="chap" data-ci="${ci}">
+  return `<div class="chap" data-ci="${ci}" style="animation-delay:${Math.min(pos||0,8)*40}ms">
     <div class="top">
       <span class="cname" ondblclick="renameChap(${ci})" title="Double-clic pour renommer">${escapeH(c.nom)}</span>
       <span class="cpct" style="color:${col}">${c.pct}%</span>
