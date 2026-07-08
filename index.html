@@ -21,10 +21,10 @@
     --bg2:#D8E2EC;         /* pistes de barres / sliders */
     --card:#FFFFFF;        /* 30% surfaces */
     --ink:#0F172A;         /* texte principal */
-    --muted:#5C6B7A;       /* texte secondaire / labels */
+    --muted:#4F5E6C;       /* texte secondaire / labels (assombri pour le contraste AA) */
     --line:#D8E2EC;        /* bordures fines */
     --primary:#0369A1;     /* 10% accent : liens, focus, CTA */
-    --rouge:#DC2626; --orange:#F97316; --jaune:#EAB308; --vert:#16A34A;
+    --rouge:#DC2626; --orange:#F97316; --jaune:#CA8A04; --vert:#16A34A;
     --shadow:0 1px 3px rgba(15,23,42,.08);
     --ring:rgba(3,105,161,.16);
   }
@@ -47,24 +47,29 @@
   .iconbtn:active{transform:scale(.94)}
 
   /* ---------- Vue accueil : grille de matières ---------- */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-  .mcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;color:var(--ink);
+  .grid{display:flex;flex-wrap:wrap;gap:14px;align-items:start}
+  .grid .mcard{flex:0 1 230px}   /* largeur ~230, s'allonge selon le plus long mot (pas de coupe), sans se gonfler pour remplir la ligne */
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;cursor:pointer;color:var(--ink);
          box-shadow:var(--shadow);position:relative;text-align:left;
+         display:grid;grid-template-columns:1fr auto auto;align-items:center;column-gap:12px;row-gap:12px;
          transition:transform .2s cubic-bezier(.22,.61,.36,1),box-shadow .2s ease,background-color .3s ease,border-color .3s ease,color .3s ease;
          animation:rise .4s cubic-bezier(.22,.61,.36,1) backwards}
   .mcard:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(15,23,42,.10)}
   .mcard:active{transform:translateY(-1px) scale(.992)}
   .mcard.done{border-color:var(--vert)}
   .mcard.done .go{color:var(--vert)}
-  .mcard .name{font-size:15px;font-weight:500;margin-bottom:12px;padding-right:26px;line-height:1.3}
-  .mcard .pct{font-size:34px;font-weight:700;line-height:1;letter-spacing:-.02em}
-  .mcard .pct .u{font-size:16px;font-weight:500;color:var(--muted);margin-left:1px}
-  .mcard .pbar{height:8px;border-radius:5px;background:var(--bg2);margin:12px 0 8px;overflow:hidden}
+  .mcard .top{min-width:min-content}
+  .mcard .name{font-size:16px;font-weight:600;line-height:1.25;display:flex;align-items:center;gap:9px}
+  .mcard .name .nm{overflow-wrap:normal;word-break:normal}
+  .mcard .mdot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+  .mcard .meta{font-size:12px;font-weight:500;color:var(--muted);margin-top:3px}
+  .mcard .pct{font-size:30px;font-weight:700;line-height:1;letter-spacing:-.02em;text-align:right;white-space:nowrap}
+  .mcard .pct .u{font-size:15px;font-weight:500;color:var(--muted);margin-left:1px}
+  .mcard .pbar{grid-column:1/-1;height:7px;border-radius:5px;background:var(--bg2);overflow:hidden}
   .mcard .pbar>span{display:block;height:100%;border-radius:5px;transition:width .55s cubic-bezier(.22,.61,.36,1),background .3s}
-  .mcard .meta{font-size:12px;font-weight:500;color:var(--muted)}
-  .mcard .go{position:absolute;top:15px;right:13px;color:var(--muted);display:inline-flex}
+  .mcard .go{color:var(--muted);display:inline-flex;align-self:center;opacity:.55}
   .addcard{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--line);
-           background:transparent;box-shadow:none;color:var(--muted);font-size:14px;font-weight:600;min-height:140px}
+           background:transparent;box-shadow:none;color:var(--muted);font-size:14px;font-weight:600;min-height:90px}
   .addcard:hover{border-color:var(--primary);color:var(--primary);transform:none;box-shadow:none}
 
   /* ---------- État vide ---------- */
@@ -83,19 +88,22 @@
   .back:hover{opacity:.78}
   .back:active{transform:scale(.97)}
   .dhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-  .dhead h2{margin:0;font-size:22px;font-weight:600;flex:1;line-height:1.2}
+  .dhead h2{margin:0;font-size:22px;font-weight:600;flex:1;line-height:1.2;display:flex;align-items:center;gap:10px}
+  .dhead .mdot{width:13px;height:13px;border-radius:50%;flex-shrink:0}
+  .dhead .dotbtn{background:none;border:none;padding:9px;margin:-9px;cursor:pointer;display:inline-flex;align-items:center;border-radius:50%;flex-shrink:0}
+  .dhead .dotbtn:active{transform:scale(.9)}
   .badge{font-weight:700;font-size:15px;color:#fff;padding:4px 12px;border-radius:999px}
   .dsub{color:var(--muted);font-size:12px;margin:0 0 18px}
 
-  .chap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:9px;
+  .chap{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:10px;
         box-shadow:var(--shadow);animation:rise .4s cubic-bezier(.22,.61,.36,1) backwards;
         transition:transform .18s cubic-bezier(.22,.61,.36,1),box-shadow .2s ease,background-color .3s ease,border-color .3s ease,color .3s ease}
   .chap:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,42,.08)}
   .chap.done{border-color:var(--vert)}
   .chap .top{display:flex;align-items:center;gap:8px}
-  .chap .cname{font-size:15px;font-weight:500;flex:1;line-height:1.3}
+  .chap .cname{font-size:15px;font-weight:500;flex:1;min-width:0;line-height:1.3;overflow-wrap:normal;word-break:normal}
   .chap .cdone{color:var(--vert);display:inline-flex}
-  .chap .cpct{font-size:15px;font-weight:700;min-width:42px;text-align:right}
+  .chap .cpct{font-size:15px;font-weight:700;min-width:42px;flex-shrink:0;text-align:right}
   .chap .bar{height:8px;border-radius:5px;background:var(--bg2);overflow:hidden;margin:10px 0 0}
   .chap .bar>span{display:block;height:100%;border-radius:5px;transition:width .5s cubic-bezier(.22,.61,.36,1),background .3s}
   .chap .ctrl{display:flex;align-items:center;gap:10px;margin-top:11px}
@@ -157,7 +165,9 @@
   .overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:flex-start;justify-content:center;
            padding:56px 16px;z-index:50;animation:fade .2s ease}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;width:100%;max-width:360px;
+         max-height:calc(100vh - 112px);overflow:auto;
          box-shadow:0 14px 44px rgba(15,23,42,.28);animation:rise .25s cubic-bezier(.22,.61,.36,1)}
+  .panel.wide{max-width:640px}
   .phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
   .phead>span{font-size:16px;font-weight:600}
   .plabel{font-size:11px;font-weight:600;color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em}
@@ -178,6 +188,151 @@
   .dbtn.danger:hover{border-color:var(--rouge);color:var(--rouge)}
   .pfoot{font-size:12px;color:var(--muted);margin:14px 0 0;text-align:center}
 
+  /* ---------- Navigation Maîtrise / Temps ---------- */
+  .nav{display:inline-flex;background:var(--bg2);border-radius:11px;padding:3px;gap:2px;margin-top:14px}
+  .navt{border:none;background:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--muted);
+        padding:8px 16px;border-radius:9px;cursor:pointer;min-height:40px;transition:.15s}
+  .navt.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+  .navt:active{transform:scale(.97)}
+
+  /* ---------- Page « Temps de travail » ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;
+        box-shadow:var(--shadow);animation:rise .4s cubic-bezier(.22,.61,.36,1) backwards}
+  /* Choix de la matière + lancement */
+  .sessionwrap{min-height:58vh;display:flex;align-items:center}
+  .sessioncard{width:100%}
+  .sesshead{text-align:center;margin-bottom:18px;color:var(--ink)}
+  .sesshead svg{color:var(--primary)}
+  .sesshead h2{margin:6px 0 5px;font-size:20px;font-weight:600}
+  .sesshead p{margin:0 auto;max-width:300px;font-size:13px;color:var(--muted);line-height:1.45}
+  .sessioncard .matchips{justify-content:center}
+  .matchips{display:flex;flex-wrap:wrap;gap:9px;margin:6px 0 16px}
+  .matchip{display:inline-flex;align-items:center;gap:8px;background:var(--bg2);border:1.5px solid transparent;
+           border-radius:999px;padding:9px 15px;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);
+           cursor:pointer;min-height:42px;transition:.15s}
+  .matchip .dot{width:12px;height:12px;border-radius:50%;background:var(--c);flex-shrink:0}
+  .matchip.on{border-color:var(--c);background:var(--card)}
+  .matchip:active{transform:scale(.97)}
+  .bigbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:none;border-radius:14px;
+          font-family:inherit;font-size:17px;font-weight:700;color:#fff;padding:16px;cursor:pointer;min-height:56px;transition:.15s}
+  .bigbtn:active{transform:scale(.985)}
+  .bigwork{background:var(--primary)}
+  .bigwork:disabled{opacity:.4;cursor:default}
+  .bigstop{background:var(--ink);color:var(--card)}
+  .bigbreathe{background:var(--bg2);color:var(--ink);border:1px solid var(--line);margin-top:10px;font-size:15px;font-weight:600;padding:14px}
+  .bigbreathe svg{color:var(--primary)}
+
+  /* ---------- Méditation (« Respire ») ---------- */
+  .brov{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;align-items:center;justify-content:center;animation:fade .25s ease}
+  .brwrap{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;padding:28px 20px;max-width:360px;width:100%}
+  .brquit{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);
+          background:var(--card);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .brhint{margin:0;font-size:14px;color:var(--muted);max-width:260px;line-height:1.5}
+  .brcircle{width:190px;height:190px;border-radius:50%;
+            background:radial-gradient(circle at 50% 42%, var(--primary), transparent 72%);
+            box-shadow:0 0 55px rgba(99,102,241,.22);
+            animation:breathe 8s ease-in-out infinite;margin:6px 0}
+  .brphase{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:.01em}
+  .brtime{font-size:30px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+  .brdurs{display:flex;gap:8px}
+  .brdur{background:var(--bg2);border:1.5px solid transparent;border-radius:999px;padding:8px 16px;font-family:inherit;
+         font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;min-height:40px;transition:.15s}
+  .brdur.on{border-color:var(--primary);background:var(--card)}
+  .brchain{margin:0;font-size:13px;color:var(--muted);max-width:280px;line-height:1.45}
+  .brstart{max-width:300px;margin-top:2px}
+  @keyframes breathe{0%,100%{transform:scale(.6)}50%{transform:scale(1)}}
+  /* Session en cours — mode focus plein écran (couvre la barre d'onglets) */
+  .focusov{position:fixed;inset:0;z-index:55;background:var(--bg);overflow:auto;display:flex;flex-direction:column;
+           align-items:center;justify-content:flex-start;animation:fade .25s ease;
+           padding:max(28px,env(safe-area-inset-top)) 20px max(28px,env(safe-area-inset-bottom))}
+  .focuswrap{width:100%;max-width:360px;margin:auto 0;text-align:center}
+  .focuswrap .mixer{margin-top:18px}
+  .focuswrap .bigstop{margin-top:8px}
+  /* Session en cours */
+  .runcard{text-align:center}
+  .runtop{display:inline-flex;align-items:center;gap:9px;margin-bottom:2px}
+  .rdot{width:14px;height:14px;border-radius:50%;background:var(--c)}
+  .rname{font-size:16px;font-weight:600}
+  .rtimer{font-size:46px;font-weight:700;font-variant-numeric:tabular-nums;margin:6px 0 6px;color:var(--ink);line-height:1}
+  .rstate{font-size:12px;color:var(--muted);margin-bottom:18px;display:inline-flex;align-items:center;gap:6px}
+  .rsound{background:none;border:none;color:var(--primary);font-family:inherit;font-size:12px;font-weight:600;
+          cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:0}
+  .rwarn{font-size:12px;font-weight:600;color:var(--ink);background:var(--bg2);border-radius:9px;
+         padding:8px 12px;margin:0 0 14px;display:inline-flex;align-items:center;gap:7px}
+  .note{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;
+        padding:11px 14px;margin-bottom:14px;font-size:13px;color:var(--ink);animation:rise .3s ease backwards}
+  .note .nclose{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;display:inline-flex;
+                padding:4px;border-radius:8px;flex-shrink:0}
+  .note .nclose:hover{color:var(--ink)}
+  .rvol{display:flex;align-items:center;gap:11px;margin:0 0 18px;color:var(--muted)}
+  .volrange{-webkit-appearance:none;appearance:none;flex:1;height:32px;background:transparent;cursor:pointer;margin:0}
+  .volrange::-webkit-slider-runnable-track{height:6px;border-radius:5px;background:var(--bg2)}
+  .volrange::-moz-range-track{height:6px;border-radius:5px;background:var(--bg2)}
+  .volrange::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;
+        background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.22);margin-top:-7px}
+  .volrange::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.22)}
+  /* Graphe façon « temps d'écran » */
+  .seg{display:inline-flex;background:var(--bg2);border-radius:10px;padding:3px;gap:2px;margin-bottom:14px}
+  .segb{border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);
+        padding:7px 14px;border-radius:8px;cursor:pointer;min-height:40px;transition:.15s}
+  .segb.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+  .segb:active{transform:scale(.97)}
+  .navper{display:flex;align-items:center;gap:10px;margin:2px 0 8px}
+  .pnav{background:none;border:1px solid var(--line);border-radius:9px;min-width:40px;min-height:40px;
+        display:inline-flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;transition:.15s}
+  .pnav:hover:not(:disabled){border-color:var(--primary);color:var(--primary)}
+  .pnav:active:not(:disabled){transform:scale(.95)}
+  .pnav:disabled{opacity:.35;cursor:default}
+  .plabelw{font-size:13px;font-weight:600;color:var(--ink)}
+  .sttotal{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .stsub{font-size:12px;color:var(--muted);margin:3px 0 16px}
+  /* Graphe temps : SVG fait main façon « temps d'écran » (grille + axe à droite + moyenne).
+     Réutilise .chartsvg/.cg/.cyl/.cxl du graphe de maîtrise ; barres = couleurs des matières. */
+  .timesvg{width:100%;height:auto;display:block;margin:2px 0 2px}
+  .chartsvg .cavg{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3}
+  .chartsvg .cay{fill:var(--muted);font-size:11px;text-anchor:start}
+  .chartsvg rect{transition:none}
+  .legend{margin-top:6px;border-top:1px dashed var(--line);padding-top:10px}
+  .legrow{display:flex;align-items:center;gap:11px;padding:7px 0}
+  .legdot{width:15px;height:15px;border-radius:4px;background:var(--c);border:none;cursor:pointer;flex-shrink:0;padding:0;
+          box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);transition:transform .12s}
+  .legdot:active{transform:scale(.9)}
+  .legname{flex:1;font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .legtime{font-size:14px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+  /* Pastille de couleur (modale création) : la couleur choisie ; taper ouvre le sélecteur maison. */
+  .nmcolor{display:block;width:100%;height:46px;border-radius:12px;cursor:pointer;padding:0;
+           border:1.5px solid var(--line);box-shadow:inset 0 0 0 2px rgba(255,255,255,.18)}
+  /* Sélecteur de couleur maison (popover) */
+  .cpickov{position:fixed;inset:0;z-index:70}
+  .cpickpanel{position:fixed;width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;
+              box-shadow:0 12px 34px rgba(15,23,42,.28);padding:12px;display:flex;flex-direction:column;gap:10px}
+  .cpsv{position:relative;width:100%;height:140px;border-radius:9px;cursor:crosshair;touch-action:none;
+        box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+  .cpsvthumb{position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid #fff;
+             box-shadow:0 0 0 1px rgba(0,0,0,.4);transform:translate(-50%,-50%);pointer-events:none}
+  .cphue{-webkit-appearance:none;appearance:none;width:100%;height:14px;border-radius:8px;cursor:pointer;
+         background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
+  .cphue::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;
+                               background:#fff;border:2px solid rgba(0,0,0,.35);cursor:pointer}
+  .cphue::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.35);cursor:pointer}
+  .cprow{display:flex;align-items:center;gap:9px}
+  .cpprev{width:30px;height:30px;border-radius:8px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+  .cphex{flex:1;min-width:0;font-family:inherit;font-size:16px;border:1px solid var(--line);border-radius:8px;
+         background:var(--bg2);color:var(--ink);padding:7px 9px;text-transform:uppercase}
+
+  /* ---------- Modale maison (renommer / ajouter / supprimer) ---------- */
+  .mdmsg{font-size:14px;color:var(--ink);line-height:1.5;margin:2px 0 16px}
+  .mdinput{width:100%;border:1px solid var(--line);background:var(--bg2);color:var(--ink);border-radius:12px;
+           padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:16px}
+  .mdinput:focus{border-color:var(--primary)}
+  .mdactions{display:flex;gap:10px;justify-content:flex-end}
+  .mdbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:11px;padding:11px 18px;
+         font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;min-height:44px;transition:.15s}
+  .mdbtn:hover{border-color:var(--primary)}
+  .mdbtn:active{transform:scale(.97)}
+  .mdbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .mdbtn.danger{background:var(--rouge);color:#fff;border-color:var(--rouge)}
+
   /* ---------- Tactile (iPad / iPhone) ---------- */
   button,input,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .cname,.dhead h2{touch-action:manipulation;-webkit-user-select:none;user-select:none}
@@ -185,6 +340,251 @@
     .mcard:hover,.chap:hover{transform:none}
     .mcard:hover{box-shadow:var(--shadow)}
   }
+
+  /* ---------- Navigation : sidebar à gauche (desktop) ---------- */
+  :root{--sbw:230px}   /* largeur de la sidebar */
+  /* Contenu large et CENTRÉ dans l'espace restant (max 1160px), marges généreuses → look « logiciel », pas « appli téléphone ». */
+  .wrap{max-width:none;margin-left:var(--sbw);
+        padding:0 max(48px, calc((100vw - var(--sbw) - 1160px) / 2)) 80px}
+
+  /* ---------- Barre du haut : stats persistantes + CTA (façon tableau de bord) ---------- */
+  /* Collée en haut (sticky) : reste visible sur toutes les pages quand on descend. */
+  .topbar{position:sticky;top:0;z-index:30;background:var(--bg);
+          display:flex;align-items:center;gap:34px;margin-bottom:26px;
+          padding:30px 0 20px;border-bottom:1px solid var(--line)}
+  .tbstat{display:flex;flex-direction:column;gap:3px}
+  .tbstat .k{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .tbstat .v{font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--ink);
+             display:inline-flex;align-items:center;gap:2px}
+  .tbstat .tbflame{display:inline-flex;color:#F97316}   /* même orange que le bandeau série de l'accueil */
+  .tbcta{margin-left:auto;background:var(--primary);color:#fff;border:none;border-radius:12px;
+         font-family:inherit;font-size:14.5px;font-weight:600;padding:12px 20px;cursor:pointer;
+         display:inline-flex;align-items:center;gap:9px;transition:.15s;box-shadow:var(--shadow)}
+  .tbcta:hover{filter:brightness(1.06)}
+  .tbcta:active{transform:scale(.98)}
+  /* Desktop : la barre du haut couvre déjà Série + Temps → on retire les doublons de l'accueil. */
+  @media (min-width:821px){
+    #accueil .streak{display:none}
+    #accueil .statgrid{grid-template-columns:1fr}
+    #accueil .statgrid .statcard:last-child{display:none}
+    #accueil .panel{max-width:none}   /* « À faire » / « Aujourd'hui » pleine largeur sur grand écran */
+    #accueil .acccta{display:none}     /* « Nouvelle session » de la barre du haut suffit sur desktop */
+  }
+  .tabbar{position:fixed;top:0;left:0;bottom:0;z-index:40;width:var(--sbw);
+          display:flex;flex-direction:column;gap:4px;background:var(--card);
+          border-right:1px solid var(--line);padding:18px 14px;overflow-y:auto}
+  /* En-tête de marque en haut de la sidebar */
+  .sbbrand{display:flex;align-items:center;gap:10px;padding:6px 8px 16px;font-weight:700;
+           font-size:17px;letter-spacing:-.01em;color:var(--ink)}
+  .sbbrand .logo{width:30px;height:30px;border-radius:9px;background:var(--primary);color:#fff;
+                 display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .sbsect{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+          color:var(--muted);padding:10px 10px 4px;opacity:.7}
+  .tab{background:none;border:none;cursor:pointer;font-family:inherit;color:var(--muted);
+       display:flex;flex-direction:row;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;
+       text-align:left;transition:color .15s,background .15s}
+  .tab .tabic{display:inline-flex}
+  .tab .tablbl{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+  .tab:hover{background:var(--bg2);color:var(--ink)}
+  .tab:active{transform:scale(.98)}
+  .tab.on{color:var(--primary);background:var(--ring)}
+  /* Pied de sidebar : mode offline */
+  .sbfoot{margin-top:auto;padding:12px 10px 4px;font-size:12px;font-weight:600;color:var(--muted);
+          display:flex;align-items:center;gap:8px}
+  .sbfoot .dotlive{width:8px;height:8px;border-radius:50%;background:var(--vert)}
+
+  /* ---------- Repli en barre du bas sur écran étroit (mobile / iPad portrait) ---------- */
+  @media (max-width:820px){
+    .wrap{margin:0 auto;max-width:920px;padding:30px 22px 118px}
+    .topbar{display:none}   /* sur mobile, l'accueil montre déjà série + temps du jour */
+    .tabbar{top:auto;left:50%;right:auto;bottom:max(16px,env(safe-area-inset-bottom));
+            transform:translateX(-50%);flex-direction:row;gap:2px;width:calc(100% - 28px);max-width:430px;
+            height:auto;border:1px solid var(--line);border-radius:22px;padding:7px 8px;
+            box-shadow:0 8px 28px rgba(15,23,42,.18);justify-content:space-between;overflow:visible}
+    .tab{flex:1;flex-direction:column;gap:3px;padding:6px 2px;border-radius:14px;
+         min-height:52px;justify-content:center;align-items:center;text-align:center}
+    .tab .tablbl{font-size:11px}
+    .tab:hover{background:none;color:var(--muted)}
+    .tab.on{background:none;color:var(--primary)}
+    .sbbrand,.sbsect,.sbfoot{display:none}   /* pas de marque/pied en mode barre */
+  }
+  @media (max-width:520px){ .grid .mcard{flex-basis:100%} }   /* cartes pleine largeur sur téléphone (pas de vide à droite) */
+
+  /* ---------- Titres de page ---------- */
+  .ptitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 18px}
+  .ptitle h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em}
+  .ptitle .sub{color:var(--muted);font-size:14px;margin-top:3px}
+  .addbtn{background:var(--primary);color:#fff;border:none;cursor:pointer;display:inline-flex;align-items:center;
+          justify-content:center;width:44px;height:44px;border-radius:12px;flex-shrink:0;transition:.15s}
+  .addbtn:hover{filter:brightness(1.07)}
+  .addbtn:active{transform:scale(.94)}
+
+  /* ---------- Accueil (tableau de bord) ---------- */
+  .hello{margin:2px 0 18px}
+  .hello h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .hello p{margin:4px 0 0;color:var(--muted);font-size:14px}
+  .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+  .statcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);
+            animation:rise .4s cubic-bezier(.22,.61,.36,1) backwards}
+  .statcard .lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .statcard .big{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-top:6px}
+  .statcard .big .u{font-size:16px;font-weight:500;color:var(--muted)}
+  .statcard .mini{font-size:13px;color:var(--muted);margin-top:6px}
+  .seclabel{display:flex;align-items:baseline;justify-content:space-between;margin:22px 0 10px}
+  .seclabel .t{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .seclabel .lk{background:none;border:none;color:var(--primary);font-family:inherit;font-size:13px;font-weight:600;
+                cursor:pointer;padding:0}
+  .seclabel .lk:active{transform:scale(.97)}
+  .prevlist{display:flex;flex-direction:column;gap:9px}
+  .prevrow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;background:var(--card);
+           border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;
+           text-align:left;color:var(--ink);font-family:inherit;animation:rise .4s cubic-bezier(.22,.61,.36,1) backwards;transition:transform .18s}
+  .prevrow:active{transform:scale(.99)}
+  .prevrow.bosser{display:flex;padding:0;align-items:stretch;overflow:hidden}
+  .bosswork{flex:1;min-width:0;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;
+            padding:12px 14px;background:none;border:0;color:inherit;font-family:inherit;text-align:left;cursor:pointer;transition:transform .18s}
+  .bosswork:active{transform:scale(.99)}
+  .bossgraph{flex-shrink:0;width:52px;display:flex;align-items:center;justify-content:center;background:none;
+             border:0;border-left:1px solid var(--line);color:var(--muted);cursor:pointer;transition:transform .18s}
+  .bossgraph:active{transform:scale(.9)}
+  .prevrow .pdot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+  .prevrow .pmid{min-width:0}
+  .prevrow .pnm{font-size:15px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .prevrow .pbar2{height:6px;border-radius:4px;background:var(--bg2);overflow:hidden;margin-top:6px}
+  .prevrow .pbar2>span{display:block;height:100%;border-radius:4px}
+  .prevrow .ppct{font-size:16px;font-weight:700;min-width:44px;text-align:right}
+  .prevrow .psub{display:block;font-size:12px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ---------- Série (streak) ---------- */
+  .streak{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+          border-radius:16px;padding:13px 15px;margin-bottom:14px;box-shadow:var(--shadow);animation:rise .4s ease backwards}
+  .streak .fl{display:flex;color:var(--muted);flex-shrink:0}
+  .streak .fl.on{color:#F97316}
+  .streak .stxt{display:flex;flex-direction:column;min-width:0}
+  .streak .stxt .n{font-size:16px;font-weight:700;line-height:1.2}
+  .streak .stxt .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  /* ---------- Recap du jour ---------- */
+  .recap{padding:14px 16px;display:flex;flex-direction:column;gap:9px;animation:rise .4s ease backwards}
+  .recap .rcline{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.35;color:var(--ink)}
+  .recap .rcline .ic{color:var(--muted);flex-shrink:0}
+  .recap .rcline .cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .recap .rchips{display:flex;flex-wrap:wrap;gap:7px;margin:-2px 0 2px 25px}
+  .recap .rchip{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border-radius:999px;
+                padding:4px 10px;font-size:12.5px;color:var(--ink)}
+  .recap .rchip .cdot{width:8px;height:8px;border-radius:50%}
+  .rcempty{font-size:13.5px;color:var(--muted);margin:0;line-height:1.45}
+  .recap .rcmore{font-size:13px;color:var(--muted);font-style:italic}
+
+  /* ---------- To-do ---------- */
+  .todo{padding:6px 14px 14px;animation:rise .4s ease backwards}
+  .todogroup{padding-top:8px}
+  .todoglabel{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:6px 0 2px}
+  .todorow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .todogroup .todorow:last-child{border-bottom:none}
+  .todochk{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);background:var(--card);
+           display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;color:#fff;transition:.15s}
+  .todochk .ic{opacity:0;transition:opacity .15s}
+  .todochk.on{background:var(--vert);border-color:var(--vert)}
+  .todochk.on .ic{opacity:1}
+  .todotxt{font-size:14.5px;line-height:1.3;word-break:break-word}
+  .todotxt.done{text-decoration:line-through;color:var(--muted)}
+  .tododel{color:var(--muted);width:34px;height:34px}
+  .todoseg{display:flex;gap:8px;margin:14px 0 8px}
+  .tseg{flex:1;background:var(--bg2);border:1.5px solid transparent;border-radius:999px;padding:8px 10px;
+        font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;min-height:40px;transition:.15s}
+  .tseg.on{background:var(--primary);color:#fff}
+  .todoadd{display:flex;gap:8px}
+  .todoadd input{flex:1;border:1px solid var(--line);background:var(--bg2);color:var(--ink);border-radius:12px;
+                 padding:11px 13px;font-family:inherit;font-size:16px;outline:none;min-width:0}
+  .todoadd input:focus{border-color:var(--primary)}
+  .addbtn{background:var(--primary);color:#fff;border:none;border-radius:12px;width:46px;flex-shrink:0;
+          display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
+  .addbtn:active{transform:scale(.95)}
+
+  /* ---------- Agenda (onglet Session) ---------- */
+  .sessionwrap.withag{min-height:auto;display:block;margin-bottom:0}
+  .agendacard{padding:16px}
+  .aghdr{display:flex;align-items:center;gap:9px;color:var(--ink);margin-bottom:4px}
+  .aghdr .ic{color:var(--primary)}
+  .aghdr h3{margin:0;font-size:17px;font-weight:700}
+  .agnav{display:flex;align-items:center;justify-content:center;gap:14px;margin:6px 0 12px}
+  .agarrow{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);
+           display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
+  .agarrow:active{transform:scale(.94)}
+  .aglabel{font-size:14.5px;font-weight:700;min-width:150px;text-align:center}
+  .aglist{display:flex;flex-direction:column;gap:2px}
+  .agday{padding:6px 0}
+  .agday.today .aghead{color:var(--primary)}
+  .aghead{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted);
+          text-transform:uppercase;letter-spacing:.03em;margin:4px 0 4px}
+  .aghead .agdow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;
+                 background:var(--bg2);color:var(--ink);font-size:11px}
+  .agday.today .aghead .agdow{background:var(--primary);color:#fff}
+  .agempty{font-size:13px;color:var(--muted);opacity:.75;padding:2px 0 2px 28px}
+  .agtask{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:5px 0}
+  .agtxt{display:flex;align-items:center;gap:9px;min-width:0;background:var(--bg2);border:1px solid var(--line);
+         border-radius:11px;padding:10px 12px;font-family:inherit;color:var(--ink);cursor:pointer;text-align:left;transition:.15s}
+  .agtxt:active{transform:scale(.99)}
+  .agtxt .cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .agtxt .agname{font-size:14.5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .agtxt.done{opacity:.6}
+  .agtxt.done .agname{text-decoration:line-through;color:var(--muted)}
+  .agtxt .agplay{display:inline-flex;color:var(--primary);flex-shrink:0;margin-left:auto}
+  .agadd{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+  .agpicklbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px}
+  .matchips.mini{margin:0 0 14px;justify-content:flex-start}
+  .matchip.mini{padding:7px 12px;font-size:13px;min-height:36px}
+  .matchip.mini .dot{width:10px;height:10px}
+  .agdays{display:flex;gap:6px;margin-bottom:14px}
+  .agdaypick{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--bg2);border:1.5px solid transparent;
+             border-radius:12px;padding:7px 0;font-family:inherit;color:var(--ink);cursor:pointer;min-height:48px;transition:.15s}
+  .agdaypick span{font-size:11px;color:var(--muted)}
+  .agdaypick b{font-size:15px;font-weight:700}
+  .agdaypick.td b{color:var(--primary)}
+  .agdaypick.on{background:var(--primary);border-color:var(--primary)}
+  .agdaypick.on span,.agdaypick.on b{color:#fff}
+  .agdaypick.past{opacity:.32;cursor:not-allowed}
+  .agday.pastday .aghead{opacity:.5}
+  .agtask.late{grid-template-columns:auto 1fr auto auto}
+  .agreb{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--orange);
+         display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.15s}
+  .agreb:active{transform:scale(.92)}
+  .rbgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px}
+  .rbchip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;background:var(--bg2);
+          border:1.5px solid transparent;border-radius:10px;cursor:pointer;font-family:inherit;color:var(--ink);transition:transform .15s}
+  .rbchip span{font-size:11px;color:var(--muted)}
+  .rbchip b{font-size:15px;font-weight:700}
+  .rbchip.on{background:var(--primary);border-color:var(--primary)}
+  .rbchip.on span,.rbchip.on b{color:#fff}
+  .rbchip:active{transform:scale(.94)}
+  .aglate{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);border-radius:13px;padding:10px 12px;margin-bottom:14px}
+  .aglatehd{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--orange);
+            text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+  /* « À faire aujourd'hui » (Accueil) */
+  .todaytasks{padding:12px 14px;display:flex;flex-direction:column;gap:2px;animation:rise .4s ease backwards}
+  .latebanner{display:flex;align-items:center;gap:8px;width:100%;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);
+              border-radius:11px;padding:10px 12px;font-family:inherit;font-size:13px;font-weight:600;color:var(--orange);
+              cursor:pointer;margin-bottom:8px;text-align:left}
+
+  /* ---------- Mélangeur d'ambiances (Session) ---------- */
+  .mixlbl{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:600;color:var(--muted);
+          text-transform:uppercase;letter-spacing:.04em;margin:2px 0 12px}
+  .mixer{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;margin:0 0 18px}
+  .sndcell{display:flex;flex-direction:column;align-items:center;gap:7px;opacity:.62;transition:opacity .18s}
+  .sndcell.on{opacity:1}
+  .sndic{color:var(--ink);display:flex}
+  .sndcell.on .sndic{color:var(--primary)}
+  .sndlbl{font-size:12.5px;font-weight:600;color:var(--ink);text-align:center}
+  .sndcell .volrange.sndrange{flex:none;width:100%;height:32px}
+
+  /* ---------- Réglages : aperçu ---------- */
+  .counts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:2px 0 4px}
+  .countcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 8px;text-align:center;box-shadow:var(--shadow)}
+  .countcard .n{font-size:26px;font-weight:700;letter-spacing:-.02em}
+  .countcard .l{font-size:11px;color:var(--muted);margin-top:3px}
+  #reglages .panel{max-width:none;box-shadow:none;border:none;padding:0;background:none;overflow:visible;max-height:none;animation:none}
+  #reglages .secblock{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
 
   .hidden{display:none}
   .fade{animation:fade .25s ease}
@@ -198,46 +598,74 @@
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="hrow">
-      <div>
-        <h1>Mes révisions</h1>
-        <div class="tagline" id="tagline">Maîtrise globale <span class="gpill" id="globalPill"></span></div>
-      </div>
-      <button class="iconbtn" id="settingsBtn" title="Réglages" onclick="openSettings()"></button>
-    </div>
-  </header>
+  <!-- BARRE DU HAUT : stats persistantes + CTA (desktop uniquement) -->
+  <div class="topbar" id="topbar">
+    <div class="tbstat"><span class="k">Série actuelle</span><span class="v" id="tbStreak">—</span></div>
+    <div class="tbstat"><span class="k">Travail aujourd'hui</span><span class="v" id="tbToday">—</span></div>
+    <button class="tbcta" onclick="goPage('session')"><span id="tbCtaIc"></span><span>Nouvelle session</span></button>
+  </div>
 
-  <!-- ACCUEIL -->
-  <div id="home" class="fade"></div>
+  <!-- ACCUEIL (tableau de bord) -->
+  <div id="accueil" class="fade"></div>
 
-  <!-- DÉTAIL -->
+  <!-- MATIÈRES : grille -->
+  <div id="home" class="hidden"></div>
+
+  <!-- MATIÈRES : détail -->
   <div id="detail" class="hidden"></div>
+
+  <!-- SESSION -->
+  <div id="temps" class="hidden"></div>
+
+  <!-- STATS -->
+  <div id="stats" class="hidden"></div>
+
+  <!-- RÉGLAGES -->
+  <div id="reglages" class="hidden"></div>
 </div>
 
-<!-- RÉGLAGES -->
-<div id="settings" class="overlay hidden" onclick="if(event.target===this)closeSettings()">
-  <div class="panel">
-    <div class="phead"><span>Réglages</span><button class="iconbtn" id="closeSettingsBtn" title="Fermer" onclick="closeSettings()"></button></div>
-    <p class="plabel">Apparence</p>
-    <div id="themeOpts"></div>
-    <p class="plabel" style="margin-top:18px">Mes données</p>
-    <button class="dbtn" id="btnExport" onclick="exportData()"></button>
-    <button class="dbtn" id="btnImport" onclick="document.getElementById('importFile').click()"></button>
-    <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
-    <button class="dbtn danger" id="btnReset" onclick="resetData()"></button>
-    <p class="pfoot">Tout est enregistré sur cet appareil, sans internet.</p>
+<!-- NAVIGATION : sidebar à gauche (desktop) / barre en bas (mobile) -->
+<nav class="tabbar" id="tabbar">
+  <div class="sbbrand"><span class="logo" id="sbLogo"></span><span>Mes révisions</span></div>
+  <button class="tab" data-p="accueil" onclick="goPage('accueil')"><span class="tabic"></span><span class="tablbl">Accueil</span></button>
+  <button class="tab" data-p="matieres" onclick="goPage('matieres')"><span class="tabic"></span><span class="tablbl">Matières</span></button>
+  <button class="tab" data-p="session" onclick="goPage('session')"><span class="tabic"></span><span class="tablbl">Travail</span></button>
+  <button class="tab" data-p="stats" onclick="goPage('stats')"><span class="tabic"></span><span class="tablbl">Stats</span></button>
+  <button class="tab" data-p="reglages" onclick="goPage('reglages')"><span class="tabic"></span><span class="tablbl">Réglages</span></button>
+  <div class="sbfoot"><span class="dotlive"></span><span>Mode hors-ligne</span></div>
+</nav>
+
+<!-- CHOIX DE COULEUR D'UNE MATIÈRE -->
+<!-- SÉLECTEUR DE COULEUR MAISON (popover ancré au clic, 100% offline) -->
+<div id="cpick" class="cpickov hidden" onclick="if(event.target===this)closeCPick()">
+  <div class="cpickpanel" id="cpickPanel">
+    <div class="cpsv" id="cpSV"><span class="cpsvthumb" id="cpThumb"></span></div>
+    <input id="cpHue" class="cphue" type="range" min="0" max="360" value="0" aria-label="Teinte">
+    <div class="cprow"><span class="cpprev" id="cpPrev"></span><input id="cpHex" class="cphex" type="text" maxlength="7" spellcheck="false" aria-label="Code couleur hexadécimal"></div>
   </div>
 </div>
 
+<!-- MODALE MAISON (renommer / ajouter / supprimer) -->
+<div id="modal" class="overlay hidden" onclick="if(event.target===this)closeModal(null)"></div>
+
+<!-- MÉDITATION (« Respire » avant une session) -->
+<div id="breathe" class="brov hidden"></div>
+
+<!-- SESSION EN COURS (mode focus plein écran : pas d'accès aux autres pages) -->
+<div id="focus" class="focusov hidden"></div>
+
+<!-- (Réglages et Stats sont désormais des pages, plus des overlays) -->
+<input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
+
 <script>
-const VERSION = '20260615-180934';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260708-175157';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 
 // ---- Icônes (SVG inline, cohérentes : trait 1.5, currentColor) ----
 const ICONS = {
   'chevron':'<path d="M9 6l6 6-6 6"/>',
+  'chevleft':'<path d="M15 6l-6 6 6 6"/>',
   'back':'<path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>',
   'trash':'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>',
   'x':'<path d="M18 6L6 18M6 6l12 12"/>',
@@ -249,6 +677,23 @@ const ICONS = {
   'plus':'<path d="M12 5v14M5 12h14"/>',
   'check':'<path d="M5 13l4 4 8-10"/>',
   'book':'<path d="M12 6.5C10.5 5 8 4.5 4 4.5v13c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2v-13c-4 0-6.5.5-8 2z"/><path d="M12 6.5V20"/>',
+  'play':'<path d="M7 5l12 7-12 7z"/>',
+  'stop':'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+  'clock':'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  'volume':'<path d="M11 5L6 9H3v6h3l5 4z"/><path d="M16 9a4 4 0 010 6"/><path d="M19.5 6.5a8 8 0 010 11"/>',
+  'home':'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+  'bars':'<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/>',
+  'flame':'<path d="M12 2c2 4 5 5 5 9a5 5 0 11-10 0c0-2 1-3.6 2-4.6.3 1.6 1.2 2.6 2.5 2.6C12.8 9 12 5.5 12 2z"/>',
+  'sun':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>',
+  'list':'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  'target':'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  'breath':'<path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h9a2.5 2.5 0 1 1-2.5 2.5"/>',
+  'rain':'<path d="M7 15a4 4 0 01-.5-7.96A5 5 0 0116.5 8.5 3.5 3.5 0 0117.5 15"/><path d="M8 19l-1 2M12 19l-1 2M16 19l-1 2"/>',
+  'waves':'<path d="M2 7c2 0 2.2 1.8 4 1.8S8.2 7 10 7s2.2 1.8 4 1.8S16.2 7 18 7s2.2 1.8 4 1.8"/><path d="M2 13c2 0 2.2 1.8 4 1.8S8.2 13 10 13s2.2 1.8 4 1.8S16.2 13 18 13s2.2 1.8 4 1.8"/><path d="M2 19c2 0 2.2 1.8 4 1.8S8.2 19 10 19s2.2 1.8 4 1.8S16.2 19 18 19s2.2 1.8 4 1.8"/>',
+  'wind':'<path d="M3 8h10a2.5 2.5 0 10-2.5-2.5"/><path d="M3 12h15a3 3 0 11-3 3"/><path d="M3 16h8a2 2 0 11-2 2"/>',
+  'soundwave':'<path d="M2 12h2l2-6 4 15 3-11 2 6 2-4h3"/>',
+  'bird':'<path d="M2 18c5 0 8-2 10-6 1.4-2.8 3.4-4.5 6.5-4.5 1.6 0 2.5.9 2.5 2.2 0 1.8-1.8 2.6-3.5 2.6"/><path d="M13 7l3.5-3"/><path d="M9 13l-2 6"/>',
+  'bowl':'<path d="M3 10c0 4.2 4 7.5 9 7.5s9-3.3 9-7.5"/><path d="M3 10c0-1.6 4-2.6 9-2.6s9 1 9 2.6"/><path d="M16.5 4.5l2.5 4.5"/>',
 };
 function ic(name,size){ size=size||20; return `<svg class="ic" viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`; }
 
@@ -265,67 +710,149 @@ const THEMES = {
 };
 // Base claire complète : permet de revenir proprement après le mode sombre (couleurs maîtrise incluses).
 const LIGHT_DEFAULTS = {
-  '--bg':'#EAF0F6','--bg2':'#D8E2EC','--card':'#FFFFFF','--ink':'#0F172A','--muted':'#5C6B7A','--line':'#D8E2EC',
-  '--primary':'#0369A1','--rouge':'#DC2626','--orange':'#F97316','--jaune':'#EAB308','--vert':'#16A34A',
+  '--bg':'#EAF0F6','--bg2':'#D8E2EC','--card':'#FFFFFF','--ink':'#0F172A','--muted':'#4F5E6C','--line':'#D8E2EC',
+  '--primary':'#0369A1','--rouge':'#DC2626','--orange':'#F97316','--jaune':'#CA8A04','--vert':'#16A34A',
   '--shadow':'0 1px 3px rgba(15,23,42,.08)','--ring':'rgba(3,105,161,.16)'
 };
 
+// Renvoie le vrai thème à peindre : 'auto' suit le système (sombre/clair).
+function effectiveTheme(name){
+  if(name==='auto'){
+    try{ return matchMedia('(prefers-color-scheme: dark)').matches ? 'sombre' : 'slate'; }catch(e){ return 'slate'; }
+  }
+  return THEMES[name] ? name : 'slate';
+}
 function applyTheme(name){
-  if(!THEMES[name]) name='slate';
-  const t = THEMES[name];
+  if(name!=='auto' && !THEMES[name]) name='slate';
+  const t = THEMES[effectiveTheme(name)];
   const root = document.documentElement;
   Object.entries(LIGHT_DEFAULTS).forEach(([k,v])=>root.style.setProperty(k,v)); // base claire
   Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));          // puis l'ambiance
   localStorage.setItem(THEME_KEY, name);
   document.querySelectorAll('.topt').forEach(s=>s.classList.toggle('on', s.dataset.t===name));
 }
+// Liste des options de thème, avec « Auto » en plus (suit le système).
+const THEME_OPTS = [['slate','Clair'],['sauge','Sauge'],['sombre','Sombre'],['auto','Auto']];
 function buildThemeOpts(active){
   const box = document.getElementById('themeOpts');
-  box.innerHTML = Object.entries(THEMES).map(([k,t])=>{
-    const bg = t.vars['--bg']||LIGHT_DEFAULTS['--bg'];
-    const ac = t.vars['--primary']||LIGHT_DEFAULTS['--primary'];
+  if(!box) return;
+  box.innerHTML = THEME_OPTS.map(([k,label])=>{
+    const eff = effectiveTheme(k);
+    const bg = THEMES[eff].vars['--bg']||LIGHT_DEFAULTS['--bg'];
+    const ac = THEMES[eff].vars['--primary']||LIGHT_DEFAULTS['--primary'];
     return `<button class="topt${k===active?' on':''}" data-t="${k}" onclick="applyTheme('${k}')">
       <span class="tdot" style="background:linear-gradient(135deg,${bg},${ac})"></span>
-      <span class="tlabel">${t.label}</span>
+      <span class="tlabel">${label}</span>
       <span class="tcheck">${ic('check',18)}</span>
     </button>`;
   }).join('');
 }
-function openSettings(){ buildThemeOpts(localStorage.getItem(THEME_KEY)||'slate'); document.getElementById('settings').classList.remove('hidden'); }
-function closeSettings(){ document.getElementById('settings').classList.add('hidden'); }
+// Suivi du changement de thème système quand « Auto » est sélectionné.
+try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
+  if((localStorage.getItem(THEME_KEY)||'')==='auto') applyTheme('auto');
+}); }catch(e){}
 
-const DEFAULT = { matieres:[] };  // démarre vide (matières du bac à ajouter)
+// ---------- Page Réglages ----------
+function renderReglages(){
+  const r=document.getElementById('reglages');
+  r.classList.remove('hidden'); r.classList.remove('fade'); void r.offsetWidth; r.classList.add('fade');
+  r.innerHTML=`
+    <div class="ptitle"><div><h1>Réglages</h1></div></div>
+    <div class="panel">
+      <div class="secblock">
+        <p class="plabel">Apparence</p>
+        <div id="themeOpts"></div>
+      </div>
+      <div class="secblock">
+        <p class="plabel">Mes données</p>
+        <button class="dbtn" onclick="exportData()">${ic('download')}<span>Sauvegarder</span></button>
+        <button class="dbtn" onclick="document.getElementById('importFile').click()">${ic('upload')}<span>Importer</span></button>
+        <button class="dbtn danger" onclick="resetData()">${ic('reset')}<span>Réinitialiser</span></button>
+      </div>
+      <p class="pfoot">Tout est enregistré sur cet appareil, sans internet.</p>
+    </div>`;
+  buildThemeOpts(localStorage.getItem(THEME_KEY)||'slate');
+}
+
+const DEFAULT = { matieres:[], sessions:[], active:null };  // démarre vide (matières du bac à ajouter)
+const MAX_SESSION_H = 4;                        // au-delà : session présumée oubliée
+const MAX_SESSION_MS = MAX_SESSION_H*3600000;
+
+// Palette d'identité des matières (distincte, lisible en clair comme en sombre).
+const MAT_PALETTE = ['#0EA5E9','#8B5CF6','#EC4899','#F59E0B','#10B981','#6366F1',
+                     '#14B8A6','#F97316','#A855F7','#84CC16','#06B6D4','#E11D48'];
+function genId(i){ return 'm'+Date.now().toString(36)+'-'+(i||0)+'-'+Math.floor(Math.random()*1e6).toString(36); }
+// Première couleur libre de la palette (puis cyclique si tout est pris). `used` est muté.
+function pickColor(used){
+  for(const c of MAT_PALETTE){ if(!used.has(c)){ used.add(c); return c; } }
+  const c=MAT_PALETTE[used.size % MAT_PALETTE.length]; used.add(c); return c;
+}
 
 let data = load();
-let current = null;       // index matière ouverte, ou null = accueil
+let current = null;       // index matière ouverte, ou null = grille des matières
+let page = 'accueil';     // 'accueil' | 'matieres' | 'session' | 'stats' | 'reglages'
+let armed = null;         // id de la matière sélectionnée avant de lancer une session
+let period = 'jour';      // période du graphe temps : 'jour' | 'semaine'
+let periodOffset = 0;     // décalage de fenêtre : 0 = courante, -1 = précédente, …
+let tick = null;          // intervalle d'affichage du chrono en cours
+let staleRecovered = false; // une session oubliée a été annulée au chargement → note à afficher
 let chartDom = [0,1];     // [tmin,tmax] (rembourré) partagé par les graphes de la matière ouverte
 let chartReal = [0,0];    // vraie plage [min,max] des points, avant rembourrage
 
 function load(){ try{const r=localStorage.getItem(STORE_KEY); if(r) return backfillDaily(prepare(JSON.parse(r)));}catch(e){} return prepare(clone(DEFAULT)); }
-function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+let saveError=false;
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); saveError=false; }
+  catch(e){ if(!saveError){ saveError=true;
+    alert("Impossible d'enregistrer : mémoire pleine ou navigation privée. Va dans Réglages → Sauvegarder pour exporter tes données."); } }
+}
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 // Garantit que chaque chapitre a un historique de points {t,p} ; nettoie l'ancien champ "last".
 function prepare(d){
-  (d.matieres||[]).forEach(m=>(m.chapitres||[]).forEach(c=>{
-    if(!Array.isArray(c.hist)) c.hist=[{t:new Date().toISOString(), p:+c.pct||0}];
-    delete c.last;
-  }));
+  (d.matieres||[]).forEach(m=>{
+    if(!Array.isArray(m.chapitres)) m.chapitres=[];   // garde-fou : une matière a toujours un tableau de chapitres
+    if(typeof m.nom!=='string') m.nom='Sans nom';
+    m.chapitres.forEach(c=>{
+      c.pct=Math.max(0,Math.min(100,+c.pct||0));
+      if(!Array.isArray(c.hist)||!c.hist.length) c.hist=[{t:dateKey(Date.now())+'T12:00:00.000Z', p:c.pct}];
+      delete c.last;
+    });
+  });
+  // Brique « Temps » : chaque matière reçoit un id stable + une couleur d'identité (rétro-compatible).
+  if(!Array.isArray(d.sessions)) d.sessions=[];
+  if(!('active' in d)) d.active=null;
+  if(!Array.isArray(d.todos)) d.todos=[];   // agenda (onglet Session) : {id,txt,mat,date,done,doneAt,created}
+  d.todos.forEach(t=>{                       // migration de l'ancien modèle {when:'demain'|'semaine'} → date réelle + matière
+    if(!t.date){ const b=new Date(); b.setHours(0,0,0,0); b.setDate(b.getDate()+(t.when==='demain'?1:0)); t.date=dateKey(b.getTime()); }
+    if(!('mat' in t)) t.mat=null;
+    delete t.when;
+  });
+  const used=new Set((d.matieres||[]).map(m=>m.color).filter(Boolean));
+  (d.matieres||[]).forEach((m,i)=>{
+    if(!m.id) m.id=genId(i);
+    if(!m.color) m.color=pickColor(used);
+  });
   return d;
 }
 // La courbe se construit toute seule dans le temps : pour chaque chapitre, on ajoute
 // un point par jour (à la dernière valeur connue) entre le dernier point enregistré et
 // aujourd'hui. Idempotent. Lancé à chaque chargement/import.
 function backfillDaily(d){
-  const todayMs=Date.parse(new Date().toISOString().slice(0,10)+'T12:00:00.000Z');
+  const todayStr=dateKey(Date.now());   // jour LOCAL (aligné sur les sessions et l'agenda)
   (d.matieres||[]).forEach(m=>(m.chapitres||[]).forEach(c=>{
     if(!Array.isArray(c.hist)||!c.hist.length) return;
     c.hist.sort((a,b)=>new Date(a.t)-new Date(b.t));
+    // 1) la courbe atteint aujourd'hui : un point « aujourd'hui » à la dernière valeur connue
     const last=c.hist[c.hist.length-1];
-    let dayMs=Date.parse(last.t.slice(0,10)+'T12:00:00.000Z');
-    while(dayMs+86400000<=todayMs){
-      dayMs+=86400000;
-      c.hist.push({t:new Date(dayMs).toISOString().slice(0,10)+'T12:00:00.000Z', p:last.p});
-    }
+    if(last.t.slice(0,10) < todayStr) c.hist.push({t:todayStr+'T12:00:00.000Z', p:last.p});
+    // 2) compactage : on retire les points intermédiaires égaux à leurs DEUX voisins.
+    //    Un palier plat ne garde que ses deux extrémités → stockage borné au nombre de
+    //    changements (plus O(jours)), tout en conservant exactement la forme en marches.
+    const h=c.hist; if(h.length<=2) return;
+    const out=[h[0]];
+    for(let i=1;i<h.length-1;i++){ if(!(h[i].p===h[i-1].p && h[i].p===h[i+1].p)) out.push(h[i]); }
+    out.push(h[h.length-1]);
+    c.hist=out;
   }));
   return d;
 }
@@ -337,39 +864,357 @@ function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString('fr-FR',{day:
 function escapeH(s){ return (s+'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
 
 // ---------- Rendu ----------
+const PAGE_IDS = ['accueil','home','detail','temps','stats','reglages'];
 function render(){
-  updateGlobal();
-  if(current===null){ renderHome(); } else { renderDetail(); }
+  // onglet actif (la page "matieres" couvre la grille ET le détail)
+  document.querySelectorAll('#tabbar .tab').forEach(b=>b.classList.toggle('on', b.dataset.p===page));
+  // on masque tout puis on affiche la bonne page
+  PAGE_IDS.forEach(id=>document.getElementById(id).classList.add('hidden'));
+  if(page==='accueil'){ renderAccueil(); }
+  else if(page==='matieres'){ if(current===null) renderHome(); else renderDetail(); }
+  else if(page==='session'){ renderTemps(); }
+  else if(page==='stats'){ renderStats(); }
+  else if(page==='reglages'){ renderReglages(); }
+  renderFocus();   // mode focus plein écran si une session est active (couvre la barre d'onglets)
+  updateTopbar();
   save();
 }
-// Maîtrise globale en sous-titre (cachée tant qu'il n'y a aucun chapitre).
-function updateGlobal(){
-  const all = data.matieres.flatMap(m=>m.chapitres);
-  const tag = document.getElementById('tagline');
-  if(!all.length){ tag.style.display='none'; return; }
-  tag.style.display='';
-  const moy=moyenne(all);
-  const el=document.getElementById('globalPill');
-  el.textContent=moy+'%'; el.style.color=couleur(moy);
+// Barre du haut (desktop) : série + temps du jour, toujours visibles quelle que soit la page.
+function updateTopbar(){
+  const s=document.getElementById('tbStreak'); if(!s) return;
+  const n=streakDays();
+  // Flamme = icône SVG (cohérent avec le bandeau série de l'accueil, pas d'emoji isolé).
+  s.innerHTML = n>0 ? `<span class="tbflame">${ic('flame',16)}</span> ${n} jour${n>1?'s':''}` : 'Aucune série';
+  const w=todayWorkMs();
+  document.getElementById('tbToday').textContent = w>0 ? fmtDur(w) : '0 min';
 }
+function goPage(p){ page=p; render(); window.scrollTo({top:0}); }
+
+// Maîtrise globale sur TOUS les chapitres de toutes les matières (ou null si aucun chapitre).
+function globalMoyenne(){
+  const all = data.matieres.flatMap(m=>m.chapitres);
+  return all.length ? moyenne(all) : null;
+}
+// Temps de travail cumulé aujourd'hui (sessions dont le début est aujourd'hui).
+function todayWorkMs(){
+  const d=new Date(); d.setHours(0,0,0,0); const start=d.getTime(), end=start+86400000;
+  return (data.sessions||[]).reduce((s,x)=>{ const t=Date.parse(x.start);
+    return (x.end && t>=start && t<end) ? s+Math.max(0,Date.parse(x.end)-t) : s; },0);
+}
+
+// ---------- Page Accueil (tableau de bord) ----------
+// Jour local (minuit) en ms — sert aux comparaisons « aujourd'hui ».
+function localDay(ms){ const d=new Date(ms); d.setHours(0,0,0,0); return d.getTime(); }
+// Ensemble des jours (minuit local) ayant au moins une session terminée.
+function sessionDaySet(){ const s=new Set(); (data.sessions||[]).forEach(x=>{ if(x.end) s.add(localDay(Date.parse(x.start))); }); return s; }
+// Série : jours consécutifs avec ≥1 session, terminant aujourd'hui (ou hier, pour ne pas
+// casser la série en début de journée avant la 1re session).
+function streakDays(){
+  const set=sessionDaySet(); if(!set.size) return 0;
+  const DAY=86400000, today=localDay(Date.now());
+  let cur = set.has(today) ? today : (set.has(today-DAY) ? today-DAY : null);
+  if(cur===null) return 0;
+  let n=0; while(set.has(cur)){ n++; cur-=DAY; }
+  return n;
+}
+// « À bosser » : chapitres les plus faibles (≤40) + matières délaissées (aucune session depuis 4 j).
+function aBosser(){
+  const out=[], DAY=86400000, today=localDay(Date.now());
+  const weak=[];
+  data.matieres.forEach((m,mi)=>m.chapitres.forEach(c=>{ if((+c.pct||0)<=40) weak.push({mi,m,c}); }));
+  weak.sort((a,b)=>(+a.c.pct||0)-(+b.c.pct||0));
+  weak.slice(0,3).forEach(w=>out.push({mi:w.mi, color:w.m.color, txt:w.c.nom, sub:'Maîtrise faible', pct:+w.c.pct||0}));
+  // matières avec chapitres mais pas travaillées depuis 4 j (et pas déjà listées via un chap faible)
+  const lastByMat={}; (data.sessions||[]).forEach(x=>{ if(x.end){ const d=localDay(Date.parse(x.start)); if(!lastByMat[x.mat]||d>lastByMat[x.mat]) lastByMat[x.mat]=d; } });
+  const shown=new Set(out.map(o=>o.mi));
+  data.matieres.forEach((m,mi)=>{ if(!m.chapitres.length||shown.has(mi)) return;
+    const last=lastByMat[m.id]; const days=last?Math.round((today-last)/DAY):999;
+    if(days>=4) out.push({mi, color:m.color, txt:m.nom, sub:last?`Pas révisée depuis ${days} jour${days>1?'s':''}`:'Jamais travaillée', pct:moyenne(m.chapitres)});
+  });
+  return out.slice(0,4);
+}
+// Recap du jour (compilé automatiquement) : temps, répartition, chapitres modifiés, tâches faites.
+function recapToday(){
+  const today=localDay(Date.now());
+  const work=todayWorkMs();
+  const perMat={};
+  (data.sessions||[]).forEach(x=>{ if(x.end && localDay(Date.parse(x.start))===today){ perMat[x.mat]=(perMat[x.mat]||0)+Math.max(0,Date.parse(x.end)-Date.parse(x.start)); } });
+  const changed=[];
+  data.matieres.forEach(m=>m.chapitres.forEach(c=>{ const h=c.hist||[]; if(h.length<2) return;
+    const last=h[h.length-1], prev=h[h.length-2];
+    if(localDay(Date.parse(last.t))===today && last.p!==prev.p) changed.push({nom:c.nom, from:prev.p, to:last.p, color:m.color});
+  }));
+  const done=(data.todos||[]).filter(t=>t.done && t.doneAt && localDay(Date.parse(t.doneAt))===today);
+  return {work, perMat, changed, done};
+}
+
+// ---------- Agenda (onglet Session) ----------
+// Une tâche est datée et rattachée à une matière ; la taper pré-arme cette matière pour lancer la session.
+let agendaOffset=0;   // semaine affichée : 0 = courante, +1 = suivante, -1 = précédente…
+let agMat=null;       // matière sélectionnée pour la nouvelle tâche
+let agDayISO=null;    // jour (YYYY-MM-DD) sélectionné pour la nouvelle tâche
+
+const DOW_LET=['L','M','M','J','V','S','D'];
+const MONTHS_AB=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+function dateKey(ms){ const d=new Date(ms); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function todayKey(){ return dateKey(Date.now()); }
+// Lundi 00:00 (local) de la semaine décalée de `offset` semaines.
+function mondayOf(offset){ const d=new Date(); d.setHours(0,0,0,0); const dow=(d.getDay()+6)%7; d.setDate(d.getDate()-dow+offset*7); return d.getTime(); }
+function weekDays(offset){ const mon=mondayOf(offset),out=[]; for(let i=0;i<7;i++){ const ms=mon+i*86400000,d=new Date(ms); out.push({ms, iso:dateKey(ms), let:DOW_LET[i], num:d.getDate(), mon:MONTHS_AB[d.getMonth()]}); } return out; }
+function weekLabel(offset){ if(offset===0)return 'Cette semaine'; if(offset===1)return 'Semaine prochaine'; if(offset===-1)return 'Semaine dernière'; const d=weekDays(offset); return `${d[0].num} ${d[0].mon} – ${d[6].num} ${d[6].mon}`; }
+function isPast(iso){ return iso < todayKey(); }   // jour révolu (comparaison de chaînes YYYY-MM-DD = ok)
+function shiftAgenda(n){ agendaOffset+=n; agDayISO=null; refreshTemps(); }
+function setAgMat(id){ agMat=(agMat===id?null:id); refreshTemps(); }
+function setAgDay(iso){ if(isPast(iso)) return; agDayISO=iso; refreshTemps(); }   // pas de planif dans le passé
+
+function addTask(){
+  const inp=document.getElementById('agInput'); if(!inp) return;
+  const v=(inp.value||'').trim(); if(!v) return;
+  if(!agDayISO || isPast(agDayISO)) return;   // sécurité : jamais sur un jour passé
+  const mat = agMat || (data.matieres[0]&&data.matieres[0].id) || null;
+  data.todos.push({id:'t'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36), txt:v, mat, date:agDayISO, done:false, doneAt:null, created:new Date().toISOString()});
+  inp.value=''; save(); refreshTemps(); const ni=document.getElementById('agInput'); if(ni) ni.focus();
+}
+function toggleTodo(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return; t.done=!t.done; t.doneAt=t.done?new Date().toISOString():null; save(); refreshTodos(); }
+function delTodo(id){ data.todos=(data.todos||[]).filter(x=>x.id!==id); save(); refreshTodos(); }
+// Reporter une tâche en retard : ouvre un choix du jour (auj., demain, 2 semaines à venir).
+function reschedulePick(id){
+  const t=(data.todos||[]).find(x=>x.id===id); if(!t) return;
+  const base=new Date(); base.setHours(0,0,0,0);
+  let chips='';
+  for(let i=0;i<14;i++){ const ms=base.getTime()+i*86400000, d=new Date(ms), iso=dateKey(ms);
+    const lbl = i===0?'Auj.' : i===1?'Dem.' : DOW_LET[(d.getDay()+6)%7];
+    chips+=`<button class="rbchip${iso===t.date?' on':''}" onclick="doReschedule('${id}','${iso}')"><span>${lbl}</span><b>${d.getDate()}</b></button>`;
+  }
+  const m=document.getElementById('modal');
+  m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+    <div class="phead"><span>Reporter à…</span>
+      <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
+    <p class="mdmsg">${escapeH(t.txt)}</p>
+    <div class="rbgrid">${chips}</div></div>`;
+  modalResolve=null; m.classList.remove('hidden');
+}
+function doReschedule(id,iso){
+  const t=(data.todos||[]).find(x=>x.id===id); if(!t) return;
+  t.date=iso; t.done=false; t.doneAt=null; save();
+  const m=document.getElementById('modal'); m.classList.add('hidden'); m.innerHTML='';
+  refreshTodos();
+}
+// Bosser une matière depuis l'Accueil (À bosser) : pré-arme la matière et bascule sur l'onglet Travail.
+function workSubject(mi){ const m=data.matieres[mi]; if(!m) return; if(!data.active) armed=m.id; goPage('session'); }
+// Taper une tâche dans l'agenda (onglet Session) : pré-arme sa matière et remonte au lanceur.
+function armFromTask(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t||data.active) return; if(t.mat&&matById(t.mat)) armed=t.mat; renderTemps(); window.scrollTo({top:0,behavior:'smooth'}); }
+// Taper une tâche depuis l'Accueil : pré-arme sa matière et bascule sur l'onglet Session.
+function goWorkTask(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return; if(t.mat&&matById(t.mat)&&!data.active) armed=t.mat; goPage('session'); }
+// Re-rend la page concernée (en préservant le champ d'ajout sur Session).
+function refreshTemps(){ const inp=document.getElementById('agInput'); const v=inp?inp.value:''; renderTemps(); const ni=document.getElementById('agInput'); if(ni) ni.value=v; }
+function refreshTodos(){ if(page==='session') refreshTemps(); else render(); }
+
+// Ligne de tâche réutilisable. `mode` : 'arm' (agenda) → tape = arme la matière ; 'late' ajoute le report.
+function taskRow(t, late){
+  const m=matById(t.mat), col=m?m.color:'var(--muted)';
+  return `<div class="agtask${late?' late':''}">
+    <button class="todochk ${t.done?'on':''}" onclick="toggleTodo('${t.id}')" aria-label="Cocher">${ic('check',14)}</button>
+    <button class="agtxt ${t.done?'done':''}" onclick="armFromTask('${t.id}')">
+      <span class="cdot" style="background:${col}"></span><span class="agname">${escapeH(t.txt)}</span>
+      ${(m&&!t.done&&!data.active)?`<span class="agplay">${ic('play',13)}</span>`:''}
+    </button>
+    ${late?`<button class="agreb" onclick="reschedulePick('${t.id}')" title="Reporter à un autre jour" aria-label="Reporter à un autre jour">${ic('reset',15)}</button>`:''}
+    <button class="iconbtn tododel" onclick="delTodo('${t.id}')" title="Supprimer" aria-label="Supprimer la tâche">${ic('x',16)}</button>
+  </div>`;
+}
+function agendaCard(){
+  const days=weekDays(agendaOffset), tk=todayKey();
+  // jour d'ajout par défaut : aujourd'hui s'il est dans la semaine, sinon le 1er jour non passé (ou aucun si semaine révolue)
+  if(!agDayISO || !days.some(x=>x.iso===agDayISO) || isPast(agDayISO)){
+    const future=days.find(x=>!isPast(x.iso)); agDayISO = future?future.iso:null;
+  }
+  const nav=`<div class="agnav">
+    <button class="agarrow" onclick="shiftAgenda(-1)" aria-label="Semaine précédente">${ic('chevleft',18)}</button>
+    <span class="aglabel">${weekLabel(agendaOffset)}</span>
+    <button class="agarrow" onclick="shiftAgenda(1)" aria-label="Semaine suivante">${ic('chevron',18)}</button></div>`;
+  // En retard (global, indépendant de la semaine affichée) : tâches passées non faites.
+  const overdue=(data.todos||[]).filter(t=>!t.done && isPast(t.date)).sort((a,b)=>a.date<b.date?-1:1);
+  const lateBlock = overdue.length
+    ? `<div class="aglate"><div class="aglatehd">${ic('clock',15)}<span>En retard · ${overdue.length} à replanifier</span></div>
+        ${overdue.map(t=>taskRow(t,true)).join('')}</div>`
+    : '';
+  const blocks=days.map(d=>{
+    // une tâche passée non faite migre dans le bloc « En retard » → on ne la montre plus dans son jour
+    const tasks=(data.todos||[]).filter(t=>t.date===d.iso && !(isPast(d.iso) && !t.done));
+    const rows=tasks.map(t=>taskRow(t,false)).join('');
+    return `<div class="agday${d.iso===tk?' today':''}${isPast(d.iso)?' pastday':''}">
+      <div class="aghead"><span class="agdow">${d.let}</span>${d.num} ${d.mon}${d.iso===tk?` · Aujourd'hui`:''}</div>
+      ${rows||`<div class="agempty">—</div>`}</div>`;
+  }).join('');
+  const matChips=data.matieres.map(m=>`<button class="matchip mini${agMat===m.id?' on':''}" style="--c:${m.color}" onclick="setAgMat('${m.id}')"><span class="dot"></span>${escapeH(m.nom)}</button>`).join('');
+  const dayChips=days.map(d=>{ const past=isPast(d.iso);
+    return `<button class="agdaypick${agDayISO===d.iso?' on':''}${d.iso===tk?' td':''}${past?' past':''}" ${past?'disabled':''} onclick="setAgDay('${d.iso}')"><span>${d.let}</span><b>${d.num}</b></button>`;
+  }).join('');
+  const add = agDayISO
+    ? `<div class="agadd">
+        <div class="agpicklbl">Matière de la tâche</div>
+        <div class="matchips mini">${matChips}</div>
+        <div class="agpicklbl">Jour</div>
+        <div class="agdays">${dayChips}</div>
+        <div class="todoadd">
+          <input id="agInput" type="text" placeholder="Nouvelle tâche…" maxlength="120" onkeydown="if(event.key==='Enter')addTask()">
+          <button class="addbtn" onclick="addTask()" aria-label="Ajouter la tâche">${ic('plus',18)}</button>
+        </div></div>`
+    : `<div class="agadd"><p class="rcempty">Semaine passée — on ne planifie que sur aujourd'hui ou plus tard. Reviens à <b>Cette semaine</b> pour ajouter une tâche.</p></div>`;
+  return `<div class="card agendacard">
+    <div class="aghdr">${ic('list',20)}<h3>Mon agenda</h3></div>
+    ${lateBlock}${nav}<div class="aglist">${blocks}</div>${add}</div>`;
+}
+
+function renderAccueil(){
+  const a=document.getElementById('accueil');
+  a.classList.remove('hidden'); a.classList.remove('fade'); void a.offsetWidth; a.classList.add('fade');
+  const moy=globalMoyenne();
+  const work=todayWorkMs();
+  const hello=`<div class="hello"><h1>Salut 👋</h1><p>Voici où tu en es aujourd'hui.</p></div>`;
+
+  // — Série —
+  const st=streakDays();
+  const streak=`<div class="streak">
+    <span class="fl ${st>0?'on':''}">${ic('flame',22)}</span>
+    <span class="stxt">${st>0
+      ? `<span class="n">${st} jour${st>1?'s':''} d'affilée</span><span class="sub">Continue, ne casse pas la série !</span>`
+      : `<span class="n">Aucune série en cours</span><span class="sub">Lance une session pour démarrer.</span>`}</span>
+  </div>`;
+
+  const stats=`<div class="statgrid">
+    <div class="statcard">
+      <div class="lbl">Maîtrise globale</div>
+      ${moy===null
+        ? `<div class="mini" style="margin-top:10px">Pas encore de chapitre</div>`
+        : `<div class="big" style="color:${couleur(moy)}">${moy}<span class="u">%</span></div>`}
+    </div>
+    <div class="statcard">
+      <div class="lbl">Travail aujourd'hui</div>
+      <div class="big">${fmtDur(work)}</div>
+    </div>
+  </div>`;
+  const cta=`<button class="cta acccta" style="width:100%;justify-content:center" onclick="goPage('session')">${ic('clock',20)}<span>Lancer une session</span></button>`;
+
+  // — À faire aujourd'hui (depuis l'agenda) —
+  let today='';
+  const tk=todayKey();
+  const tdayTasks=(data.todos||[]).filter(t=>t.date===tk);
+  const overdue=(data.todos||[]).filter(t=>!t.done && t.date<tk);
+  if(tdayTasks.length || overdue.length){
+    const late = overdue.length
+      ? `<button class="latebanner" onclick="goPage('session')">${ic('clock',16)}<span>${overdue.length} tâche${overdue.length>1?'s':''} en retard — voir l'agenda</span></button>`
+      : '';
+    const rows = tdayTasks.length
+      ? tdayTasks.map(t=>{ const m=matById(t.mat), col=m?m.color:'var(--muted)';
+          return `<div class="agtask">
+            <button class="todochk ${t.done?'on':''}" onclick="toggleTodo('${t.id}')" aria-label="Cocher">${ic('check',14)}</button>
+            <button class="agtxt ${t.done?'done':''}" onclick="goWorkTask('${t.id}')">
+              <span class="cdot" style="background:${col}"></span><span class="agname">${escapeH(t.txt)}</span>
+              ${(m&&!t.done&&!data.active)?`<span class="agplay">${ic('play',13)}</span>`:''}
+            </button>
+            <button class="iconbtn tododel" onclick="delTodo('${t.id}')" title="Supprimer" aria-label="Supprimer la tâche">${ic('x',16)}</button>
+          </div>`;}).join('')
+      : `<p class="rcempty">Rien de prévu aujourd'hui. Planifie dans l'agenda.</p>`;
+    today=`<div class="seclabel"><span class="t">À faire aujourd'hui</span>
+        <button class="lk" onclick="goPage('session')">Agenda</button></div>
+      <div class="panel todaytasks">${late}${rows}</div>`;
+  }
+
+  // — À bosser —
+  let bosser='';
+  const bos=aBosser();
+  if(bos.length){
+    const rows=bos.map(b=>{ const col=couleur(b.pct);
+      return `<div class="prevrow bosser">
+        <button class="bosswork" onclick="workSubject(${b.mi})" aria-label="Bosser ${escapeH(b.txt)}">
+          <span class="pdot" style="background:${b.color}"></span>
+          <span class="pmid"><span class="pnm">${escapeH(b.txt)}</span><span class="psub">${escapeH(b.sub)}</span></span>
+          <span class="ppct" style="color:${col}">${b.pct}%</span></button>
+        <button class="bossgraph" onclick="openMatiere(${b.mi})" title="Voir le graphe" aria-label="Voir le graphe de ${escapeH(b.txt)}">${ic('bars',18)}</button>
+      </div>`;
+    }).join('');
+    bosser=`<div class="seclabel"><span class="t">À bosser</span></div><div class="prevlist">${rows}</div>`;
+  }
+
+  // — Recap du jour —
+  const rc=recapToday();
+  const hasRecap=rc.work>0 || rc.changed.length || rc.done.length;
+  let recap=`<div class="seclabel"><span class="t">Aujourd'hui</span></div><div class="panel recap">`;
+  if(!hasRecap){
+    recap+=`<p class="rcempty">Rien encore aujourd'hui — lance une session pour remplir ton bilan.</p>`;
+  } else {
+    if(rc.work>0){
+      const chips=Object.entries(rc.perMat).map(([mid,ms])=>{ const m=data.matieres.find(x=>x.id===mid);
+        return `<span class="rchip"><span class="cdot" style="background:${m?m.color:'#888'}"></span>${m?escapeH(m.nom):'?'} · ${fmtDur(ms)}</span>`; }).join('');
+      recap+=`<div class="rcline">${ic('clock',16)}<span><b>${fmtDur(rc.work)}</b> travaillées aujourd'hui</span></div>`;
+      if(chips) recap+=`<div class="rchips">${chips}</div>`;
+    }
+    rc.changed.slice(0,4).forEach(c=>{ const up=c.to>=c.from;
+      recap+=`<div class="rcline"><span class="cdot" style="background:${c.color}"></span><span>${escapeH(c.nom)} : ${c.from}% → <b style="color:${couleur(c.to)}">${c.to}%</b> ${up?'↗':'↘'}</span></div>`; });
+    if(rc.changed.length>4) recap+=`<div class="rcline"><span style="width:9px"></span><span class="rcmore">+ ${rc.changed.length-4} autre${rc.changed.length-4>1?'s':''} chapitre${rc.changed.length-4>1?'s':''}</span></div>`;
+    if(rc.done.length) recap+=`<div class="rcline">${ic('check',16)}<span><b>${rc.done.length}</b> tâche${rc.done.length>1?'s':''} faite${rc.done.length>1?'s':''}</span></div>`;
+  }
+  recap+=`</div>`;
+
+  // — Tes matières —
+  let subjects;
+  if(!data.matieres.length){
+    subjects=`<div class="empty" style="margin:30px auto 0">
+      <span class="bookic">${ic('book',38)}</span>
+      <h2>Aucune matière</h2>
+      <p>Ajoute tes matières pour suivre ta progression et chronométrer tes révisions.</p>
+      <button class="cta" onclick="goPage('matieres')">${ic('plus',20)}<span>Ajouter une matière</span></button></div>`;
+  } else {
+    const rows=data.matieres.map((m,i)=>{ const mo=moyenne(m.chapitres), col=couleur(mo);
+      return `<button class="prevrow" onclick="openMatiere(${i})">
+        <span class="pdot" style="background:${m.color}"></span>
+        <span class="pmid"><span class="pnm">${escapeH(m.nom)}</span>
+          <span class="pbar2"><span style="width:${mo}%;background:${col}"></span></span></span>
+        <span class="ppct" style="color:${col}">${mo}%</span></button>`;
+    }).join('');
+    subjects=`<div class="seclabel"><span class="t">Tes matières</span>
+        <button class="lk" onclick="goPage('matieres')">Tout voir</button></div>
+      <div class="prevlist">${rows}</div>`;
+  }
+
+  // — Aperçu (compteurs) —
+  const nm=data.matieres.length, nc=data.matieres.reduce((s,m)=>s+m.chapitres.length,0), ns=(data.sessions||[]).length;
+  const apercu=`<div class="seclabel"><span class="t">Aperçu</span></div>
+    <div class="counts">
+      <div class="countcard"><div class="n">${nm}</div><div class="l">Matière${nm>1?'s':''}</div></div>
+      <div class="countcard"><div class="n">${nc}</div><div class="l">Chapitre${nc>1?'s':''}</div></div>
+      <div class="countcard"><div class="n">${ns}</div><div class="l">Session${ns>1?'s':''}</div></div>
+    </div>`;
+
+  a.innerHTML = hello + streak + stats + cta + today + bosser + recap + subjects + apercu;
+}
+// Ouvre une matière depuis l'accueil (bascule sur l'onglet Matières en vue détail).
+function openMatiere(i){ current=i; page='matieres'; render(); window.scrollTo({top:0}); }
 
 function renderHome(){
   document.getElementById('detail').classList.add('hidden');
   const home = document.getElementById('home');
   home.classList.remove('hidden'); home.classList.remove('fade'); void home.offsetWidth; home.classList.add('fade');
-  if(!data.matieres.length){ home.innerHTML = emptyState(); return; }
-  home.innerHTML = `<div class="grid">` + data.matieres.map((m,i)=>{
+  const title=`<div class="ptitle"><div><h1>Matières</h1>${
+    data.matieres.length?`<div class="sub">${data.matieres.length} matière${data.matieres.length>1?'s':''}</div>`:''}</div>
+    <button class="addbtn" title="Ajouter une matière" aria-label="Ajouter une matière" onclick="addMatiere()">${ic('plus',22)}</button></div>`;
+  if(!data.matieres.length){ home.innerHTML = title + emptyState(); return; }
+  home.innerHTML = title + `<div class="grid">` + data.matieres.map((m,i)=>{
     const moy = moyenne(m.chapitres);
     const col = couleur(moy);
     const done = moy>=100;
     return `<button class="mcard${done?' done':''}" style="animation-delay:${Math.min(i,8)*45}ms" onclick="open_(${i})">
-      <span class="go">${done?ic('check',20):ic('chevron',20)}</span>
-      <div class="name">${escapeH(m.nom)}</div>
+      <div class="top">
+        <div class="name"><span class="mdot" style="background:${m.color}"></span><span class="nm">${escapeH(m.nom)}</span></div>
+        <div class="meta">${m.chapitres.length} chapitre${m.chapitres.length>1?'s':''}</div>
+      </div>
       <div class="pct" style="color:${col}"><span class="num" data-to="${moy}">${moy}</span><span class="u">%</span></div>
+      <span class="go">${done?ic('check',20):ic('chevron',20)}</span>
       <div class="pbar"><span style="width:${moy}%;background:${col}"></span></div>
-      <div class="meta">${m.chapitres.length} chapitre${m.chapitres.length>1?'s':''}</div>
     </button>`;
-  }).join('') + `<button class="mcard addcard" style="animation-delay:${Math.min(data.matieres.length,8)*45}ms" onclick="addMatiere()">${ic('plus',20)}<span>Ajouter une matière</span></button></div>`;
+  }).join('') + `</div>`;
   home.querySelectorAll('.mcard .num').forEach(countUp);   // grand % qui s'incrémente de 0
 }
 function emptyState(){
@@ -407,9 +1252,9 @@ function renderDetail(){
   d.innerHTML = `
     <button class="back" onclick="goHome()">${ic('back',18)}<span>Toutes les matières</span></button>
     <div class="dhead">
-      <h2 ondblclick="renameMat()" title="Double-clic pour renommer">${escapeH(m.nom)}</h2>
+      <h2 ondblclick="renameMat()" title="Double-clic pour renommer"><button class="dotbtn" onclick="event.stopPropagation();openColorPick('${m.id}',this)" title="Changer la couleur" aria-label="Changer la couleur"><span class="mdot" style="background:${m.color}"></span></button>${escapeH(m.nom)}</h2>
       <span class="badge" style="background:${couleur(moy)}">${moy}%</span>
-      <button class="delc dtrash" title="Supprimer la matière" onclick="delMatiere(${current})">${ic('trash',20)}</button>
+      <button class="delc dtrash" title="Supprimer la matière" aria-label="Supprimer la matière" onclick="delMatiere(${current})">${ic('trash',20)}</button>
     </div>
     <p class="dsub" id="dsub">${subText(m)}</p>
     <div class="chartbox">
@@ -433,10 +1278,10 @@ function chapCard(ci,c,pos){
     </div>
     <div class="bar"><span style="width:${c.pct}%;background:${col}"></span></div>
     <div class="ctrl">
-      <input type="range" min="0" max="100" step="5" value="${c.pct}"
+      <input type="range" min="0" max="100" step="5" value="${c.pct}" aria-label="Niveau de maîtrise de ${escapeH(c.nom)}"
              oninput="setPct(${ci},this.value)" onchange="commitPct(${ci},this.value)">
       <button class="seegraph" onclick="toggleChap(${ci})">${ic('chart',18)}<span>Graphe</span></button>
-      <button class="delc" title="Supprimer" onclick="delChapitre(${ci})">${ic('x',18)}</button>
+      <button class="delc" title="Supprimer" aria-label="Supprimer le chapitre" onclick="delChapitre(${ci})">${ic('x',18)}</button>
     </div>
     <div class="minichart" id="mc-${ci}">${lineChart(c.hist, col, {w:480,h:165,labels:true})}</div>
   </div>`;
@@ -450,9 +1295,9 @@ function goHome(){ current=null; render(); window.scrollTo({top:0}); }
 // Enregistre la valeur du jour (un seul point par jour, écrasé si on rebouge le même jour).
 function recordToday(c,v){
   const h=c.hist||(c.hist=[]);
-  const today=new Date().toISOString();
-  if(h.length && h[h.length-1].t.slice(0,10)===today.slice(0,10)) h[h.length-1].p=v;
-  else h.push({t:today,p:v});
+  const key=dateKey(Date.now());          // jour LOCAL (même base que sessions/agenda)
+  if(h.length && h[h.length-1].t.slice(0,10)===key) h[h.length-1].p=v;
+  else h.push({t:key+'T12:00:00.000Z',p:v});
 }
 // Redessine les graphes EN PLACE (graphe du haut + mini-graphe du chapitre). On ne
 // touche QUE des conteneurs SVG (#chart, #mc-ci) qui ne contiennent pas le curseur.
@@ -506,12 +1351,15 @@ function chartDomain(m){
 }
 // Série de la maîtrise MOYENNE de la matière dans le temps (valeur reportée jour par jour).
 function avgSeries(m){
-  const days=[...new Set(m.chapitres.flatMap(c=>(c.hist||[]).map(pt=>pt.t.slice(0,10))))].sort();
+  // On trie chaque chapitre UNE seule fois (avant : un re-tri par jour → lent pendant le glissement).
+  const chs=m.chapitres.map(c=>(c.hist||[]).slice().sort((a,b)=>new Date(a.t)-new Date(b.t)));
+  const days=[...new Set(chs.flat().map(pt=>pt.t.slice(0,10)))].sort();
   return days.map(day=>{
     let sum=0,n=0;
-    m.chapitres.forEach(c=>{
-      const pts=(c.hist||[]).slice().sort((a,b)=>new Date(a.t)-new Date(b.t)).filter(pt=>pt.t.slice(0,10)<=day);
-      if(pts.length){ sum+=pts[pts.length-1].p; n++; }
+    chs.forEach(pts=>{
+      let v=null;
+      for(let i=0;i<pts.length && pts[i].t.slice(0,10)<=day;i++) v=pts[i].p;   // dernier point ≤ ce jour
+      if(v!==null){ sum+=v; n++; }
     });
     return {t:day+'T12:00:00.000Z', p:n?Math.round(sum/n):0};
   });
@@ -581,11 +1429,10 @@ function refreshBadge(){
   const m=data.matieres[current];
   const badge=document.querySelector('#detail .badge');
   if(badge){ const moy=moyenne(m.chapitres); badge.textContent=moy+'%'; badge.style.background=couleur(moy); }
-  updateGlobal();
 }
-function addChapitre(mi,nom){ nom=nom.trim(); if(!nom)return; data.matieres[mi].chapitres.push({nom,pct:0,hist:[{t:new Date().toISOString(),p:0}]}); render(); }
-function renameChap(ci){ const c=data.matieres[current].chapitres[ci]; const n=prompt("Renommer le chapitre :",c.nom); if(n&&n.trim()){ c.nom=n.trim(); render(); } }
-function renameMat(){ const m=data.matieres[current]; const n=prompt("Renommer la matière :",m.nom); if(n&&n.trim()){ m.nom=n.trim(); render(); } }
+function addChapitre(mi,nom){ nom=nom.trim(); if(!nom)return; data.matieres[mi].chapitres.push({nom,pct:0,hist:[{t:dateKey(Date.now())+'T12:00:00.000Z',p:0}]}); render(); }
+async function renameChap(ci){ const c=data.matieres[current].chapitres[ci]; const n=await uiPrompt(c.nom,{title:'Renommer le chapitre'}); if(n&&n.trim()){ c.nom=n.trim(); render(); } }
+async function renameMat(){ const m=data.matieres[current]; const n=await uiPrompt(m.nom,{title:'Renommer la matière'}); if(n&&n.trim()){ m.nom=n.trim(); render(); } }
 // Affiche/cache le graphe d'un chapitre (caché par défaut, à la demande)
 function toggleChap(ci){
   const mc=document.getElementById('mc-'+ci); if(!mc) return;
@@ -593,29 +1440,657 @@ function toggleChap(ci){
   const b=document.querySelector(`#detail .chap[data-ci="${ci}"] .seegraph`);
   if(b){ b.classList.toggle('on',open); const s=b.querySelector('span'); if(s) s.textContent = open ? 'Masquer' : 'Graphe'; }
 }
-function delChapitre(ci){ const m=data.matieres[current]; if(confirm("Supprimer « "+m.chapitres[ci].nom+" » ?")){ m.chapitres.splice(ci,1); render(); } }
-function addMatiere(){ const n=prompt("Nom de la matière ?"); if(n&&n.trim()){ data.matieres.push({nom:n.trim(),chapitres:[]}); render(); } }
-function delMatiere(i){ if(confirm("Supprimer « "+data.matieres[i].nom+" » et tous ses chapitres ?")){ data.matieres.splice(i,1); current=null; render(); } }
-function resetData(){ if(confirm("Tout effacer et repartir de zéro ? Tes changements seront perdus.")){ data=prepare(clone(DEFAULT)); current=null; closeSettings(); render(); } }
+async function delChapitre(ci){ const m=data.matieres[current];
+  if(await uiConfirm("Supprimer « "+m.chapitres[ci].nom+" » ?",{title:'Supprimer le chapitre',ok:'Supprimer',danger:true})){ m.chapitres.splice(ci,1); render(); } }
+async function addMatiere(){
+  const used=new Set(data.matieres.map(m=>m.color).filter(Boolean));
+  newMatColor = MAT_PALETTE.find(c=>!used.has(c)) || MAT_PALETTE[0];   // pré-sélection : 1re couleur libre
+  const r=await promptNewMatiere();
+  if(r && r.nom && r.nom.trim()){
+    data.matieres.push({nom:r.nom.trim(),chapitres:[],id:genId(data.matieres.length),color:r.color||pickColor(used)}); render(); } }
+async function delMatiere(i){ const m=data.matieres[i];
+  if(await uiConfirm("Supprimer « "+m.nom+" » et tous ses chapitres ?",{title:'Supprimer la matière',ok:'Supprimer',danger:true})){
+  data.sessions=(data.sessions||[]).filter(s=>s.mat!==m.id);            // purge les sessions orphelines
+  if(data.active && data.active.mat===m.id){ stopNoise(); data.active=null; }
+  data.matieres.splice(i,1); current=null; render(); } }
+async function resetData(){ if(await uiConfirm("Tout effacer et repartir de zéro ? Tes changements seront perdus.",{title:'Réinitialiser',ok:'Tout effacer',danger:true})){ stopNoise(); data=prepare(clone(DEFAULT)); current=null; render(); } }
 
 function exportData(){ const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='revisions-sauvegarde.json'; a.click(); closeSettings(); }
-function importData(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader();
-  r.onload=()=>{ try{ data=backfillDaily(prepare(JSON.parse(r.result))); current=null; closeSettings(); render(); alert("Importé ✅"); }catch(e){ alert("Fichier invalide."); } };
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='revisions-sauvegarde.json'; a.click(); }
+function importData(ev){ const f=ev.target.files[0]; if(!f){return;} const r=new FileReader();
+  r.onload=async ()=>{ try{
+    const parsed=JSON.parse(r.result);
+    if(!parsed || typeof parsed!=='object' || !Array.isArray(parsed.matieres)) throw new Error('structure');
+    if(!await uiConfirm("Remplacer toutes tes données actuelles par ce fichier ? (irréversible)",{title:'Importer',ok:'Remplacer',danger:true})){ ev.target.value=''; return; }
+    data=backfillDaily(prepare(parsed)); current=null; render(); alert("Données importées.");
+  }catch(e){ alert("Fichier invalide."); } finally { ev.target.value=''; } };
   r.readAsText(f); }
 
+// ================= Brique « Temps de travail » =================
+function matById(id){ return data.matieres.find(m=>m.id===id); }
+// ---- Mélangeur d'ambiances généré en Web Audio (100% hors-ligne, aucun fichier) ----
+// Plusieurs couches mixables, chacune avec son volume ; tout est SYNTHÉTISÉ (pas d'enregistrement).
+const MIX_KEY = "suivi-revisions-bac-mix";   // niveaux du mix (préférence appareil, hors export)
+const SOUNDS = [
+  {key:'pluie',  label:'Pluie',        icon:'rain',  kind:'noise', base:'rose', filter:{type:'highpass',f:900}},
+  {key:'vagues', label:'Vagues',       icon:'waves', kind:'noise', base:'brun', lfo:0.09},
+  {key:'vent',   label:'Vent',         icon:'wind',  kind:'noise', base:'brun', filter:{type:'lowpass',f:420}, lfo:0.14},
+  {key:'feu',    label:'Feu',          icon:'flame', kind:'fire'},
+  {key:'oiseaux',label:'Oiseaux',      icon:'bird',  kind:'birds'},
+  {key:'bol',    label:'Bol tibétain', icon:'bowl',  kind:'bowl'},
+];
+function loadMix(){ try{ const r=JSON.parse(localStorage.getItem(MIX_KEY)); if(r && typeof r==='object') return r; }catch(e){} return {pluie:40}; }
+function saveMix(){ localStorage.setItem(MIX_KEY, JSON.stringify(mix)); }
+let mix = loadMix();
+let audioCtx=null, masterGain=null, mixActive=false;
+const layers={};   // key -> {src, g, lfo, lg}
+// Remplit le buffer selon le type de bruit choisi.
+function fillNoise(out, type){
+  if(type==='blanc'){
+    for(let i=0;i<out.length;i++) out[i]=(Math.random()*2-1)*0.5;
+  } else if(type==='brun'){
+    let last=0;
+    for(let i=0;i<out.length;i++){ const w=Math.random()*2-1; last=(last+0.02*w)/1.02; out[i]=last*3.5; }
+  } else { // rose (Paul Kellet)
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for(let i=0;i<out.length;i++){
+      const w=Math.random()*2-1;
+      b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759; b2=0.96900*b2+w*0.1538520;
+      b3=0.86650*b3+w*0.3104856; b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
+      out[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11; b6=w*0.115926;
+    }
+  }
+}
+function ensureCtx(){
+  if(!audioCtx){ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); masterGain=audioCtx.createGain(); masterGain.gain.value=1; masterGain.connect(audioCtx.destination); }
+  if(audioCtx.state==='suspended') audioCtx.resume();
+}
+function noiseBuffer(type){ const ctx=audioCtx, b=ctx.createBuffer(1, ctx.sampleRate*4, ctx.sampleRate); fillNoise(b.getChannelData(0), type); return b; }
+const rnd=()=>Math.random();   // (les sources audio sont jouées, pas déterministes — OK ici)
+
+// Couche bruitée (pluie / vagues / vent) : buffer filtré + LFO lent optionnel sur le gain.
+function buildNoiseLayer(def, v){
+  const ctx=audioCtx;
+  const src=ctx.createBufferSource(); src.buffer=noiseBuffer(def.base); src.loop=true;
+  let out=src;
+  if(def.filter){ const f=ctx.createBiquadFilter(); f.type=def.filter.type; f.frequency.value=def.filter.f; out.connect(f); out=f; }
+  const g=ctx.createGain(); let lfo=null, lg=null;
+  if(def.lfo){ g.gain.value=v*0.55; lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=def.lfo;
+    lg=ctx.createGain(); lg.gain.value=v*0.45; lfo.connect(lg).connect(g.gain); lfo.start(); }
+  else g.gain.value=v;
+  out.connect(g).connect(masterGain); src.start();
+  return { setVol(nv){ if(lfo){ g.gain.value=nv*0.55; lg.gain.value=nv*0.45; } else g.gain.value=nv; },
+           stop(){ try{src.stop();}catch(e){} try{lfo&&lfo.stop();}catch(e){} [src,g,lfo,lg].forEach(n=>{try{n&&n.disconnect();}catch(e){}}); } };
+}
+// Feu : grondement (brun + passe-bas) + braises (crépitements aléatoires bandpass).
+function buildFireLayer(v){
+  const ctx=audioCtx;
+  const src=ctx.createBufferSource(); src.buffer=noiseBuffer('brun'); src.loop=true;
+  const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=360;
+  const g=ctx.createGain(); g.gain.value=v*0.5;
+  const lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=0.7; const lg=ctx.createGain(); lg.gain.value=v*0.18;
+  lfo.connect(lg).connect(g.gain); lfo.start();
+  src.connect(lp).connect(g).connect(masterGain); src.start();
+  const crackBuf=ctx.createBuffer(1, Math.floor(ctx.sampleRate*0.3), ctx.sampleRate); fillNoise(crackBuf.getChannelData(0),'blanc');
+  let curV=v, timer=null, dead=false;
+  function pop(){
+    if(curV<=0) return;
+    const t=ctx.currentTime;
+    const b=ctx.createBufferSource(); b.buffer=crackBuf;
+    const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1100+rnd()*2600; bp.Q.value=1.1;
+    const pg=ctx.createGain(); const amp=curV*(0.12+rnd()*0.5), dur=0.04+rnd()*0.09;
+    pg.gain.setValueAtTime(0.0001,t); pg.gain.exponentialRampToValueAtTime(amp,t+0.003); pg.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    b.connect(bp).connect(pg).connect(masterGain); b.start(t); b.stop(t+dur+0.05);
+  }
+  function loop(){ if(dead) return; timer=setTimeout(()=>{ pop(); loop(); }, 50+rnd()*330); }
+  loop();
+  return { setVol(nv){ curV=nv; g.gain.value=nv*0.5; lg.gain.value=nv*0.18; },
+           stop(){ dead=true; if(timer)clearTimeout(timer); try{src.stop();}catch(e){} try{lfo.stop();}catch(e){} [src,lp,g,lfo,lg].forEach(n=>{try{n.disconnect();}catch(e){}}); } };
+}
+// Oiseaux : pépiements (oscillateurs avec balayage de hauteur) à intervalles aléatoires.
+function buildBirdsLayer(v){
+  const ctx=audioCtx; let curV=v, timer=null, dead=false;
+  function chirp(){
+    const t=ctx.currentTime, notes=1+(rnd()<0.4?1:0)+(rnd()<0.2?1:0);
+    for(let i=0;i<notes;i++){ const s=t+i*0.13, f0=1900+rnd()*1700;
+      const o=ctx.createOscillator(); o.type='sine';
+      o.frequency.setValueAtTime(f0,s); o.frequency.linearRampToValueAtTime(f0*(1.1+rnd()*0.3),s+0.04); o.frequency.linearRampToValueAtTime(f0*0.9,s+0.11);
+      const g=ctx.createGain(); const amp=curV*0.16;
+      g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(amp,s+0.01); g.gain.exponentialRampToValueAtTime(0.0001,s+0.12);
+      o.connect(g).connect(masterGain); o.start(s); o.stop(s+0.15);
+    }
+  }
+  function loop(){ if(dead) return; timer=setTimeout(()=>{ if(curV>0) chirp(); loop(); }, 500+rnd()*2800); }
+  loop();
+  return { setVol(nv){ curV=nv; }, stop(){ dead=true; if(timer)clearTimeout(timer); } };
+}
+// Bol tibétain : bourdon métallique (partiels inharmoniques) + miroitement lent.
+function buildBowlLayer(v){
+  const ctx=audioCtx; const g=ctx.createGain(); g.gain.value=0; g.connect(masterGain);
+  const fund=210, partials=[1,2.76,5.40,8.93];
+  const oscs=partials.map((r,i)=>{ const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=fund*r*(1+(rnd()*0.004-0.002));
+    const pg=ctx.createGain(); pg.gain.value=(i===0?0.5:0.45/(i+1)); o.connect(pg).connect(g); o.start(); return o; });
+  const lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=0.15; const lg=ctx.createGain();
+  lfo.connect(lg).connect(g.gain); lfo.start();
+  function apply(nv){ g.gain.value=nv*0.5; lg.gain.value=nv*0.18; } apply(v);
+  return { setVol(nv){ apply(nv); }, stop(){ try{lfo.stop();}catch(e){} oscs.forEach(o=>{try{o.stop();}catch(e){}}); try{g.disconnect();}catch(e){} } };
+}
+// Démarre une couche selon son type.
+function startLayer(key){
+  if(layers[key]) return;
+  const def=SOUNDS.find(s=>s.key===key); if(!def) return;
+  try{ ensureCtx(); const v=(mix[key]||0)/100; let L=null;
+    if(def.kind==='noise') L=buildNoiseLayer(def, v);
+    else if(def.kind==='fire') L=buildFireLayer(v);
+    else if(def.kind==='birds') L=buildBirdsLayer(v);
+    else if(def.kind==='bowl') L=buildBowlLayer(v);
+    if(L) layers[key]=L;
+  }catch(e){}
+}
+function stopLayer(key){ const L=layers[key]; if(!L) return; try{L.stop();}catch(e){} delete layers[key]; }
+function applyLayerVol(key){
+  const v=(mix[key]||0)/100, L=layers[key];
+  if(v<=0){ stopLayer(key); return; }
+  if(!L){ startLayer(key); return; }
+  L.setVol(v);
+}
+// Curseur d'une ambiance : on stocke toujours le niveau ; on agit sur le son seulement si le mix tourne.
+function setLayerVol(key,v,el){
+  mix[key]=+v; saveMix();
+  if(el){ const cell=el.closest('.sndcell'); if(cell) cell.classList.toggle('on', +v>0); }
+  if(mixActive) applyLayerVol(key);
+}
+// Démarre / arrête tout le mix (au lancement/arrêt de session et pendant la méditation).
+// On garde les noms startNoise/stopNoise/noisePlaying pour les appelants existants.
+function startNoise(){ ensureCtx(); mixActive=true; SOUNDS.forEach(s=>{ if((mix[s.key]||0)>0) startLayer(s.key); }); }
+function stopNoise(){ mixActive=false; Object.keys(layers).forEach(stopLayer); }
+function noisePlaying(){ return mixActive; }
+
+// ---------- Méditation (« Respire » avant une session) ----------
+let brTotal=300, brLeft=300, brTick=null, brPhaseTick=null, brArmed=null;
+function brClock(s){ const m=Math.floor(s/60), x=s%60; return m+':'+String(x).padStart(2,'0'); }
+function breatheHTML(){
+  const mins=Math.round(brTotal/60);
+  const durs=[1,3,5].map(m=>`<button class="brdur${m===mins?' on':''}" data-m="${m}" onclick="setBreatheDur(${m})">${m} min</button>`).join('');
+  const chain = (brArmed&&matById(brArmed)) ? `<p class="brchain">À la fin, ta session « ${escapeH(matById(brArmed).nom)} » démarre toute seule.</p>` : '';
+  return `<div class="brwrap">
+    <button class="brquit" onclick="endBreathe(false)" title="Quitter" aria-label="Quitter">${ic('x',22)}</button>
+    <p class="brhint">Pose-toi. Respire profondément, ne pense à rien.</p>
+    <div class="brcircle"></div>
+    <div class="brphase" id="brPhase">Inspire</div>
+    <div class="brtime" id="brTime">${brClock(brLeft)}</div>
+    <div class="brdurs">${durs}</div>
+    ${chain}
+    <button class="bigbtn bigwork brstart" onclick="endBreathe(true)"><span>${(brArmed&&matById(brArmed))?'Lancer ma session':'Terminer'}</span></button>
+  </div>`;
+}
+function setBreathePhase(p){ const el=document.getElementById('brPhase'); if(el) el.textContent = p?'Expire':'Inspire'; }
+function updateBreathe(){ const el=document.getElementById('brTime'); if(el) el.textContent=brClock(Math.max(0,brLeft)); }
+function setBreatheDur(mins){ brTotal=mins*60; brLeft=brTotal; document.querySelectorAll('#breathe .brdur').forEach(b=>b.classList.toggle('on', +b.dataset.m===mins)); updateBreathe(); }
+function openBreathe(mins){
+  brArmed = armed;                       // si une matière est armée, on enchaîne la session à la fin
+  brTotal=(mins||5)*60; brLeft=brTotal;
+  const ov=document.getElementById('breathe'); ov.classList.remove('hidden'); ov.innerHTML=breatheHTML();
+  startNoise();                          // ambiance pendant la respiration (le tap = geste utilisateur requis pour l'audio)
+  let phase=0; setBreathePhase(0);
+  if(brTick) clearInterval(brTick);
+  brTick=setInterval(()=>{ brLeft--; updateBreathe(); if(brLeft<=0) endBreathe(true); },1000);
+  if(brPhaseTick) clearInterval(brPhaseTick);
+  brPhaseTick=setInterval(()=>{ phase^=1; setBreathePhase(phase); },4000);   // calé sur l'animation 8 s (4 s inspire / 4 s expire)
+}
+function endBreathe(launch){
+  if(brTick){ clearInterval(brTick); brTick=null; }
+  if(brPhaseTick){ clearInterval(brPhaseTick); brPhaseTick=null; }
+  document.getElementById('breathe').classList.add('hidden');
+  if(launch && brArmed && matById(brArmed)){ armed=brArmed; startSession(); }   // le bruit continue dans la session
+  else { if(!data.active) stopNoise(); render(); }   // ne coupe pas le son si une session tourne déjà
+  brArmed=null;
+}
+
+// ---- Cycle de vie d'une session (mesurée par horodatage début/fin) ----
+function armMat(id){ armed=(armed===id?null:id); renderTemps(); }
+function startSession(){
+  if(!armed || !matById(armed)) return;
+  data.active={mat:armed, start:new Date().toISOString()};
+  armed=null; startNoise(); save(); render();   // render() affiche le mode focus plein écran
+}
+function stopSession(){
+  if(data.active){
+    const s=data.active, end=new Date().toISOString();
+    if(Date.parse(end)-Date.parse(s.start) >= 5000)   // < 5 s = tap accidentel, on ignore
+      data.sessions.push({mat:s.mat, start:s.start, end});
+    data.active=null;
+  }
+  stopNoise(); save(); render();   // render() masque le mode focus
+}
+
+// ---- Affichage du chrono (cosmétique : la durée réelle reste fin − début) ----
+function clock(ms){ const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60,
+  p=n=>String(n).padStart(2,'0'); return h?`${h}:${p(m)}:${p(x)}`:`${p(m)}:${p(x)}`; }
+function updateTimer(){
+  if(!data.active) return;
+  const ms=Date.now()-Date.parse(data.active.start);
+  const el=document.getElementById('rtimer'); if(el) el.textContent=clock(ms);
+  const w=document.getElementById('rwarn'); if(w) w.style.display = ms>MAX_SESSION_MS ? '' : 'none';
+}
+
+// ---- Agrégation par période ----
+function fmtDur(ms){
+  if(ms<=0) return '0 min';
+  const sec=Math.round(ms/1000); if(sec<60) return sec+' s';   // < 1 min → secondes (façon « temps d'écran »)
+  const min=Math.round(ms/60000); if(min<60) return min+' min';
+  const h=Math.floor(min/60),m=min%60; return m?`${h} h ${String(m).padStart(2,'0')}`:`${h} h`;
+}
+// Fenêtre affichée [start,end) selon période + décalage : jour = 1 journée ;
+// semaine = lundi→dimanche. periodOffset recule (−1 = précédente) ; jamais dans le futur.
+function periodWindow(){
+  const d=new Date(); d.setHours(0,0,0,0);
+  if(period==='jour'){ d.setDate(d.getDate()+periodOffset); const start=d.getTime(); return {start, end:start+86400000}; }
+  const wd=(d.getDay()+6)%7;                 // 0 = lundi
+  d.setDate(d.getDate()-wd + periodOffset*7); // lundi de la semaine cible
+  const start=d.getTime(); return {start, end:start+7*86400000};
+}
+function sessionsInPeriod(){ const {start,end}=periodWindow();
+  return (data.sessions||[]).filter(s=>{ const t=Date.parse(s.start); return s.end && t>=start && t<end; }); }
+function matTotals(){
+  const tot={};
+  sessionsInPeriod().forEach(s=>{ const d=Date.parse(s.end)-Date.parse(s.start); if(d>0) tot[s.mat]=(tot[s.mat]||0)+d; });
+  return tot;
+}
+// Libellé de la fenêtre courante (façon « Aujourd'hui, … » / « Semaine dernière »).
+function windowLabel(){
+  const {start}=periodWindow();
+  if(period==='jour'){
+    if(periodOffset===0) return "Aujourd'hui";
+    if(periodOffset===-1) return "Hier";
+    return new Date(start).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+  }
+  if(periodOffset===0) return "Cette semaine";
+  if(periodOffset===-1) return "Semaine dernière";
+  const a=new Date(start), b=new Date(start+6*86400000);
+  return `${a.getDate()} – ${b.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}`;
+}
+// Comme « temps d'écran » : tranches (24 heures pour le jour, 7 jours lundi→dimanche pour la semaine),
+// chaque tranche cumulée par matière (→ empilage coloré). tipOf = libellé d'infobulle.
+function timeBuckets(){
+  const {start}=periodWindow();
+  let n, idxOf, labelOf, tipOf;
+  if(period==='jour'){
+    n=24;
+    idxOf=t=> new Date(t).getHours();
+    labelOf=i=> i%6===0 ? i+'h' : '';
+    tipOf=i=> `${i}h–${i+1}h`;
+  } else {
+    n=7; const WD=['L','M','M','J','V','S','D'];   // start = lundi
+    idxOf=t=>{ const d=new Date(t); d.setHours(0,0,0,0); return Math.round((d-start)/86400000); };
+    labelOf=i=> WD[i];
+    tipOf=i=> new Date(start+i*86400000).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'});
+  }
+  const buckets=Array.from({length:n},()=>({total:0,byMat:{}}));
+  sessionsInPeriod().forEach(s=>{ const k=idxOf(Date.parse(s.start)); if(k<0||k>=n) return;
+    const d=Date.parse(s.end)-Date.parse(s.start); if(d<=0) return;
+    buckets[k].total+=d; buckets[k].byMat[s.mat]=(buckets[k].byMat[s.mat]||0)+d; });
+  return {buckets, labelOf, tipOf};
+}
+// Axe Y « joli » : un pas rond donnant ~3-4 graduations au-dessus du max (en minutes).
+function niceAxis(maxMin){
+  const steps=[10,15,20,30,60,90,120,180,240,360,480,600,720];
+  let step=steps[steps.length-1];
+  for(const s of steps){ if(maxMin/s<=4){ step=s; break; } }
+  return {max:Math.max(step, Math.ceil(maxMin/step)*step), step};
+}
+function axisLab(min){ if(min<60) return min+'min'; const h=Math.floor(min/60),m=min%60; return m?`${h}h${m}`:`${h}h`; }
+// Graphe SVG : barres empilées par tranche de temps + grille + axe à droite + ligne de moyenne.
+function barChartSVG(avgMin){
+  const {buckets,labelOf,tipOf}=timeBuckets();
+  const W=600,H=232,padL=6,padR=42,padT=12,padB=22,plotW=W-padL-padR,plotH=H-padT-padB;
+  const maxMin=Math.max(...buckets.map(b=>b.total))/60000;
+  if(maxMin<=0) return `<p class="chartempty">Aucune session sur cette période. Lance-toi !</p>`;
+  const {max:axMax,step}=niceAxis(maxMin);
+  const Y=min=> padT+(1-min/axMax)*plotH;
+  let grid='';
+  for(let v=0; v<=axMax+0.001; v+=step){ const y=Y(v).toFixed(1);
+    grid+=`<line x1="${padL}" y1="${y}" x2="${padL+plotW}" y2="${y}" class="cg"${v===0?'':' opacity="0.5"'}/>`;
+    grid+=`<text x="${padL+plotW+5}" y="${(+y+3.5).toFixed(1)}" class="cay">${axisLab(v)}</text>`;
+  }
+  let avg='';
+  if(avgMin>0 && avgMin<=axMax){ const y=Y(avgMin).toFixed(1);
+    avg=`<line x1="${padL}" y1="${y}" x2="${padL+plotW}" y2="${y}" class="cavg"/>`
+       +`<text x="${padL+plotW+5}" y="${(+y+3.5).toFixed(1)}" class="cay" style="fill:var(--ink)">moy.</text>`;
+  }
+  // Vue semaine : chaque tranche = 1 jour cliquable (sauf le futur).
+  const week=period==='semaine', {start:winStart}=periodWindow();
+  const todayMid=(()=>{ const d=new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
+  const dayClickable=i=> week && (winStart+i*86400000)<=todayMid;
+  const n=buckets.length, slot=plotW/n, bw=Math.min(slot*0.62, period==='semaine'?30:slot*0.72);
+  let bars='', hits='';
+  buckets.forEach((b,i)=>{
+    const cx=padL+(i+0.5)*slot, x=(cx-bw/2).toFixed(1), clik=dayClickable(i);
+    if(clik) hits+=`<rect x="${(padL+i*slot).toFixed(1)}" y="${padT}" width="${slot.toFixed(1)}" height="${(H-padT-2).toFixed(1)}" fill="transparent" style="cursor:pointer" onclick="drillDay(${i})"><title>${escapeH(tipOf(i))} · voir le détail</title></rect>`;
+    if(b.total>0){
+      let y=padT+plotH, segs='';
+      data.matieres.forEach(m=>{ const v=b.byMat[m.id]; if(!v) return;
+        const h=v/60000/axMax*plotH; y-=h;
+        segs+=`<rect x="${x}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1.5,h).toFixed(1)}" fill="${m.color}"/>`;
+      });
+      bars+=`<g${clik?` style="cursor:pointer" onclick="drillDay(${i})"`:''}><title>${escapeH(tipOf(i))} · ${fmtDur(b.total)}</title>${segs}</g>`;
+    }
+    const lab=labelOf(i);
+    if(lab) bars+=`<text x="${cx.toFixed(1)}" y="${H-7}" class="cxl">${lab}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" class="chartsvg timesvg">${grid}${avg}${hits}${bars}</svg>`;
+}
+
+// ---- Rendu de la page Temps ----
+function renderTemps(){
+  const t=document.getElementById('temps');
+  t.classList.remove('hidden'); t.classList.remove('fade'); void t.offsetWidth; t.classList.add('fade');
+  if(!data.matieres.length){
+    t.innerHTML=`<div class="empty"><span class="bookic">${ic('clock',40)}</span>
+      <h2>Pas encore de matière</h2>
+      <p>Ajoute d'abord une matière dans l'onglet <b>Matières</b>. Tu pourras ensuite chronométrer tes sessions de travail ici.</p>
+      <button class="cta" onclick="goPage('matieres')">${ic('book',20)}<span>Aller à Matières</span></button></div>`;
+    return;
+  }
+  const note = staleRecovered
+    ? `<div class="note">${ic('clock',18)}<span>Une session restée ouverte (oubli de « Terminer ») a été annulée, sans être comptée.</span>
+        <button class="nclose" onclick="this.closest('.note').remove()" title="Fermer" aria-label="Fermer">${ic('x',16)}</button></div>`
+    : '';
+  staleRecovered=false;
+  t.innerHTML = note + pickerCard() + agendaCard();   // la session active s'affiche en plein écran (#focus), pas ici
+}
+// Sélecteur du type de bruit de fond (généré, hors-ligne).
+// Mélangeur d'ambiances : une cellule (icône + label + curseur) par son, mixables.
+function soundMixer(){
+  const cells=SOUNDS.map(s=>{ const v=mix[s.key]||0;
+    return `<div class="sndcell${v>0?' on':''}">
+      <span class="sndic">${ic(s.icon,24)}</span>
+      <span class="sndlbl">${s.label}</span>
+      <input class="volrange sndrange" type="range" min="0" max="100" value="${v}" aria-label="${s.label}"
+        oninput="setLayerVol('${s.key}',this.value,this)">
+    </div>`;}).join('');
+  return `<div class="mixer">${cells}</div>`;
+}
+// ---------- Page Stats (« Temps de travail », façon temps d'écran) ----------
+function renderStats(){
+  const s=document.getElementById('stats');
+  s.classList.remove('hidden'); s.classList.remove('fade'); void s.offsetWidth; s.classList.add('fade');
+  const title=`<div class="ptitle"><div><h1>Temps de travail</h1></div></div>`;
+  s.innerHTML = title + (data.matieres.length
+    ? graphCard()
+    : `<div class="empty" style="margin:30px auto 0"><span class="bookic">${ic('bars',38)}</span>
+        <h2>Rien à afficher</h2>
+        <p>Ajoute une matière puis lance une session pour suivre ton temps de travail.</p>
+        <button class="cta" onclick="goPage('matieres')">${ic('book',20)}<span>Aller à Matières</span></button></div>`);
+}
+// Les contrôles du graphe (période, navigation, couleurs) rafraîchissent la page Stats.
+function renderTempsStats(){ if(page==='stats') renderStats(); }
+// Au chargement : une session laissée ouverte depuis > MAX_SESSION_H est présumée oubliée → on l'annule (non comptée).
+function recoverStaleSession(){
+  if(data.active && Date.now()-Date.parse(data.active.start) > MAX_SESSION_MS){
+    data.active=null; staleRecovered=true; save();
+  }
+}
+function pickerCard(){
+  const chips=data.matieres.map(m=>`<button class="matchip${armed===m.id?' on':''}" style="--c:${m.color}" onclick="armMat('${m.id}')">
+      <span class="dot"></span>${escapeH(m.nom)}</button>`).join('');
+  return `<div class="sessionwrap withag"><div class="card sessioncard">
+    <div class="sesshead">${ic('clock',30)}
+      <h2>Prêt·e à bosser ?</h2>
+      <p>Choisis une matière et ton ambiance sonore, puis lance le chrono.</p></div>
+    <div class="matchips">${chips}</div>
+    <button class="bigbtn bigwork" ${armed?'':'disabled'} onclick="startSession()">${ic('play',20)}<span>${armed?'Travailler':'Choisis une matière'}</span></button>
+    <button class="bigbtn bigbreathe" onclick="openBreathe(5)">${ic('breath',20)}<span>${armed?'Respirer puis travailler':'Respirer 5 min'}</span></button>
+  </div></div>`;
+}
+// Contenu du mode focus plein écran (session en cours).
+function focusCard(){
+  const m=matById(data.active.mat);
+  const name=m?escapeH(m.nom):'Matière supprimée';
+  const col=m?m.color:'var(--muted)';
+  const sound=noisePlaying()
+    ? `<div class="mixlbl">${ic('volume',16)}<span>Ambiance sonore</span></div>`
+    : `<button class="rsound" onclick="startNoise();refreshFocus()">${ic('volume',14)}<span>Activer le son</span></button>`;
+  return `<div class="focuswrap" style="--c:${col}">
+    <div class="runtop"><span class="rdot"></span><span class="rname">${name}</span></div>
+    <div class="rtimer" id="rtimer">00:00</div>
+    ${sound}
+    ${soundMixer()}
+    <div class="rwarn" id="rwarn" style="display:none">${ic('clock',14)}<span>En session depuis plus de ${MAX_SESSION_H} h — pense à terminer.</span></div>
+    <button class="bigbtn bigstop" onclick="stopSession()">${ic('stop',20)}<span>Terminer</span></button>
+  </div>`;
+}
+// Affiche/masque le mode focus selon qu'une session est active. Idempotent (ne reconstruit qu'aux transitions).
+let focusShown=false;
+function renderFocus(){
+  const f=document.getElementById('focus');
+  if(data.active && !focusShown){
+    f.innerHTML=focusCard(); f.classList.remove('hidden'); focusShown=true;
+    if(tick) clearInterval(tick); updateTimer(); tick=setInterval(updateTimer,1000);
+  } else if(!data.active && focusShown){
+    f.classList.add('hidden'); f.innerHTML=''; focusShown=false;
+    if(tick){ clearInterval(tick); tick=null; }
+  }
+}
+// Reconstruit le contenu du focus (ex. après « Activer le son »).
+function refreshFocus(){ if(!data.active) return; document.getElementById('focus').innerHTML=focusCard();
+  if(tick) clearInterval(tick); updateTimer(); tick=setInterval(updateTimer,1000); }
+function graphCard(){
+  const tot=matTotals();
+  const sum=Object.values(tot).reduce((a,b)=>a+b,0);
+  const segl={jour:'Jour',semaine:'Semaine'};
+  const seg=['jour','semaine'].map(p=>`<button class="segb${period===p?' on':''}" onclick="setPeriod('${p}')">${segl[p]}</button>`).join('');
+  // Navigation : reculer/avancer d'une fenêtre (jamais dans le futur).
+  const nav=`<div class="navper">
+    <button class="pnav" onclick="shiftPeriod(-1)" title="Précédent" aria-label="Période précédente">${ic('chevleft',18)}</button>
+    <span class="plabelw">${windowLabel()}</span>
+    <button class="pnav" onclick="shiftPeriod(1)" ${periodOffset>=0?'disabled':''} title="Suivant" aria-label="Période suivante">${ic('chevron',18)}</button>
+  </div>`;
+  // Moyenne quotidienne (vue semaine) : vraie donnée = total / jours pris en compte.
+  let avgMs=0, sub='';
+  if(period==='semaine' && sum>0){
+    const {start}=periodWindow(); let div=7;
+    if(periodOffset===0){ const t=new Date(); t.setHours(0,0,0,0); div=Math.round((t-start)/86400000)+1; }
+    avgMs=sum/Math.max(1,div);
+    sub=`Moyenne ${fmtDur(avgMs)} / jour`;
+  }
+  const barsHtml = barChartSVG(avgMs/60000);   // SVG : barres empilées + grille + axe + ligne de moyenne
+  // Légende = gestion des couleurs : toutes les matières, pastille éditable + total sur la période.
+  const legend=`<div class="legend">`+data.matieres.map(m=>`<div class="legrow">
+      <button class="legdot" style="--c:${m.color}" title="Changer la couleur" aria-label="Changer la couleur de ${escapeH(m.nom)}" onclick="openColorPick('${m.id}',this)"></button>
+      <span class="legname">${escapeH(m.nom)}</span>
+      <span class="legtime">${fmtDur(tot[m.id]||0)}</span></div>`).join('')+`</div>`;
+  return `<div class="card">
+    <div class="seg">${seg}</div>
+    ${nav}
+    <div class="sttotal">${fmtDur(sum)}</div>
+    ${sub?`<div class="stsub">${sub}</div>`:''}
+    ${barsHtml}
+    ${legend}
+  </div>`;
+}
+// Changer Jour⇄Semaine garde la position dans le temps (façon « temps d'écran ») :
+// revenir de Jour → Semaine ramène sur LA semaine du jour affiché, pas la semaine courante.
+function setPeriod(p){
+  if(p===period){ renderTempsStats(); return; }
+  const today=new Date(); today.setHours(0,0,0,0);
+  const monOf=ms=>{ const d=new Date(ms); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d.getTime(); };
+  const {start}=periodWindow();            // début de la fenêtre actuelle (jour ou lundi)
+  if(p==='semaine'){
+    periodOffset=Math.round((monOf(start)-monOf(today.getTime()))/(7*86400000));
+  }else{
+    const target=Math.min(start+6*86400000, today.getTime());  // aujourd'hui si semaine courante, sinon dimanche
+    periodOffset=Math.round((target-today.getTime())/86400000);
+  }
+  period=p; renderTempsStats();
+}
+function shiftPeriod(d){ if(periodOffset+d>0) return; periodOffset+=d; renderTempsStats(); }
+// Vue semaine : cliquer un jour ouvre son détail heure-par-heure (façon « temps d'écran »). Jamais le futur.
+function drillDay(i){
+  const {start}=periodWindow();                 // lundi de la semaine affichée
+  const today=new Date(); today.setHours(0,0,0,0);
+  const off=Math.round((start+i*86400000-today.getTime())/86400000);
+  if(off>0) return;
+  period='jour'; periodOffset=off; renderTempsStats();
+}
+
+// ---- Sélecteur de couleur maison (offline, ancré au clic) ----
+// Panneau interne = carré saturation/valeur + curseur de teinte + hex. Aucun panneau OS
+// (le natif ne s'ouvre pas de façon fiable dans Safari et se plaçait dans un coin).
+let cpH=0, cpS=0, cpV=0, cpOnPick=null;   // teinte 0-360, sat/val 0-1
+function hexToHsv(hex){ if(!/^#?[0-9a-f]{6}$/i.test(hex||'')) return null; hex=hex.replace('#','');
+  const r=parseInt(hex.slice(0,2),16)/255, g=parseInt(hex.slice(2,4),16)/255, b=parseInt(hex.slice(4,6),16)/255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn; let h=0;
+  if(d){ if(mx===r)h=((g-b)/d)%6; else if(mx===g)h=(b-r)/d+2; else h=(r-g)/d+4; h*=60; if(h<0)h+=360; }
+  return {h, s: mx? d/mx : 0, v: mx}; }
+function hsvToHex(h,s,v){ const c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c; let r,g,b;
+  if(h<60){r=c;g=x;b=0;} else if(h<120){r=x;g=c;b=0;} else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;} else if(h<300){r=x;g=0;b=c;} else {r=c;g=0;b=x;}
+  const to=n=>Math.round((n+m)*255).toString(16).padStart(2,'0'); return '#'+to(r)+to(g)+to(b); }
+// Ouvre le sélecteur près de `anchor`, initialisé sur `currentHex` ; `onPick(hex)` à la fermeture.
+function openPicker(anchor, currentHex, onPick){
+  cpOnPick=onPick; const hsv=hexToHsv(currentHex)||{h:210,s:.55,v:.9}; cpH=hsv.h; cpS=hsv.s; cpV=hsv.v;
+  document.getElementById('cpHue').value=Math.round(cpH);
+  document.getElementById('cpick').classList.remove('hidden');
+  cpickRender();
+  const panel=document.getElementById('cpickPanel');
+  const r=(anchor&&anchor.getBoundingClientRect)?anchor.getBoundingClientRect():null;
+  let left = r? r.left : (innerWidth-panel.offsetWidth)/2;
+  let top  = r? r.bottom+6 : innerHeight*0.25;
+  left=Math.max(8, Math.min(left, innerWidth  - panel.offsetWidth  - 8));
+  top =Math.max(8, Math.min(top,  innerHeight - panel.offsetHeight - 8));
+  panel.style.left=left+'px'; panel.style.top=top+'px';
+}
+function cpickRender(){
+  const hex=hsvToHex(cpH,cpS,cpV);
+  document.getElementById('cpSV').style.background=
+    `linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, hsl(${cpH},100%,50%))`;
+  const th=document.getElementById('cpThumb'); th.style.left=(cpS*100)+'%'; th.style.top=((1-cpV)*100)+'%';
+  th.style.background=hex;
+  document.getElementById('cpPrev').style.background=hex;
+  const hx=document.getElementById('cpHex'); if(document.activeElement!==hx) hx.value=hex.toUpperCase();
+}
+function closeCPick(){ const ov=document.getElementById('cpick'); if(!ov||ov.classList.contains('hidden')) return;
+  ov.classList.add('hidden'); const cb=cpOnPick; cpOnPick=null; if(cb) cb(hsvToHex(cpH,cpS,cpV)); }
+// Compat : les appelants existants (.dotbtn, .legdot) passent une matière → applique + re-render.
+function openColorPick(id, anchor){ const m=matById(id); if(!m) return;
+  openPicker(anchor, m.color, hex=>{ const mm=matById(id); if(mm){ mm.color=hex; save(); render(); } }); }
+
+// ---- Modale maison : remplace prompt()/confirm() natifs (rendu cohérent avec l'app) ----
+let modalResolve=null;
+function closeModal(val){
+  const m=document.getElementById('modal');
+  m.classList.add('hidden'); m.innerHTML='';
+  const r=modalResolve; modalResolve=null; if(r) r(val);
+}
+// Confirmation → Promise<boolean>. danger = bouton rouge.
+function uiConfirm(message,{title='Confirmer',ok='Confirmer',danger=false}={}){
+  return new Promise(res=>{ modalResolve=res;
+    const m=document.getElementById('modal');
+    m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+      <div class="phead"><span>${escapeH(title)}</span>
+        <button class="iconbtn" aria-label="Fermer" onclick="closeModal(false)">${ic('x')}</button></div>
+      <p class="mdmsg">${escapeH(message)}</p>
+      <div class="mdactions">
+        <button class="mdbtn" onclick="closeModal(false)">Annuler</button>
+        <button class="mdbtn ${danger?'danger':'primary'}" onclick="closeModal(true)">${escapeH(ok)}</button>
+      </div></div>`;
+    m.classList.remove('hidden');
+    const b=m.querySelector('.mdbtn:last-child'); if(b) b.focus();
+  });
+}
+// Saisie texte → Promise<string|null> (null = annulé).
+function uiPrompt(def='',{title='Renommer',ok='Valider',message=''}={}){
+  return new Promise(res=>{ modalResolve=res;
+    const m=document.getElementById('modal');
+    m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+      <div class="phead"><span>${escapeH(title)}</span>
+        <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
+      ${message?`<p class="mdmsg">${escapeH(message)}</p>`:''}
+      <input id="mdInput" class="mdinput" type="text" value="${escapeH(def)}" maxlength="120"
+        onkeydown="if(event.key==='Enter')submitPrompt();else if(event.key==='Escape')closeModal(null)">
+      <div class="mdactions">
+        <button class="mdbtn" onclick="closeModal(null)">Annuler</button>
+        <button class="mdbtn primary" onclick="submitPrompt()">${escapeH(ok)}</button>
+      </div></div>`;
+    m.classList.remove('hidden');
+    const i=document.getElementById('mdInput'); if(i){ i.focus(); i.select(); }
+  });
+}
+function submitPrompt(){ const i=document.getElementById('mdInput'); closeModal(i?i.value:null); }
+
+// Modale « Nouvelle matière » : nom + choix de la couleur → Promise<{nom,color}|null>.
+let newMatColor=null;
+// Une seule pastille = la couleur choisie ; taper ouvre le sélecteur maison (pas de presets).
+function nmColorHTML(){ const v=newMatColor||'#888888';
+  return `<button type="button" class="nmcolor" title="Choisir la couleur" aria-label="Choisir la couleur" style="background:${v}"
+    onclick="openPicker(this, newMatColor||'#888888', function(hex){ pickNewMatColor(hex); })"></button>`; }
+function pickNewMatColor(c){ newMatColor=c; const box=document.getElementById('nmSwatches'); if(box) box.innerHTML=nmColorHTML(); }
+function promptNewMatiere(){
+  return new Promise(res=>{ modalResolve=res;
+    const m=document.getElementById('modal');
+    m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+      <div class="phead"><span>Nouvelle matière</span>
+        <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
+      <input id="mdInput" class="mdinput" type="text" value="" maxlength="120" placeholder="Nom de la matière"
+        onkeydown="if(event.key==='Enter')submitNewMat();else if(event.key==='Escape')closeModal(null)">
+      <p class="mdmsg" style="margin:14px 0 8px;font-weight:600">Couleur</p>
+      <div id="nmSwatches">${nmColorHTML()}</div>
+      <div class="mdactions">
+        <button class="mdbtn" onclick="closeModal(null)">Annuler</button>
+        <button class="mdbtn primary" onclick="submitNewMat()">Ajouter</button>
+      </div></div>`;
+    m.classList.remove('hidden');
+    const i=document.getElementById('mdInput'); if(i) i.focus();
+  });
+}
+function submitNewMat(){ const i=document.getElementById('mdInput'); closeModal(i?{nom:i.value,color:newMatColor}:null); }
+
 // ---- Icônes statiques + démarrage ----
-document.getElementById('settingsBtn').innerHTML = ic('settings');
-document.getElementById('closeSettingsBtn').innerHTML = ic('x');
-document.getElementById('btnExport').innerHTML = ic('download')+'<span>Sauvegarder</span>';
-document.getElementById('btnImport').innerHTML = ic('upload')+'<span>Importer</span>';
-document.getElementById('btnReset').innerHTML = ic('reset')+'<span>Réinitialiser</span>';
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSettings(); });
+// Icônes de la barre de navigation flottante.
+const TAB_ICONS = {accueil:'home', matieres:'book', session:'clock', stats:'bars', reglages:'settings'};
+document.querySelectorAll('#tabbar .tab').forEach(b=>{
+  const span=b.querySelector('.tabic'); if(span) span.innerHTML=ic(TAB_ICONS[b.dataset.p]||'home',22);
+});
+{ const sbl=document.getElementById('sbLogo'); if(sbl) sbl.innerHTML=ic('book',18); }
+{ const tci=document.getElementById('tbCtaIc'); if(tci) tci.innerHTML=ic('plus',18); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
+  const cp=document.getElementById('cpick'); if(cp && !cp.classList.contains('hidden')){ closeCPick(); return; }
+  const md=document.getElementById('modal'); if(md && !md.classList.contains('hidden')) closeModal(null); } });
+// Interactions du sélecteur de couleur maison (carré S/V + teinte + hex), câblées une fois.
+(function(){ const sv=document.getElementById('cpSV'); if(!sv) return; let drag=false;
+  const pick=e=>{ const r=sv.getBoundingClientRect();
+    cpS=Math.min(Math.max((e.clientX-r.left)/r.width,0),1);
+    cpV=1-Math.min(Math.max((e.clientY-r.top)/r.height,0),1); cpickRender(); };
+  sv.addEventListener('pointerdown', e=>{ drag=true; sv.setPointerCapture(e.pointerId); pick(e); });
+  sv.addEventListener('pointermove', e=>{ if(drag) pick(e); });
+  sv.addEventListener('pointerup', ()=>{ drag=false; });
+  document.getElementById('cpHue').addEventListener('input', e=>{ cpH=+e.target.value; cpickRender(); });
+  document.getElementById('cpHex').addEventListener('change', e=>{ const v=hexToHsv(e.target.value.trim());
+    if(v){ cpH=v.h; cpS=v.s; cpV=v.v; document.getElementById('cpHue').value=Math.round(cpH); } cpickRender(); });
+})();
+// iOS suspend l'audio en arrière-plan : on le relance au retour si une session tourne.
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && audioCtx && mixActive && audioCtx.state==='suspended') audioCtx.resume(); });
 
 let savedTheme = localStorage.getItem(THEME_KEY);
-if(!THEMES[savedTheme]) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…) → clair
+if(savedTheme!=='auto' && !THEMES[savedTheme]) savedTheme='slate';   // 'auto' est valide ; migration des anciens thèmes (bleu/bleuvert…) → clair
 applyTheme(savedTheme);
-render();
+recoverStaleSession();
+// Garde-fou : si l'affichage plante sur un état inattendu, on montre un écran de secours
+// (tes données restent intactes) plutôt qu'une page blanche irrécupérable.
+try{ render(); }
+catch(e){
+  console.error(e);
+  document.querySelector('.wrap').innerHTML =
+    `<div class="empty">
+      <h2>Oups, souci d'affichage</h2>
+      <p>Tes données sont toujours là. Sauvegarde-les d'abord, puis recharge proprement si besoin.</p>
+      <button class="cta" onclick="exportData()">${ic('download',20)}<span>Sauvegarder mes données</span></button>
+      <button class="dbtn danger" style="margin:14px auto 0;max-width:300px"
+        onclick="if(confirm('Effacer les données et recharger ?')){localStorage.removeItem(STORE_KEY);location.reload();}">
+        ${ic('reset',18)}<span>Réinitialiser l'affichage</span></button>
+    </div>`;
+}
 
 // --- Mise à jour automatique ---
 // À l'ouverture, si EN LIGNE, on vérifie discrètement une version plus récente et on la
