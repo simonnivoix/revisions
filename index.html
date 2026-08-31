@@ -188,6 +188,28 @@
   .dbtn.danger:hover{border-color:var(--rouge);color:var(--rouge)}
   .pfoot{font-size:12px;color:var(--muted);margin:14px 0 0;text-align:center}
 
+  /* ---------- Écran de connexion (plein écran brandé, pas une modale) ---------- */
+  .authov{position:fixed;inset:0;z-index:70;background:var(--bg);display:flex;align-items:center;justify-content:center;
+          padding:24px;animation:fade .25s ease}
+  .authcard{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:20px;
+            padding:36px 28px 28px;box-shadow:0 20px 60px rgba(15,23,42,.14);animation:rise .3s cubic-bezier(.22,.61,.36,1)}
+  .authbrand{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:28px;text-align:center}
+  .authbrand .logo{width:56px;height:56px;border-radius:16px;background:var(--primary);color:#fff;
+                    display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(3,105,161,.25);flex-shrink:0}
+  .authbrand h1{font-size:20px;font-weight:800;letter-spacing:-.01em;margin:0;color:var(--ink)}
+  .authbrand p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.4}
+  .authinput{width:100%;border:1px solid var(--line);background:var(--bg2);color:var(--ink);border-radius:12px;
+             padding:14px 16px;font-family:inherit;font-size:16px;outline:none;margin-bottom:12px;transition:.15s}
+  .authinput:focus{border-color:var(--primary);background:var(--card)}
+  .authcta{width:100%;background:var(--primary);color:#fff;border:none;font-size:15.5px;font-weight:700;
+           padding:14px;border-radius:12px;cursor:pointer;font-family:inherit;transition:.15s;margin-top:4px}
+  .authcta:hover{filter:brightness(1.07)}
+  .authcta:active{transform:scale(.98)}
+  .authcta:disabled{opacity:.6;cursor:default}
+  .authswitch{text-align:center;margin-top:22px;font-size:14px;color:var(--muted)}
+  .authswitch button{background:none;border:none;color:var(--primary);font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;padding:0}
+  .autherr{font-size:13.5px;color:var(--rouge);margin:-2px 0 12px;text-align:center;line-height:1.4}
+
   /* ---------- Navigation Maîtrise / Temps ---------- */
   .nav{display:inline-flex;background:var(--bg2);border-radius:11px;padding:3px;gap:2px;margin-top:14px}
   .navt{border:none;background:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--muted);
@@ -464,6 +486,35 @@
   .streak .stxt .n{font-size:16px;font-weight:700;line-height:1.2}
   .streak .stxt .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
 
+  /* ---------- Compte à rebours des épreuves ---------- */
+  .countdown{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 16px;
+             margin-bottom:14px;box-shadow:var(--shadow);animation:rise .4s ease backwards}
+  .countdown .cdmain{display:flex;align-items:center;gap:13px}
+  .countdown .cdic{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:42px;height:42px;
+                   border-radius:12px;background:var(--bg2);color:var(--primary)}
+  .countdown .cdtxt{display:flex;flex-direction:column;min-width:0;flex:1}
+  .countdown .cdlbl{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .countdown .cdnm{font-size:16px;font-weight:700;line-height:1.25;margin-top:1px;display:flex;align-items:center;gap:7px;min-width:0}
+  .countdown .cdnm .nmt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .countdown .cdnm .cddot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .countdown .cdsub{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .countdown .cdjx{flex-shrink:0;text-align:center;padding:5px 12px;border-radius:11px;background:var(--bg2);line-height:1.05}
+  .countdown .cdjx .jn{font-size:19px;font-weight:800;display:block}
+  .countdown .cdjx .jl{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.03em}
+  .countdown .cdjx.soon{background:rgba(249,115,22,.13)} .countdown .cdjx.soon .jn{color:var(--orange)}
+  .countdown .cdjx.today{background:rgba(22,163,74,.14)} .countdown .cdjx.today .jn{color:var(--vert)}
+  .countdown .cdrest{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .countdown .cdchip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;
+                     background:var(--bg2);border-radius:999px;padding:5px 11px;color:var(--ink)}
+  .countdown .cdchip .cddot{width:8px;height:8px;border-radius:50%}
+  .countdown .cdchip .cdj{color:var(--muted);font-weight:700}
+  /* chip « date d'épreuve » sur la page détail */
+  .examchip{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);
+            border-radius:999px;padding:8px 14px;min-height:40px;box-sizing:border-box;font-size:13px;font-weight:600;
+            color:var(--ink);cursor:pointer;box-shadow:var(--shadow);margin:2px 0 4px}
+  .examchip:active{transform:scale(.97)} .examchip .exic{color:var(--primary);display:flex}
+  .examchip.none{color:var(--muted);font-weight:500} .examchip .exj{color:var(--muted);font-weight:700}
+
   /* ---------- Recap du jour ---------- */
   .recap{padding:14px 16px;display:flex;flex-direction:column;gap:9px;animation:rise .4s ease backwards}
   .recap .rcline{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.35;color:var(--ink)}
@@ -648,6 +699,9 @@
 <!-- MODALE MAISON (renommer / ajouter / supprimer) -->
 <div id="modal" class="overlay hidden" onclick="if(event.target===this)closeModal(null)"></div>
 
+<!-- COMPTE (connexion / inscription) — plein écran brandé, pas une modale ; pas de clic-dehors -->
+<div id="authgate" class="authov hidden"></div>
+
 <!-- MÉDITATION (« Respire » avant une session) -->
 <div id="breathe" class="brov hidden"></div>
 
@@ -658,9 +712,16 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260708-175157';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260831-093848';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
+const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
+const SYNC_KEY = "suivi-revisions-bac-sync";   // état de la synchro cloud (migration faite ? dernier changement local)
+// Compte cloud (Supabase) : URL + clé publique du projet. La clé "anon" est faite pour être publique
+// (visible en view-source) — c'est la Row Level Security côté serveur qui protège les données, pas son secret.
+const SUPABASE_URL = "vnwqxbsikckgiuhnumdr.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_krINIAWz4poGbHpNvKiOSg_F2QZDUjM";
+const SYNC_DEBOUNCE_MS = 3000;
 
 // ---- Icônes (SVG inline, cohérentes : trait 1.5, currentColor) ----
 const ICONS = {
@@ -687,6 +748,7 @@ const ICONS = {
   'sun':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>',
   'list':'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
   'target':'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  'calendar':'<rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/>',
   'breath':'<path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h9a2.5 2.5 0 1 1-2.5 2.5"/>',
   'rain':'<path d="M7 15a4 4 0 01-.5-7.96A5 5 0 0116.5 8.5 3.5 3.5 0 0117.5 15"/><path d="M8 19l-1 2M12 19l-1 2M16 19l-1 2"/>',
   'waves':'<path d="M2 7c2 0 2.2 1.8 4 1.8S8.2 7 10 7s2.2 1.8 4 1.8S16.2 7 18 7s2.2 1.8 4 1.8"/><path d="M2 13c2 0 2.2 1.8 4 1.8S8.2 13 10 13s2.2 1.8 4 1.8S16.2 13 18 13s2.2 1.8 4 1.8"/><path d="M2 19c2 0 2.2 1.8 4 1.8S8.2 19 10 19s2.2 1.8 4 1.8S16.2 19 18 19s2.2 1.8 4 1.8"/>',
@@ -694,6 +756,8 @@ const ICONS = {
   'soundwave':'<path d="M2 12h2l2-6 4 15 3-11 2 6 2-4h3"/>',
   'bird':'<path d="M2 18c5 0 8-2 10-6 1.4-2.8 3.4-4.5 6.5-4.5 1.6 0 2.5.9 2.5 2.2 0 1.8-1.8 2.6-3.5 2.6"/><path d="M13 7l3.5-3"/><path d="M9 13l-2 6"/>',
   'bowl':'<path d="M3 10c0 4.2 4 7.5 9 7.5s9-3.3 9-7.5"/><path d="M3 10c0-1.6 4-2.6 9-2.6s9 1 9 2.6"/><path d="M16.5 4.5l2.5 4.5"/>',
+  'tree':'<path d="M12 3l5.5 8H14l4 6H6l4-6H6.5z"/><path d="M12 17v4"/>',
+  'droplet':'<path d="M12 3s6 6.4 6 11a6 6 0 01-12 0c0-4.6 6-11 6-11z"/>',
 };
 function ic(name,size){ size=size||20; return `<svg class="ic" viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`; }
 
@@ -759,6 +823,11 @@ function renderReglages(){
   r.innerHTML=`
     <div class="ptitle"><div><h1>Réglages</h1></div></div>
     <div class="panel">
+      ${authSession?`<div class="secblock">
+        <p class="plabel">Mon compte</p>
+        <p class="mdmsg" style="margin:0 0 10px">${escapeH(authSession.user.email)}</p>
+        <button class="dbtn danger" onclick="logout()">${ic('back')}<span>Se déconnecter</span></button>
+      </div>`:''}
       <div class="secblock">
         <p class="plabel">Apparence</p>
         <div id="themeOpts"></div>
@@ -769,7 +838,7 @@ function renderReglages(){
         <button class="dbtn" onclick="document.getElementById('importFile').click()">${ic('upload')}<span>Importer</span></button>
         <button class="dbtn danger" onclick="resetData()">${ic('reset')}<span>Réinitialiser</span></button>
       </div>
-      <p class="pfoot">Tout est enregistré sur cet appareil, sans internet.</p>
+      <p class="pfoot">${authSession?"Synchronisé avec ton compte dès que tu es en ligne. Reste disponible hors connexion sur cet appareil.":"Tout est enregistré sur cet appareil, sans internet."}</p>
     </div>`;
   buildThemeOpts(localStorage.getItem(THEME_KEY)||'slate');
 }
@@ -802,7 +871,7 @@ let chartReal = [0,0];    // vraie plage [min,max] des points, avant rembourrage
 function load(){ try{const r=localStorage.getItem(STORE_KEY); if(r) return backfillDaily(prepare(JSON.parse(r)));}catch(e){} return prepare(clone(DEFAULT)); }
 let saveError=false;
 function save(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); saveError=false; }
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); saveError=false; scheduleSync(); }
   catch(e){ if(!saveError){ saveError=true;
     alert("Impossible d'enregistrer : mémoire pleine ou navigation privée. Va dans Réglages → Sauvegarder pour exporter tes données."); } }
 }
@@ -855,6 +924,184 @@ function backfillDaily(d){
     c.hist=out;
   }));
   return d;
+}
+
+// ---------- Compte & synchronisation cloud (Supabase, en fetch() brut — pas de SDK) ----------
+// Principe : le localStorage reste la source de vérité IMMÉDIATE (jamais bloqué par le réseau) ;
+// la synchro cloud est un best-effort asynchrone qui pousse/tire en tâche de fond.
+function supaConfigured(){ return SUPABASE_URL.indexOf('YOUR-PROJECT')===-1 && SUPABASE_ANON_KEY.indexOf('YOUR-ANON-KEY')===-1; }
+const SUPA_REST = 'https://'+SUPABASE_URL.replace(/^https?:\/\//,'');
+
+function loadAuth(){ try{ const r=JSON.parse(localStorage.getItem(AUTH_KEY)); if(r && r.access_token) return r; }catch(e){} return null; }
+function saveAuth(s){ localStorage.setItem(AUTH_KEY, JSON.stringify(s)); }
+function clearAuth(){ localStorage.removeItem(AUTH_KEY); }
+function loadSyncMeta(){ try{ const r=JSON.parse(localStorage.getItem(SYNC_KEY)); if(r && typeof r==='object') return r; }catch(e){} return {migrated:false, lastLocalChangeAt:null}; }
+function saveSyncMeta(m){ localStorage.setItem(SYNC_KEY, JSON.stringify(m)); }
+
+let authSession = loadAuth();                         // {access_token, refresh_token, expires_at, user:{id,email}}
+let authState = authSession ? 'offline' : 'anon';      // 'anon' | 'online' | 'offline' — optimiste, confirmé au 1er sync/refresh réussi
+let refreshTimer = null, syncTimer = null, syncPending = false, authErr = '';
+
+function authHeaders(){ return {apikey:SUPABASE_ANON_KEY, Authorization:'Bearer '+(authSession?authSession.access_token:'')}; }
+function applySession(s){
+  authSession = {access_token:s.access_token, refresh_token:s.refresh_token,
+    expires_at: Date.now() + (s.expires_in||3600)*1000, user:{id:s.user.id, email:s.user.email}};
+  saveAuth(authSession); authState='online'; scheduleRefresh();
+}
+
+// Confirmation d'email ACTIVÉE côté Supabase : l'inscription ne renvoie pas de session tant que
+// le lien reçu par mail n'a pas été cliqué. Renvoie 'confirmed' (session ouverte) ou 'pending' (mail envoyé).
+async function signup(email,password){
+  const r=await fetch(SUPA_REST+'/auth/v1/signup', {method:'POST',
+    headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({email,password})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(j.error_description || j.msg || "Inscription impossible");
+  if(j.access_token){ applySession(j); return 'confirmed'; }
+  return 'pending';
+}
+async function login(email,password){
+  const r=await fetch(SUPA_REST+'/auth/v1/token?grant_type=password', {method:'POST',
+    headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({email,password})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok || !j.access_token) throw new Error(j.error_description || "Email ou mot de passe incorrect");
+  applySession(j);
+}
+function translateAuthErr(msg){
+  if(/not confirmed/i.test(msg)) return "Confirme d'abord ton email (regarde tes mails, y compris les indésirables), puis reconnecte-toi.";
+  if(/invalid login credentials/i.test(msg)) return "Email ou mot de passe incorrect.";
+  if(/already registered|user already exists/i.test(msg)) return "Un compte existe déjà avec cet email — connecte-toi plutôt.";
+  return msg;
+}
+async function refreshSession(){
+  if(!authSession || !authSession.refresh_token) return;
+  try{
+    const r=await fetch(SUPA_REST+'/auth/v1/token?grant_type=refresh_token', {method:'POST',
+      headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({refresh_token:authSession.refresh_token})});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok && j.access_token){ applySession(j); if(syncPending) flushSync(); }
+    else authState='offline';
+  }catch(e){ authState='offline'; }
+}
+function scheduleRefresh(){
+  clearTimeout(refreshTimer);
+  if(!authSession) return;
+  refreshTimer=setTimeout(refreshSession, Math.max(5000, authSession.expires_at - Date.now() - 5*60000));
+}
+async function logout(){
+  try{ if(authSession) await fetch(SUPA_REST+'/auth/v1/logout?scope=local', {method:'POST', headers:authHeaders()}); }catch(e){}
+  clearTimeout(refreshTimer); clearAuth(); authSession=null; authState='anon';
+  showAuthGate('login');
+}
+
+// -- Synchro des données : save() appelle scheduleSync(), qui débounce le push réseau. --
+function scheduleSync(){
+  if(authState==='anon' || !supaConfigured()) return;
+  syncPending=true; clearTimeout(syncTimer); syncTimer=setTimeout(flushSync, SYNC_DEBOUNCE_MS);
+}
+function flushSync(){ clearTimeout(syncTimer); if(syncPending) pushToCloud(); }
+async function pushToCloud(){
+  if(!authSession) return;
+  syncPending=false;
+  const now=new Date().toISOString();
+  try{
+    const r=await fetch(SUPA_REST+'/rest/v1/user_data', {method:'POST',
+      headers:Object.assign({'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'}, authHeaders()),
+      body:JSON.stringify([{user_id:authSession.user.id, data:data, updated_at:now}])});
+    if(r.ok){ authState='online'; const m=loadSyncMeta(); m.lastLocalChangeAt=now; saveSyncMeta(m); }
+    else if(r.status===401){ authState='offline'; syncPending=true; refreshSession(); }
+    else { authState='offline'; syncPending=true; }
+  }catch(e){ authState='offline'; syncPending=true; }
+}
+async function pullFromCloud(){
+  const r=await fetch(SUPA_REST+'/rest/v1/user_data?user_id=eq.'+encodeURIComponent(authSession.user.id)+'&select=data,updated_at', {headers:authHeaders()});
+  if(!r.ok) throw new Error('pull failed');
+  const j=await r.json();
+  return (j && j[0]) ? j[0] : null;
+}
+// Réconciliation au login (une fois par appareil/session) : voir CLAUDE.md pour la règle "dernier écrit gagne".
+async function reconcileOnLogin(){
+  if(!supaConfigured() || !authSession) return;
+  try{
+    localStorage.setItem('suivi-revisions-bac-preauth-backup', localStorage.getItem(STORE_KEY)||'');
+    const cloud=await pullFromCloud();
+    const meta=loadSyncMeta();
+    const hasLocalContent = (data.matieres&&data.matieres.length) || (data.sessions&&data.sessions.length) || (data.todos&&data.todos.length);
+    if(!cloud){
+      if(hasLocalContent && !meta.migrated){
+        const ok=await uiConfirm("On a trouvé des données sur cet appareil. Les envoyer vers ton compte ?", {title:'Données locales', ok:'Envoyer'});
+        if(ok) await pushToCloud();
+      }
+      meta.migrated=true; saveSyncMeta(meta);
+    } else if(!meta.lastLocalChangeAt || cloud.updated_at > meta.lastLocalChangeAt){
+      data = backfillDaily(prepare(cloud.data && Object.keys(cloud.data).length ? cloud.data : clone(DEFAULT)));
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}   // écrit direct : évite de re-pousser ce qu'on vient de tirer
+      meta.migrated=true; meta.lastLocalChangeAt=cloud.updated_at; saveSyncMeta(meta);
+      render();
+    } else {
+      meta.migrated=true; saveSyncMeta(meta);
+    }
+    authState='online';
+  }catch(e){ authState='offline'; }
+}
+
+// -- Écran de connexion (page pleine, pas une modale transitoire — pas d'annulation possible) --
+function showAuthGate(mode){ document.getElementById('authgate').classList.remove('hidden'); renderAuthGate(mode||'login'); }
+function hideAuthGate(){ document.getElementById('authgate').classList.add('hidden'); }
+function renderAuthGate(mode){
+  const g=document.getElementById('authgate'), isLogin=mode!=='signup';
+  g.innerHTML = `<div class="authcard" role="dialog" aria-modal="true">
+    <div class="authbrand">
+      <span class="logo">${ic('book',26)}</span>
+      <h1>Mes révisions</h1>
+      <p>${isLogin?'Retrouve tes matières où que tu sois':'Crée ton compte pour commencer'}</p>
+    </div>
+    ${!supaConfigured() ? `<p class="mdmsg" style="text-align:center">Les comptes ne sont pas encore configurés sur cette version de l'app — réessaie plus tard.</p>
+      <button class="authcta" onclick="hideAuthGate();render()">Continuer sans compte</button>` : `
+    <input id="agEmail" class="authinput" type="email" inputmode="email" placeholder="Email" autocomplete="username"
+      onkeydown="if(event.key==='Enter')document.getElementById('agPw').focus()">
+    <input id="agPw" class="authinput" type="password" placeholder="Mot de passe" autocomplete="${isLogin?'current-password':'new-password'}"
+      onkeydown="if(event.key==='Enter')submitAuth('${isLogin?'login':'signup'}')">
+    ${authErr?`<p class="autherr">${escapeH(authErr)}</p>`:''}
+    <button class="authcta" id="agSubmit" onclick="submitAuth('${isLogin?'login':'signup'}')">${isLogin?'Se connecter':'Créer mon compte'}</button>
+    <div class="authswitch">${isLogin?'Pas encore de compte ?':'Déjà un compte ?'}
+      <button onclick="authErr='';showAuthGate('${isLogin?'signup':'login'}')">${isLogin?"S'inscrire":'Se connecter'}</button>
+    </div>`}
+  </div>`;
+  const e=document.getElementById('agEmail'); if(e) e.focus();
+}
+// Affiché après une inscription quand Supabase exige la confirmation par email (pas de session encore).
+function renderAuthPending(email){
+  const g=document.getElementById('authgate');
+  g.innerHTML = `<div class="authcard" role="dialog" aria-modal="true">
+    <div class="authbrand">
+      <span class="logo">${ic('book',26)}</span>
+      <h1>Vérifie tes mails</h1>
+      <p>On a envoyé un lien de confirmation à <strong>${escapeH(email)}</strong>. Clique dessus, puis reviens te connecter ici.</p>
+    </div>
+    <button class="authcta" onclick="authErr='';showAuthGate('login')">Retour à la connexion</button>
+  </div>`;
+}
+async function submitAuth(kind){
+  const email=((document.getElementById('agEmail')||{}).value||'').trim();
+  const pw=(document.getElementById('agPw')||{}).value||'';
+  authErr='';
+  if(!email || !pw){ authErr='Renseigne un email et un mot de passe.'; renderAuthGate(kind); return; }
+  if(kind==='signup' && pw.length<6){ authErr='6 caractères minimum pour le mot de passe.'; renderAuthGate(kind); return; }
+  const btn=document.getElementById('agSubmit'); if(btn){ btn.disabled=true; btn.textContent='…'; }
+  try{
+    if(kind==='signup'){
+      const res=await signup(email,pw);
+      if(res==='pending'){ renderAuthPending(email); return; }
+    } else {
+      await login(email,pw);
+    }
+    hideAuthGate();
+    await reconcileOnLogin();
+    render();
+  }catch(e){
+    authErr = translateAuthErr(e.message || 'Une erreur est survenue.');
+    renderAuthGate(kind);
+  }
 }
 
 function couleur(p){ if(p<=20)return getCSS('--rouge'); if(p<=40)return getCSS('--orange'); if(p<=60)return getCSS('--jaune'); return getCSS('--vert'); }
@@ -1067,6 +1314,73 @@ function agendaCard(){
     ${lateBlock}${nav}<div class="aglist">${blocks}</div>${add}</div>`;
 }
 
+// ---------- Compte à rebours des épreuves ----------
+// Nombre de jours (LOCAUX) entre aujourd'hui et une date 'YYYY-MM-DD'. 0 = aujourd'hui, négatif = passé.
+function daysUntil(iso){
+  const p=(iso||'').split('-'); if(p.length!==3) return null;
+  const ex=new Date(+p[0], +p[1]-1, +p[2]); ex.setHours(0,0,0,0);
+  const now=new Date(); now.setHours(0,0,0,0);
+  return Math.round((ex-now)/86400000);
+}
+function fmtExamDate(iso){ const p=(iso||'').split('-'); if(p.length!==3) return '';
+  return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'}); }
+// Libellé « J-12 / Auj. / Demain / Passée » à partir du nombre de jours.
+function cdLabel(dd){ return dd===0?'Auj.' : dd===1?'Demain' : dd<0?'Passée' : 'J-'+dd; }
+function cdPhrase(dd){ return dd===0?"C'est aujourd'hui !" : dd===1?"C'est demain" : dd<0?`il y a ${-dd} jour${-dd>1?'s':''}` : `dans ${dd} jours`; }
+// Bandeau accueil : épreuves À VENIR (aujourd'hui inclus), triées par proximité. La plus proche en avant.
+function countdownBanner(){
+  const ups=(data.matieres||[]).filter(m=>m.exam).map(m=>({m,dd:daysUntil(m.exam)}))
+    .filter(x=>x.dd!==null && x.dd>=0).sort((a,b)=>a.dd-b.dd);
+  if(!ups.length) return '';
+  const {m,dd}=ups[0];
+  const cls = dd===0?'today' : dd<=7?'soon' : '';
+  const rest = ups.slice(1,5).map(x=>`<span class="cdchip"><span class="cddot" style="background:${x.m.color}"></span>${escapeH(x.m.nom)} <span class="cdj">${cdLabel(x.dd)}</span></span>`).join('');
+  return `<div class="countdown">
+    <div class="cdmain">
+      <span class="cdic">${ic('calendar',22)}</span>
+      <span class="cdtxt">
+        <span class="cdlbl">Prochaine épreuve</span>
+        <span class="cdnm"><span class="cddot" style="background:${m.color}"></span><span class="nmt">${escapeH(m.nom)}</span></span>
+        <span class="cdsub">${cdPhrase(dd)} · ${escapeH(fmtExamDate(m.exam))}</span>
+      </span>
+      <span class="cdjx ${cls}">${dd===0?`<span class="jn">Auj.</span>`:`<span class="jn">${dd}</span><span class="jl">${dd===1?'jour':'jours'}</span>`}</span>
+    </div>
+    ${rest?`<div class="cdrest">${rest}</div>`:''}
+  </div>`;
+}
+// Chip « date d'épreuve » sur la page détail d'une matière.
+function examRow(m){
+  const dd = m.exam ? daysUntil(m.exam) : null;
+  if(m.exam && dd!==null){
+    return `<button class="examchip" onclick="openExamPick('${m.id}')" aria-label="Modifier la date de l'épreuve">
+      <span class="exic">${ic('calendar',16)}</span>Épreuve le ${escapeH(fmtExamDate(m.exam))} <span class="exj">·&nbsp;${cdLabel(dd)}</span></button>`;
+  }
+  return `<button class="examchip none" onclick="openExamPick('${m.id}')" aria-label="Ajouter une date d'épreuve">
+    <span class="exic">${ic('calendar',16)}</span>Ajouter une date d'épreuve</button>`;
+}
+// Modale de saisie de la date (input date natif — fiable et offline, contrairement au color picker).
+function openExamPick(id){
+  const m=matById(id); if(!m) return;
+  modalResolve=null;
+  const modal=document.getElementById('modal');
+  modal.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+    <div class="phead"><span>Date de l'épreuve</span>
+      <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
+    <p class="mdmsg">${escapeH(m.nom)} — quand as-tu l'épreuve ?</p>
+    <input id="mdDate" class="mdinput" type="date" value="${m.exam||''}" min="${todayKey()}"
+      onkeydown="if(event.key==='Enter')saveExamDate('${id}');else if(event.key==='Escape')closeModal(null)">
+    <div class="mdactions">
+      ${m.exam?`<button class="mdbtn danger" onclick="clearExamDate('${id}')">Retirer</button>`
+              :`<button class="mdbtn" onclick="closeModal(null)">Annuler</button>`}
+      <button class="mdbtn primary" onclick="saveExamDate('${id}')">Enregistrer</button>
+    </div></div>`;
+  modal.classList.remove('hidden');
+  const i=document.getElementById('mdDate'); if(i) i.focus();
+}
+function saveExamDate(id){ const i=document.getElementById('mdDate'), v=i?i.value:''; const m=matById(id);
+  if(m){ if(v) m.exam=v; else delete m.exam; save(); } closeModal(null); render(); }
+function clearExamDate(id){ const m=matById(id); if(m){ delete m.exam; save(); } closeModal(null); render(); }
+
 function renderAccueil(){
   const a=document.getElementById('accueil');
   a.classList.remove('hidden'); a.classList.remove('fade'); void a.offsetWidth; a.classList.add('fade');
@@ -1158,25 +1472,15 @@ function renderAccueil(){
   }
   recap+=`</div>`;
 
-  // — Tes matières —
-  let subjects;
+  // — État vide (aucune matière) : on garde juste la CTA d'amorçage. La liste « Tes matières »
+  //   qui défilait a été retirée (redondante avec l'onglet Matières — à la demande d'Eric).
+  let subjects='';
   if(!data.matieres.length){
     subjects=`<div class="empty" style="margin:30px auto 0">
       <span class="bookic">${ic('book',38)}</span>
       <h2>Aucune matière</h2>
       <p>Ajoute tes matières pour suivre ta progression et chronométrer tes révisions.</p>
       <button class="cta" onclick="goPage('matieres')">${ic('plus',20)}<span>Ajouter une matière</span></button></div>`;
-  } else {
-    const rows=data.matieres.map((m,i)=>{ const mo=moyenne(m.chapitres), col=couleur(mo);
-      return `<button class="prevrow" onclick="openMatiere(${i})">
-        <span class="pdot" style="background:${m.color}"></span>
-        <span class="pmid"><span class="pnm">${escapeH(m.nom)}</span>
-          <span class="pbar2"><span style="width:${mo}%;background:${col}"></span></span></span>
-        <span class="ppct" style="color:${col}">${mo}%</span></button>`;
-    }).join('');
-    subjects=`<div class="seclabel"><span class="t">Tes matières</span>
-        <button class="lk" onclick="goPage('matieres')">Tout voir</button></div>
-      <div class="prevlist">${rows}</div>`;
   }
 
   // — Aperçu (compteurs) —
@@ -1188,7 +1492,7 @@ function renderAccueil(){
       <div class="countcard"><div class="n">${ns}</div><div class="l">Session${ns>1?'s':''}</div></div>
     </div>`;
 
-  a.innerHTML = hello + streak + stats + cta + today + bosser + recap + subjects + apercu;
+  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + recap + subjects + apercu;
 }
 // Ouvre une matière depuis l'accueil (bascule sur l'onglet Matières en vue détail).
 function openMatiere(i){ current=i; page='matieres'; render(); window.scrollTo({top:0}); }
@@ -1257,6 +1561,7 @@ function renderDetail(){
       <button class="delc dtrash" title="Supprimer la matière" aria-label="Supprimer la matière" onclick="delMatiere(${current})">${ic('trash',20)}</button>
     </div>
     <p class="dsub" id="dsub">${subText(m)}</p>
+    ${examRow(m)}
     <div class="chartbox">
       <h3>Évolution</h3>
       <div id="chart">${avgChartSVG(m)}</div>
@@ -1471,121 +1776,82 @@ function matById(id){ return data.matieres.find(m=>m.id===id); }
 // ---- Mélangeur d'ambiances généré en Web Audio (100% hors-ligne, aucun fichier) ----
 // Plusieurs couches mixables, chacune avec son volume ; tout est SYNTHÉTISÉ (pas d'enregistrement).
 const MIX_KEY = "suivi-revisions-bac-mix";   // niveaux du mix (préférence appareil, hors export)
+// Ambiances = vrais enregistrements (fichiers du dossier `sons/`), mixables. `file` = nom attendu.
 const SOUNDS = [
-  {key:'pluie',  label:'Pluie',        icon:'rain',  kind:'noise', base:'rose', filter:{type:'highpass',f:900}},
-  {key:'vagues', label:'Vagues',       icon:'waves', kind:'noise', base:'brun', lfo:0.09},
-  {key:'vent',   label:'Vent',         icon:'wind',  kind:'noise', base:'brun', filter:{type:'lowpass',f:420}, lfo:0.14},
-  {key:'feu',    label:'Feu',          icon:'flame', kind:'fire'},
-  {key:'oiseaux',label:'Oiseaux',      icon:'bird',  kind:'birds'},
-  {key:'bol',    label:'Bol tibétain', icon:'bowl',  kind:'bowl'},
+  {key:'pluie',   label:'Pluie',         icon:'rain',    file:'pluie.mp3'},
+  {key:'vagues',  label:'Vagues',        icon:'waves',   file:'vagues.mp3'},
+  {key:'vent',    label:'Vent',          icon:'wind',    file:'vent.mp3'},
+  {key:'feu',     label:'Feu',           icon:'flame',   file:'feu.mp3'},
+  {key:'oiseaux', label:'Oiseaux',       icon:'bird',    file:'oiseaux.mp3'},
+  {key:'foret',   label:'Forêt la nuit', icon:'tree',    file:'foret.mp3'},
+  {key:'ruisseau',label:'Ruisseau',      icon:'droplet', file:'ruisseau.mp3'},
+  {key:'bol',     label:'Bol tibétain',  icon:'bowl',    file:'bol.mp3'},
 ];
+const SND_DIR='sons/';   // dossier des ambiances (chargées à la demande, à la 1re activation)
 function loadMix(){ try{ const r=JSON.parse(localStorage.getItem(MIX_KEY)); if(r && typeof r==='object') return r; }catch(e){} return {pluie:40}; }
 function saveMix(){ localStorage.setItem(MIX_KEY, JSON.stringify(mix)); }
 let mix = loadMix();
-let audioCtx=null, masterGain=null, mixActive=false;
-const layers={};   // key -> {src, g, lfo, lg}
-// Remplit le buffer selon le type de bruit choisi.
-function fillNoise(out, type){
-  if(type==='blanc'){
-    for(let i=0;i<out.length;i++) out[i]=(Math.random()*2-1)*0.5;
-  } else if(type==='brun'){
-    let last=0;
-    for(let i=0;i<out.length;i++){ const w=Math.random()*2-1; last=(last+0.02*w)/1.02; out[i]=last*3.5; }
-  } else { // rose (Paul Kellet)
-    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
-    for(let i=0;i<out.length;i++){
-      const w=Math.random()*2-1;
-      b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759; b2=0.96900*b2+w*0.1538520;
-      b3=0.86650*b3+w*0.3104856; b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
-      out[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11; b6=w*0.115926;
-    }
-  }
-}
+let mixActive=false, actx=null;
+const layers={};        // key -> {setVol, stop, el?}
+const bufCache={};      // key -> AudioBuffer décodé (réutilisé d'une session à l'autre)
+const bufPending={};    // key -> Promise de chargement en cours (évite de décoder 2×)
+// AudioContext créé à la 1re activation (sur geste utilisateur : lancement session/médi).
 function ensureCtx(){
-  if(!audioCtx){ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); masterGain=audioCtx.createGain(); masterGain.gain.value=1; masterGain.connect(audioCtx.destination); }
-  if(audioCtx.state==='suspended') audioCtx.resume();
+  if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } }
+  if(actx && actx.state==='suspended'){ try{ actx.resume(); }catch(e){} }
+  return actx;
 }
-function noiseBuffer(type){ const ctx=audioCtx, b=ctx.createBuffer(1, ctx.sampleRate*4, ctx.sampleRate); fillNoise(b.getChannelData(0), type); return b; }
-const rnd=()=>Math.random();   // (les sources audio sont jouées, pas déterministes — OK ici)
-
-// Couche bruitée (pluie / vagues / vent) : buffer filtré + LFO lent optionnel sur le gain.
-function buildNoiseLayer(def, v){
-  const ctx=audioCtx;
-  const src=ctx.createBufferSource(); src.buffer=noiseBuffer(def.base); src.loop=true;
-  let out=src;
-  if(def.filter){ const f=ctx.createBiquadFilter(); f.type=def.filter.type; f.frequency.value=def.filter.f; out.connect(f); out=f; }
-  const g=ctx.createGain(); let lfo=null, lg=null;
-  if(def.lfo){ g.gain.value=v*0.55; lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=def.lfo;
-    lg=ctx.createGain(); lg.gain.value=v*0.45; lfo.connect(lg).connect(g.gain); lfo.start(); }
-  else g.gain.value=v;
-  out.connect(g).connect(masterGain); src.start();
-  return { setVol(nv){ if(lfo){ g.gain.value=nv*0.55; lg.gain.value=nv*0.45; } else g.gain.value=nv; },
-           stop(){ try{src.stop();}catch(e){} try{lfo&&lfo.stop();}catch(e){} [src,g,lfo,lg].forEach(n=>{try{n&&n.disconnect();}catch(e){}}); } };
+// Charge + décode le fichier en AudioBuffer → permet une boucle SANS coupure (sample-précise,
+// sans le silence technique du MP3). Peut échouer en file:// (accès local bloqué) → renvoie
+// null et on retombe sur <audio> (qui a un léger blanc à la reprise, mais lit le fichier local).
+function loadBuffer(def){
+  if(bufCache[def.key]) return Promise.resolve(bufCache[def.key]);
+  if(bufPending[def.key]) return bufPending[def.key];
+  const ctx=ensureCtx(); if(!ctx) return Promise.resolve(null);
+  // XHR (pas fetch) : gère le protocole file:// (fetch ne le gère pas), et marche aussi en https.
+  const pr=new Promise((resolve)=>{
+    const fail=()=>{ delete bufPending[def.key]; resolve(null); };   // échec → on oublie, pour pouvoir retenter (ex. fichier ajouté après)
+    try{ const x=new XMLHttpRequest(); x.open('GET', SND_DIR+def.file, true); x.responseType='arraybuffer';
+      x.onload=()=>{ const ok = x.status===0 || (x.status>=200 && x.status<300);   // status 0 = file:// en succès
+        (ok && x.response) ? ctx.decodeAudioData(x.response, b=>{ bufCache[def.key]=b; resolve(b); }, fail) : fail(); };
+      x.onerror=fail; x.send();
+    }catch(e){ fail(); }
+  });
+  bufPending[def.key]=pr; return pr;
 }
-// Feu : grondement (brun + passe-bas) + braises (crépitements aléatoires bandpass).
-function buildFireLayer(v){
-  const ctx=audioCtx;
-  const src=ctx.createBufferSource(); src.buffer=noiseBuffer('brun'); src.loop=true;
-  const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=360;
-  const g=ctx.createGain(); g.gain.value=v*0.5;
-  const lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=0.7; const lg=ctx.createGain(); lg.gain.value=v*0.18;
-  lfo.connect(lg).connect(g.gain); lfo.start();
-  src.connect(lp).connect(g).connect(masterGain); src.start();
-  const crackBuf=ctx.createBuffer(1, Math.floor(ctx.sampleRate*0.3), ctx.sampleRate); fillNoise(crackBuf.getChannelData(0),'blanc');
-  let curV=v, timer=null, dead=false;
-  function pop(){
-    if(curV<=0) return;
-    const t=ctx.currentTime;
-    const b=ctx.createBufferSource(); b.buffer=crackBuf;
-    const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1100+rnd()*2600; bp.Q.value=1.1;
-    const pg=ctx.createGain(); const amp=curV*(0.12+rnd()*0.5), dur=0.04+rnd()*0.09;
-    pg.gain.setValueAtTime(0.0001,t); pg.gain.exponentialRampToValueAtTime(amp,t+0.003); pg.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    b.connect(bp).connect(pg).connect(masterGain); b.start(t); b.stop(t+dur+0.05);
-  }
-  function loop(){ if(dead) return; timer=setTimeout(()=>{ pop(); loop(); }, 50+rnd()*330); }
-  loop();
-  return { setVol(nv){ curV=nv; g.gain.value=nv*0.5; lg.gain.value=nv*0.18; },
-           stop(){ dead=true; if(timer)clearTimeout(timer); try{src.stop();}catch(e){} try{lfo.stop();}catch(e){} [src,lp,g,lfo,lg].forEach(n=>{try{n.disconnect();}catch(e){}}); } };
+// Couche GAPLESS : AudioBufferSourceNode(loop) → gain → sortie. Boucle vraiment continue.
+function buildBufferLayer(v, buf){
+  const ctx=actx;
+  const src=ctx.createBufferSource(); src.buffer=buf; src.loop=true;
+  const g=ctx.createGain(); g.gain.value=Math.max(0,Math.min(1,v));
+  src.connect(g).connect(ctx.destination); src.start();
+  return { setVol(nv){ g.gain.value=Math.max(0,Math.min(1,nv)); },
+           stop(){ try{src.stop();}catch(e){} try{src.disconnect(); g.disconnect(); }catch(e){} } };
 }
-// Oiseaux : pépiements (oscillateurs avec balayage de hauteur) à intervalles aléatoires.
-function buildBirdsLayer(v){
-  const ctx=audioCtx; let curV=v, timer=null, dead=false;
-  function chirp(){
-    const t=ctx.currentTime, notes=1+(rnd()<0.4?1:0)+(rnd()<0.2?1:0);
-    for(let i=0;i<notes;i++){ const s=t+i*0.13, f0=1900+rnd()*1700;
-      const o=ctx.createOscillator(); o.type='sine';
-      o.frequency.setValueAtTime(f0,s); o.frequency.linearRampToValueAtTime(f0*(1.1+rnd()*0.3),s+0.04); o.frequency.linearRampToValueAtTime(f0*0.9,s+0.11);
-      const g=ctx.createGain(); const amp=curV*0.16;
-      g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(amp,s+0.01); g.gain.exponentialRampToValueAtTime(0.0001,s+0.12);
-      o.connect(g).connect(masterGain); o.start(s); o.stop(s+0.15);
-    }
-  }
-  function loop(){ if(dead) return; timer=setTimeout(()=>{ if(curV>0) chirp(); loop(); }, 500+rnd()*2800); }
-  loop();
-  return { setVol(nv){ curV=nv; }, stop(){ dead=true; if(timer)clearTimeout(timer); } };
+// Repli <audio loop> (quand le décodage Web Audio est impossible, ex. fichier local en file://).
+function buildFileLayer(def, v){
+  const a=new Audio();
+  a.src=SND_DIR+def.file; a.loop=true; a.preload='auto';
+  a.volume=Math.max(0,Math.min(1,v));
+  const play=()=>{ const p=a.play(); if(p&&p.catch) p.catch(()=>{}); };
+  play();
+  return { el:a,
+    setVol(nv){ a.volume=Math.max(0,Math.min(1,nv)); if(a.paused) play(); },
+    stop(){ try{a.pause();}catch(e){} try{a.removeAttribute('src'); a.load();}catch(e){} } };
 }
-// Bol tibétain : bourdon métallique (partiels inharmoniques) + miroitement lent.
-function buildBowlLayer(v){
-  const ctx=audioCtx; const g=ctx.createGain(); g.gain.value=0; g.connect(masterGain);
-  const fund=210, partials=[1,2.76,5.40,8.93];
-  const oscs=partials.map((r,i)=>{ const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=fund*r*(1+(rnd()*0.004-0.002));
-    const pg=ctx.createGain(); pg.gain.value=(i===0?0.5:0.45/(i+1)); o.connect(pg).connect(g); o.start(); return o; });
-  const lfo=ctx.createOscillator(); lfo.type='sine'; lfo.frequency.value=0.15; const lg=ctx.createGain();
-  lfo.connect(lg).connect(g.gain); lfo.start();
-  function apply(nv){ g.gain.value=nv*0.5; lg.gain.value=nv*0.18; } apply(v);
-  return { setVol(nv){ apply(nv); }, stop(){ try{lfo.stop();}catch(e){} oscs.forEach(o=>{try{o.stop();}catch(e){}}); try{g.disconnect();}catch(e){} } };
-}
-// Démarre une couche selon son type.
+// Démarre une couche : on tente le Web Audio gapless, repli <audio> si indisponible.
+// Le chargement est async → on réserve tout de suite un jeton pour éviter les doubles départs
+// et pour capter un stop()/réglage de volume survenu avant la fin du décodage.
 function startLayer(key){
   if(layers[key]) return;
   const def=SOUNDS.find(s=>s.key===key); if(!def) return;
-  try{ ensureCtx(); const v=(mix[key]||0)/100; let L=null;
-    if(def.kind==='noise') L=buildNoiseLayer(def, v);
-    else if(def.kind==='fire') L=buildFireLayer(v);
-    else if(def.kind==='birds') L=buildBirdsLayer(v);
-    else if(def.kind==='bowl') L=buildBowlLayer(v);
-    if(L) layers[key]=L;
-  }catch(e){}
+  const token={ v:(mix[key]||0)/100, stopped:false, setVol(nv){ this.v=nv; }, stop(){ this.stopped=true; } };
+  layers[key]=token;
+  loadBuffer(def).then(buf=>{
+    if(token.stopped || layers[key]!==token) return;   // arrêté / relancé entre-temps
+    try{ layers[key] = (buf && actx) ? buildBufferLayer(token.v, buf) : buildFileLayer(def, token.v); }
+    catch(e){ try{ layers[key]=buildFileLayer(def, token.v); }catch(_){} }
+  });
 }
 function stopLayer(key){ const L=layers[key]; if(!L) return; try{L.stop();}catch(e){} delete layers[key]; }
 function applyLayerVol(key){
@@ -2070,12 +2336,16 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
     if(v){ cpH=v.h; cpS=v.s; cpV=v.v; document.getElementById('cpHue').value=Math.round(cpH); } cpickRender(); });
 })();
 // iOS suspend l'audio en arrière-plan : on le relance au retour si une session tourne.
-document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && audioCtx && mixActive && audioCtx.state==='suspended') audioCtx.resume(); });
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && mixActive){ if(actx&&actx.state==='suspended'){ try{actx.resume();}catch(e){} } Object.values(layers).forEach(L=>{ if(L.el&&L.el.paused){ const p=L.el.play(); if(p&&p.catch) p.catch(()=>{}); } }); } });
 
 let savedTheme = localStorage.getItem(THEME_KEY);
 if(savedTheme!=='auto' && !THEMES[savedTheme]) savedTheme='slate';   // 'auto' est valide ; migration des anciens thèmes (bleu/bleuvert…) → clair
 applyTheme(savedTheme);
 recoverStaleSession();
+// Compte : une session valide boot direct (hors-ligne garanti, la réconciliation cloud tourne en
+// tâche de fond) ; sans session → écran de connexion (sauf app pas encore configurée pour les comptes).
+if(!authSession && supaConfigured()){ showAuthGate('login'); }
+else if(authSession){ scheduleRefresh(); reconcileOnLogin(); }
 // Garde-fou : si l'affichage plante sur un état inattendu, on montre un écran de secours
 // (tes données restent intactes) plutôt qu'une page blanche irrécupérable.
 try{ render(); }
@@ -2104,6 +2374,7 @@ catch(e){
         if(!t) return;
         const m=t.match(/const VERSION = '([^']+)'/);
         if(m && m[1] && m[1]!==VERSION && sessionStorage.getItem('vseen')!==m[1]){
+          const ag=document.getElementById('authgate'); if(ag && !ag.classList.contains('hidden')) return;   // pas d'interruption pendant une saisie
           sessionStorage.setItem('vseen', m[1]);   // garde-fou anti-boucle
           location.replace(location.pathname+'?v='+encodeURIComponent(m[1]));
         }
