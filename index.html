@@ -207,7 +207,8 @@
   .authcta:active{transform:scale(.98)}
   .authcta:disabled{opacity:.6;cursor:default}
   .authswitch{text-align:center;margin-top:22px;font-size:14px;color:var(--muted)}
-  .authswitch button{background:none;border:none;color:var(--primary);font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;padding:0}
+  .authswitch button{background:none;border:none;color:var(--primary);font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;
+                      padding:12px 4px;margin:-12px -4px}
   .autherr{font-size:13.5px;color:var(--rouge);margin:-2px 0 12px;text-align:center;line-height:1.4}
 
   /* ---------- Navigation Maîtrise / Temps ---------- */
@@ -683,7 +684,7 @@
   <button class="tab" data-p="session" onclick="goPage('session')"><span class="tabic"></span><span class="tablbl">Travail</span></button>
   <button class="tab" data-p="stats" onclick="goPage('stats')"><span class="tabic"></span><span class="tablbl">Stats</span></button>
   <button class="tab" data-p="reglages" onclick="goPage('reglages')"><span class="tabic"></span><span class="tablbl">Réglages</span></button>
-  <div class="sbfoot"><span class="dotlive"></span><span>Mode hors-ligne</span></div>
+  <div class="sbfoot" id="sbFoot"><span class="dotlive" id="sbFootDot"></span><span id="sbFootTxt">Mode hors-ligne</span></div>
 </nav>
 
 <!-- CHOIX DE COULEUR D'UNE MATIÈRE -->
@@ -712,7 +713,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260831-093848';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260831-100459';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -970,6 +971,7 @@ function translateAuthErr(msg){
   if(/not confirmed/i.test(msg)) return "Confirme d'abord ton email (regarde tes mails, y compris les indésirables), puis reconnecte-toi.";
   if(/invalid login credentials/i.test(msg)) return "Email ou mot de passe incorrect.";
   if(/already registered|user already exists/i.test(msg)) return "Un compte existe déjà avec cet email — connecte-toi plutôt.";
+  if(/failed to fetch|load failed|networkerror/i.test(msg)) return "Pas de connexion internet — réessaie plus tard.";
   return msg;
 }
 async function refreshSession(){
@@ -990,6 +992,11 @@ function scheduleRefresh(){
 async function logout(){
   try{ if(authSession) await fetch(SUPA_REST+'/auth/v1/logout?scope=local', {method:'POST', headers:authHeaders()}); }catch(e){}
   clearTimeout(refreshTimer); clearAuth(); authSession=null; authState='anon';
+  // Efface les données de CET appareil (pas celles du cloud) : sur un appareil partagé, la personne
+  // suivante ne doit jamais hériter/mélanger les données de ce compte avec le sien.
+  localStorage.removeItem(SYNC_KEY);
+  stopNoise(); data=prepare(clone(DEFAULT)); current=null;
+  render();
   showAuthGate('login');
 }
 
@@ -1032,14 +1039,18 @@ async function reconcileOnLogin(){
         if(ok) await pushToCloud();
       }
       meta.migrated=true; saveSyncMeta(meta);
-    } else if(!meta.lastLocalChangeAt || cloud.updated_at > meta.lastLocalChangeAt){
+    } else if((!meta.lastLocalChangeAt || cloud.updated_at > meta.lastLocalChangeAt) && !data.active){
+      // !data.active : on ne remplace jamais les données pendant une session en cours sur CET appareil
+      // (sinon le focus plein écran se ferme et la session en cours disparaît sans être enregistrée).
       data = backfillDaily(prepare(cloud.data && Object.keys(cloud.data).length ? cloud.data : clone(DEFAULT)));
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}   // écrit direct : évite de re-pousser ce qu'on vient de tirer
+      current=null;   // la vue détail pouvait pointer sur un index qui n'existe plus dans la copie cloud
       meta.migrated=true; meta.lastLocalChangeAt=cloud.updated_at; saveSyncMeta(meta);
       render();
-    } else {
+    } else if(!data.active){
       meta.migrated=true; saveSyncMeta(meta);
     }
+    // data.active vrai : on ne touche à rien, `meta.migrated` reste tel quel → reconcileOnLogin() réessaiera au prochain boot/login.
     authState='online';
   }catch(e){ authState='offline'; }
 }
@@ -1124,7 +1135,16 @@ function render(){
   else if(page==='reglages'){ renderReglages(); }
   renderFocus();   // mode focus plein écran si une session est active (couvre la barre d'onglets)
   updateTopbar();
+  updateSbFoot();
   save();
+}
+// Pied de sidebar : reflète l'état du compte (pas de compte / synchronisé / hors ligne).
+function updateSbFoot(){
+  const dot=document.getElementById('sbFootDot'), txt=document.getElementById('sbFootTxt');
+  if(!dot||!txt) return;
+  if(!authSession){ dot.style.background='var(--vert)'; txt.textContent='Mode hors-ligne'; }
+  else if(authState==='online'){ dot.style.background='var(--vert)'; txt.textContent='Synchronisé'; }
+  else { dot.style.background='var(--orange)'; txt.textContent='Compte hors ligne'; }
 }
 // Barre du haut (desktop) : série + temps du jour, toujours visibles quelle que soit la page.
 function updateTopbar(){
