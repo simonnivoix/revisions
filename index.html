@@ -210,6 +210,10 @@
   .authswitch button{background:none;border:none;color:var(--primary);font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;
                       padding:12px 4px;margin:-12px -4px}
   .autherr{font-size:13.5px;color:var(--rouge);margin:-2px 0 12px;text-align:center;line-height:1.4}
+  .authforgot{text-align:right;margin:-8px 0 14px}
+  .authforgot button{background:none;border:none;color:var(--muted);font-family:inherit;font-size:13px;cursor:pointer;
+                      padding:12px 2px;margin:-12px -2px}
+  .authforgot button:hover{color:var(--primary)}
 
   /* ---------- Navigation Maîtrise / Temps ---------- */
   .nav{display:inline-flex;background:var(--bg2);border-radius:11px;padding:3px;gap:2px;margin-top:14px}
@@ -713,7 +717,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260831-100459';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260901-082510';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -942,6 +946,7 @@ function saveSyncMeta(m){ localStorage.setItem(SYNC_KEY, JSON.stringify(m)); }
 let authSession = loadAuth();                         // {access_token, refresh_token, expires_at, user:{id,email}}
 let authState = authSession ? 'offline' : 'anon';      // 'anon' | 'online' | 'offline' — optimiste, confirmé au 1er sync/refresh réussi
 let refreshTimer = null, syncTimer = null, syncPending = false, authErr = '';
+let recoverySession = null;                            // token temporaire du lien "mot de passe oublié" (voir parseRecoveryHash)
 
 function authHeaders(){ return {apikey:SUPABASE_ANON_KEY, Authorization:'Bearer '+(authSession?authSession.access_token:'')}; }
 function applySession(s){
@@ -973,6 +978,30 @@ function translateAuthErr(msg){
   if(/already registered|user already exists/i.test(msg)) return "Un compte existe déjà avec cet email — connecte-toi plutôt.";
   if(/failed to fetch|load failed|networkerror/i.test(msg)) return "Pas de connexion internet — réessaie plus tard.";
   return msg;
+}
+// Mot de passe oublié : demande un email de récupération (GoTrue renvoie 200 même si l'email n'existe pas, pour ne pas révéler les comptes).
+async function requestReset(email){
+  const r=await fetch(SUPA_REST+'/auth/v1/recover', {method:'POST',
+    headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({email})});
+  if(!r.ok){ const j=await r.json().catch(()=>({})); throw new Error(j.error_description || j.msg || "Envoi impossible"); }
+}
+// Applique le nouveau mot de passe avec le token temporaire du lien reçu par mail, puis ouvre une vraie session.
+async function updatePassword(newPw){
+  if(!recoverySession) throw new Error('Lien invalide ou expiré, redemande un email.');
+  const r=await fetch(SUPA_REST+'/auth/v1/user', {method:'PUT',
+    headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json',Authorization:'Bearer '+recoverySession.access_token},
+    body:JSON.stringify({password:newPw})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(j.error_description || j.msg || "Impossible de changer le mot de passe");
+  applySession({access_token:recoverySession.access_token, refresh_token:recoverySession.refresh_token,
+    expires_in:recoverySession.expires_in, user:{id:j.id, email:j.email}});
+}
+// Le lien de récupération redirige vers cette page avec un fragment #access_token=…&type=recovery (implicit flow GoTrue).
+function parseRecoveryHash(){
+  if(!location.hash) return null;
+  const p=new URLSearchParams(location.hash.slice(1));
+  if(p.get('type')!=='recovery' || !p.get('access_token')) return null;
+  return {access_token:p.get('access_token'), refresh_token:p.get('refresh_token'), expires_in:+(p.get('expires_in')||3600)};
 }
 async function refreshSession(){
   if(!authSession || !authSession.refresh_token) return;
@@ -1059,6 +1088,8 @@ async function reconcileOnLogin(){
 function showAuthGate(mode){ document.getElementById('authgate').classList.remove('hidden'); renderAuthGate(mode||'login'); }
 function hideAuthGate(){ document.getElementById('authgate').classList.add('hidden'); }
 function renderAuthGate(mode){
+  if(mode==='forgot'){ renderAuthForgot(); return; }
+  if(mode==='reset'){ renderAuthReset(); return; }
   const g=document.getElementById('authgate'), isLogin=mode!=='signup';
   g.innerHTML = `<div class="authcard" role="dialog" aria-modal="true">
     <div class="authbrand">
@@ -1071,7 +1102,10 @@ function renderAuthGate(mode){
     <input id="agEmail" class="authinput" type="email" inputmode="email" placeholder="Email" autocomplete="username"
       onkeydown="if(event.key==='Enter')document.getElementById('agPw').focus()">
     <input id="agPw" class="authinput" type="password" placeholder="Mot de passe" autocomplete="${isLogin?'current-password':'new-password'}"
-      onkeydown="if(event.key==='Enter')submitAuth('${isLogin?'login':'signup'}')">
+      onkeydown="if(event.key==='Enter')${isLogin?"submitAuth('login')":"document.getElementById('agPw2').focus()"}">
+    ${!isLogin?`<input id="agPw2" class="authinput" type="password" placeholder="Confirme le mot de passe" autocomplete="new-password"
+      onkeydown="if(event.key==='Enter')submitAuth('signup')">`:''}
+    ${isLogin?`<div class="authforgot"><button onclick="authErr='';showAuthGate('forgot')">Mot de passe oublié ?</button></div>`:''}
     ${authErr?`<p class="autherr">${escapeH(authErr)}</p>`:''}
     <button class="authcta" id="agSubmit" onclick="submitAuth('${isLogin?'login':'signup'}')">${isLogin?'Se connecter':'Créer mon compte'}</button>
     <div class="authswitch">${isLogin?'Pas encore de compte ?':'Déjà un compte ?'}
@@ -1079,6 +1113,83 @@ function renderAuthGate(mode){
     </div>`}
   </div>`;
   const e=document.getElementById('agEmail'); if(e) e.focus();
+}
+// Demande d'un lien de réinitialisation par email (mot de passe oublié).
+function renderAuthForgot(){
+  const g=document.getElementById('authgate');
+  g.innerHTML = `<div class="authcard" role="dialog" aria-modal="true">
+    <div class="authbrand">
+      <span class="logo">${ic('book',26)}</span>
+      <h1>Mot de passe oublié</h1>
+      <p>On t'envoie un lien pour en choisir un nouveau.</p>
+    </div>
+    <input id="agEmail" class="authinput" type="email" inputmode="email" placeholder="Email" autocomplete="username"
+      onkeydown="if(event.key==='Enter')submitForgot()">
+    ${authErr?`<p class="autherr">${escapeH(authErr)}</p>`:''}
+    <button class="authcta" id="agSubmit" onclick="submitForgot()">Envoyer le lien</button>
+    <div class="authswitch"><button onclick="authErr='';showAuthGate('login')">Retour à la connexion</button></div>
+  </div>`;
+  const e=document.getElementById('agEmail'); if(e) e.focus();
+}
+async function submitForgot(){
+  const email=((document.getElementById('agEmail')||{}).value||'').trim();
+  authErr='';
+  if(!email){ authErr='Renseigne ton email.'; renderAuthForgot(); return; }
+  const btn=document.getElementById('agSubmit'); if(btn){ btn.disabled=true; btn.textContent='…'; }
+  try{
+    await requestReset(email);
+    renderAuthForgotSent(email);
+  }catch(e){
+    authErr = translateAuthErr(e.message || 'Une erreur est survenue.');
+    renderAuthForgot();
+  }
+}
+function renderAuthForgotSent(email){
+  const g=document.getElementById('authgate');
+  g.innerHTML = `<div class="authcard" role="dialog" aria-modal="true">
+    <div class="authbrand">
+      <span class="logo">${ic('book',26)}</span>
+      <h1>Vérifie tes mails</h1>
+      <p>Si un compte existe pour <strong>${escapeH(email)}</strong>, un lien pour changer le mot de passe vient d'être envoyé.</p>
+    </div>
+    <button class="authcta" onclick="authErr='';showAuthGate('login')">Retour à la connexion</button>
+  </div>`;
+}
+// Écran affiché quand on revient du lien reçu par mail (?/#type=recovery — voir parseRecoveryHash).
+function renderAuthReset(){
+  const g=document.getElementById('authgate');
+  g.innerHTML = `<div class="authcard" role="dialog" aria-modal="true">
+    <div class="authbrand">
+      <span class="logo">${ic('book',26)}</span>
+      <h1>Nouveau mot de passe</h1>
+      <p>Choisis un nouveau mot de passe pour ton compte.</p>
+    </div>
+    <input id="agPw" class="authinput" type="password" placeholder="Nouveau mot de passe" autocomplete="new-password"
+      onkeydown="if(event.key==='Enter')document.getElementById('agPw2').focus()">
+    <input id="agPw2" class="authinput" type="password" placeholder="Confirme le mot de passe" autocomplete="new-password"
+      onkeydown="if(event.key==='Enter')submitReset()">
+    ${authErr?`<p class="autherr">${escapeH(authErr)}</p>`:''}
+    <button class="authcta" id="agSubmit" onclick="submitReset()">Valider</button>
+  </div>`;
+  const e=document.getElementById('agPw'); if(e) e.focus();
+}
+async function submitReset(){
+  const pw=(document.getElementById('agPw')||{}).value||'';
+  const pw2=(document.getElementById('agPw2')||{}).value||'';
+  authErr='';
+  if(pw.length<6){ authErr='6 caractères minimum pour le mot de passe.'; renderAuthReset(); return; }
+  if(pw!==pw2){ authErr='Les deux mots de passe ne correspondent pas.'; renderAuthReset(); return; }
+  const btn=document.getElementById('agSubmit'); if(btn){ btn.disabled=true; btn.textContent='…'; }
+  try{
+    await updatePassword(pw);
+    recoverySession=null;
+    hideAuthGate();
+    await reconcileOnLogin();
+    render();
+  }catch(e){
+    authErr = translateAuthErr(e.message || 'Une erreur est survenue.');
+    renderAuthReset();
+  }
 }
 // Affiché après une inscription quand Supabase exige la confirmation par email (pas de session encore).
 function renderAuthPending(email){
@@ -1097,7 +1208,11 @@ async function submitAuth(kind){
   const pw=(document.getElementById('agPw')||{}).value||'';
   authErr='';
   if(!email || !pw){ authErr='Renseigne un email et un mot de passe.'; renderAuthGate(kind); return; }
-  if(kind==='signup' && pw.length<6){ authErr='6 caractères minimum pour le mot de passe.'; renderAuthGate(kind); return; }
+  if(kind==='signup'){
+    if(pw.length<6){ authErr='6 caractères minimum pour le mot de passe.'; renderAuthGate(kind); return; }
+    const pw2=(document.getElementById('agPw2')||{}).value||'';
+    if(pw!==pw2){ authErr='Les deux mots de passe ne correspondent pas.'; renderAuthGate(kind); return; }
+  }
   const btn=document.getElementById('agSubmit'); if(btn){ btn.disabled=true; btn.textContent='…'; }
   try{
     if(kind==='signup'){
@@ -2362,9 +2477,13 @@ let savedTheme = localStorage.getItem(THEME_KEY);
 if(savedTheme!=='auto' && !THEMES[savedTheme]) savedTheme='slate';   // 'auto' est valide ; migration des anciens thèmes (bleu/bleuvert…) → clair
 applyTheme(savedTheme);
 recoverStaleSession();
+// Retour du lien "mot de passe oublié" : Supabase redirige ici avec #access_token=…&type=recovery.
+const recoveryFromLink = parseRecoveryHash();
+if(recoveryFromLink){ recoverySession = recoveryFromLink; history.replaceState(null, '', location.pathname + location.search); }
 // Compte : une session valide boot direct (hors-ligne garanti, la réconciliation cloud tourne en
 // tâche de fond) ; sans session → écran de connexion (sauf app pas encore configurée pour les comptes).
-if(!authSession && supaConfigured()){ showAuthGate('login'); }
+if(recoverySession){ showAuthGate('reset'); }
+else if(!authSession && supaConfigured()){ showAuthGate('login'); }
 else if(authSession){ scheduleRefresh(); reconcileOnLogin(); }
 // Garde-fou : si l'affichage plante sur un état inattendu, on montre un écran de secours
 // (tes données restent intactes) plutôt qu'une page blanche irrécupérable.
