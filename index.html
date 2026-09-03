@@ -100,6 +100,8 @@
         transition:transform .18s cubic-bezier(.22,.61,.36,1),box-shadow .2s ease,background-color .3s ease,border-color .3s ease,color .3s ease}
   .chap:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,42,.08)}
   .chap.done{border-color:var(--vert)}
+  @keyframes chapFlash{0%{box-shadow:0 0 0 3px var(--primary)}100%{box-shadow:var(--shadow)}}
+  .chap.justopened{animation:chapFlash 1.6s ease}
   .chap .top{display:flex;align-items:center;gap:8px}
   .chap .cname{font-size:15px;font-weight:500;flex:1;min-width:0;line-height:1.3;overflow-wrap:normal;word-break:normal}
   .chap .cdone{color:var(--vert);display:inline-flex}
@@ -273,7 +275,6 @@
            align-items:center;justify-content:flex-start;animation:fade .25s ease;
            padding:max(28px,env(safe-area-inset-top)) 20px max(28px,env(safe-area-inset-bottom))}
   .focuswrap{width:100%;max-width:360px;margin:auto 0;text-align:center}
-  .focuswrap .mixer{margin-top:18px}
   .focuswrap .bigstop{margin-top:8px}
   /* Session en cours */
   .runcard{text-align:center}
@@ -282,8 +283,6 @@
   .rname{font-size:16px;font-weight:600}
   .rtimer{font-size:46px;font-weight:700;font-variant-numeric:tabular-nums;margin:6px 0 6px;color:var(--ink);line-height:1}
   .rstate{font-size:12px;color:var(--muted);margin-bottom:18px;display:inline-flex;align-items:center;gap:6px}
-  .rsound{background:none;border:none;color:var(--primary);font-family:inherit;font-size:12px;font-weight:600;
-          cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:0}
   .rwarn{font-size:12px;font-weight:600;color:var(--ink);background:var(--bg2);border-radius:9px;
          padding:8px 12px;margin:0 0 14px;display:inline-flex;align-items:center;gap:7px}
   .note{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;
@@ -292,12 +291,6 @@
                 padding:4px;border-radius:8px;flex-shrink:0}
   .note .nclose:hover{color:var(--ink)}
   .rvol{display:flex;align-items:center;gap:11px;margin:0 0 18px;color:var(--muted)}
-  .volrange{-webkit-appearance:none;appearance:none;flex:1;height:32px;background:transparent;cursor:pointer;margin:0}
-  .volrange::-webkit-slider-runnable-track{height:6px;border-radius:5px;background:var(--bg2)}
-  .volrange::-moz-range-track{height:6px;border-radius:5px;background:var(--bg2)}
-  .volrange::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;
-        background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.22);margin-top:-7px}
-  .volrange::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.22)}
   /* Graphe façon « temps d'écran » */
   .seg{display:inline-flex;background:var(--bg2);border-radius:10px;padding:3px;gap:2px;margin-bottom:14px}
   .segb{border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);
@@ -467,7 +460,7 @@
            border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;
            text-align:left;color:var(--ink);font-family:inherit;animation:rise .4s cubic-bezier(.22,.61,.36,1) backwards;transition:transform .18s}
   .prevrow:active{transform:scale(.99)}
-  .prevrow.bosser{display:flex;padding:0;align-items:stretch;overflow:hidden}
+  .prevrow.bosser,.prevrow.reeval{display:flex;padding:0;align-items:stretch;overflow:hidden}
   .bosswork{flex:1;min-width:0;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;
             padding:12px 14px;background:none;border:0;color:inherit;font-family:inherit;text-align:left;cursor:pointer;transition:transform .18s}
   .bosswork:active{transform:scale(.99)}
@@ -623,17 +616,6 @@
               border-radius:11px;padding:10px 12px;font-family:inherit;font-size:13px;font-weight:600;color:var(--orange);
               cursor:pointer;margin-bottom:8px;text-align:left}
 
-  /* ---------- Mélangeur d'ambiances (Session) ---------- */
-  .mixlbl{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:600;color:var(--muted);
-          text-transform:uppercase;letter-spacing:.04em;margin:2px 0 12px}
-  .mixer{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;margin:0 0 18px}
-  .sndcell{display:flex;flex-direction:column;align-items:center;gap:7px;opacity:.62;transition:opacity .18s}
-  .sndcell.on{opacity:1}
-  .sndic{color:var(--ink);display:flex}
-  .sndcell.on .sndic{color:var(--primary)}
-  .sndlbl{font-size:12.5px;font-weight:600;color:var(--ink);text-align:center}
-  .sndcell .volrange.sndrange{flex:none;width:100%;height:32px}
-
   /* ---------- Réglages : aperçu ---------- */
   .counts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:2px 0 4px}
   .countcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 8px;text-align:center;box-shadow:var(--shadow)}
@@ -717,7 +699,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260901-082510';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260903-141731';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -864,6 +846,18 @@ function pickColor(used){
 
 let data = load();
 let current = null;       // index matière ouverte, ou null = grille des matières
+let detailTab = 'chapitres';   // sous-page active dans le détail d'une matière : 'chapitres' (Cours) | 'pratique'
+// Les chapitres sont PARTAGÉS entre Cours et Pratique (même nom, créés une seule fois) ; seule la
+// note de maîtrise diffère : pct/hist (Cours) vs pctP/histP (Pratique). pField()/hField() donnent
+// les noms de champs à lire/écrire selon l'onglet actif.
+function pField(){ return detailTab==='pratique' ? 'pctP' : 'pct'; }
+function hField(){ return detailTab==='pratique' ? 'histP' : 'hist'; }
+// Vue "aplatie" des chapitres pour l'onglet actif (nom + pct + hist du bon champ) — utilisée pour
+// l'affichage et les graphes ; l'ordre est préservé donc son index `ci` reste valide sur data.matieres[current].chapitres.
+function curListView(){
+  const pf=pField(), hf=hField();
+  return data.matieres[current].chapitres.map(c=>({nom:c.nom, pct:c[pf]||0, hist:c[hf]||[]}));
+}
 let page = 'accueil';     // 'accueil' | 'matieres' | 'session' | 'stats' | 'reglages'
 let armed = null;         // id de la matière sélectionnée avant de lancer une session
 let period = 'jour';      // période du graphe temps : 'jour' | 'semaine'
@@ -886,9 +880,14 @@ function prepare(d){
   (d.matieres||[]).forEach(m=>{
     if(!Array.isArray(m.chapitres)) m.chapitres=[];   // garde-fou : une matière a toujours un tableau de chapitres
     if(typeof m.nom!=='string') m.nom='Sans nom';
+    delete m.pratique;   // ancien modèle (2 listes séparées), abandonné avant tout déploiement — jamais réécrit
     m.chapitres.forEach(c=>{
       c.pct=Math.max(0,Math.min(100,+c.pct||0));
       if(!Array.isArray(c.hist)||!c.hist.length) c.hist=[{t:dateKey(Date.now())+'T12:00:00.000Z', p:c.pct}];
+      // Chaque chapitre porte 2 notes de maîtrise indépendantes : Cours (pct/hist) et Pratique (pctP/histP) —
+      // même chapitre, même nom, 2 progressions suivies séparément (voir detailTab / renderDetail).
+      c.pctP=Math.max(0,Math.min(100,+c.pctP||0));
+      if(!Array.isArray(c.histP)||!c.histP.length) c.histP=[{t:dateKey(Date.now())+'T12:00:00.000Z', p:c.pctP}];
       delete c.last;
     });
   });
@@ -914,19 +913,22 @@ function prepare(d){
 function backfillDaily(d){
   const todayStr=dateKey(Date.now());   // jour LOCAL (aligné sur les sessions et l'agenda)
   (d.matieres||[]).forEach(m=>(m.chapitres||[]).forEach(c=>{
-    if(!Array.isArray(c.hist)||!c.hist.length) return;
-    c.hist.sort((a,b)=>new Date(a.t)-new Date(b.t));
-    // 1) la courbe atteint aujourd'hui : un point « aujourd'hui » à la dernière valeur connue
-    const last=c.hist[c.hist.length-1];
-    if(last.t.slice(0,10) < todayStr) c.hist.push({t:todayStr+'T12:00:00.000Z', p:last.p});
-    // 2) compactage : on retire les points intermédiaires égaux à leurs DEUX voisins.
-    //    Un palier plat ne garde que ses deux extrémités → stockage borné au nombre de
-    //    changements (plus O(jours)), tout en conservant exactement la forme en marches.
-    const h=c.hist; if(h.length<=2) return;
-    const out=[h[0]];
-    for(let i=1;i<h.length-1;i++){ if(!(h[i].p===h[i-1].p && h[i].p===h[i+1].p)) out.push(h[i]); }
-    out.push(h[h.length-1]);
-    c.hist=out;
+    ['hist','histP'].forEach(hf=>{   // même traitement pour les 2 historiques (Cours et Pratique)
+      const h=c[hf];
+      if(!Array.isArray(h)||!h.length) return;
+      h.sort((a,b)=>new Date(a.t)-new Date(b.t));
+      // 1) la courbe atteint aujourd'hui : un point « aujourd'hui » à la dernière valeur connue
+      const last=h[h.length-1];
+      if(last.t.slice(0,10) < todayStr) h.push({t:todayStr+'T12:00:00.000Z', p:last.p});
+      // 2) compactage : on retire les points intermédiaires égaux à leurs DEUX voisins.
+      //    Un palier plat ne garde que ses deux extrémités → stockage borné au nombre de
+      //    changements (plus O(jours)), tout en conservant exactement la forme en marches.
+      if(h.length<=2) return;
+      const out=[h[0]];
+      for(let i=1;i<h.length-1;i++){ if(!(h[i].p===h[i-1].p && h[i].p===h[i+1].p)) out.push(h[i]); }
+      out.push(h[h.length-1]);
+      c[hf]=out;
+    });
   }));
   return d;
 }
@@ -1024,7 +1026,7 @@ async function logout(){
   // Efface les données de CET appareil (pas celles du cloud) : sur un appareil partagé, la personne
   // suivante ne doit jamais hériter/mélanger les données de ce compte avec le sien.
   localStorage.removeItem(SYNC_KEY);
-  stopNoise(); data=prepare(clone(DEFAULT)); current=null;
+  data=prepare(clone(DEFAULT)); current=null;
   render();
   showAuthGate('login');
 }
@@ -1315,6 +1317,50 @@ function aBosser(){
   });
   return out.slice(0,4);
 }
+// « À réévaluer » : chapitres dont la note Cours n'a pas été retouchée depuis REEVAL_DAYS jours
+// (auto-évaluation périodique demandée par Eric — un chapitre à 90% jamais reconfirmé reste affiché,
+// contrairement à aBosser() qui ne regarde que les chapitres faibles).
+const REEVAL_DAYS = 4;
+function staleChapitres(){
+  const DAY=86400000, today=localDay(Date.now());
+  const out=[];
+  data.matieres.forEach((m,mi)=>m.chapitres.forEach((c,ci)=>{
+    const h=c.hist||[]; if(!h.length) return;
+    const last=localDay(new Date(h[h.length-1].t).getTime());
+    const days=Math.round((today-last)/DAY);
+    if(days>=REEVAL_DAYS) out.push({mi, ci, color:m.color, txt:c.nom, sub:m.nom, pct:+c.pct||0, days});
+  }));
+  out.sort((a,b)=>b.days-a.days);
+  return out;
+}
+// Depuis l'Accueil, saute direct sur le chapitre concerné (pas juste le haut de la page matière) :
+// ouvre la matière puis scrolle jusqu'à la carte du chapitre + petit flash pour la repérer.
+function goReeval(mi,ci){
+  current=mi; detailTab='chapitres'; page='matieres'; render();
+  const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
+  if(card){ card.scrollIntoView({behavior:'smooth', block:'center'});
+    card.classList.add('justopened'); setTimeout(()=>card.classList.remove('justopened'), 1600); }
+  else window.scrollTo({top:0});
+}
+// Notif navigateur (bonus, desktop uniquement — Safari iOS ne supporte l'API Notification que
+// dans une PWA installée avec Push, pas dans un onglet classique : `'Notification' in window`
+// est simplement false là-bas, donc no-op silencieux, rien ne casse). Une seule fois par jour.
+const REEVAL_NOTIF_KEY = "suivi-revisions-bac-reevalnotif";
+function maybeNotifyReeval(){
+  if(!('Notification' in window)) return;
+  const stale=staleChapitres();
+  if(!stale.length) return;
+  const today=dateKey(Date.now());
+  if(localStorage.getItem(REEVAL_NOTIF_KEY)===today) return;
+  const fire=()=>{
+    try{ new Notification('Mes révisions', {body:`${stale.length} chapitre${stale.length>1?'s':''} à réévaluer.`}); }catch(e){}
+    localStorage.setItem(REEVAL_NOTIF_KEY, today);
+  };
+  if(Notification.permission==='granted') fire();
+  else if(Notification.permission!=='denied'){
+    Notification.requestPermission().then(p=>{ if(p==='granted') fire(); else localStorage.setItem(REEVAL_NOTIF_KEY, today); });
+  }
+}
 // Recap du jour (compilé automatiquement) : temps, répartition, chapitres modifiés, tâches faites.
 function recapToday(){
   const today=localDay(Date.now());
@@ -1587,6 +1633,21 @@ function renderAccueil(){
     bosser=`<div class="seclabel"><span class="t">À bosser</span></div><div class="prevlist">${rows}</div>`;
   }
 
+  // — À réévaluer (auto-évaluation périodique, indépendante du niveau de maîtrise) —
+  let reeval='';
+  const stale=staleChapitres();
+  if(stale.length){
+    const rows=stale.slice(0,4).map(s=>{ const col=couleur(s.pct);
+      return `<div class="prevrow reeval">
+        <button class="bosswork" onclick="goReeval(${s.mi},${s.ci})" aria-label="Réévaluer ${escapeH(s.txt)}">
+          <span class="pdot" style="background:${s.color}"></span>
+          <span class="pmid"><span class="pnm">${escapeH(s.txt)}</span><span class="psub">${escapeH(s.sub)} · pas réévalué depuis ${s.days} jours</span></span>
+          <span class="ppct" style="color:${col}">${s.pct}%</span></button>
+      </div>`;
+    }).join('');
+    reeval=`<div class="seclabel"><span class="t">À réévaluer</span></div><div class="prevlist">${rows}</div>`;
+  }
+
   // — Recap du jour —
   const rc=recapToday();
   const hasRecap=rc.work>0 || rc.changed.length || rc.done.length;
@@ -1627,10 +1688,10 @@ function renderAccueil(){
       <div class="countcard"><div class="n">${ns}</div><div class="l">Session${ns>1?'s':''}</div></div>
     </div>`;
 
-  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + recap + subjects + apercu;
+  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + reeval + recap + subjects + apercu;
 }
 // Ouvre une matière depuis l'accueil (bascule sur l'onglet Matières en vue détail).
-function openMatiere(i){ current=i; page='matieres'; render(); window.scrollTo({top:0}); }
+function openMatiere(i){ current=i; detailTab='chapitres'; page='matieres'; render(); window.scrollTo({top:0}); }
 
 function renderHome(){
   document.getElementById('detail').classList.add('hidden');
@@ -1684,10 +1745,12 @@ function renderDetail(){
   const d = document.getElementById('detail');
   d.classList.remove('hidden'); d.classList.remove('fade'); void d.offsetWidth; d.classList.add('fade');
   const m = data.matieres[current];
-  const moy = moyenne(m.chapitres);
-  chartDom = chartDomain(m);   // échelle de temps partagée par tous les graphes de la matière
-  // chapitres triés du % le plus faible au plus élevé (les moins maîtrisés en haut)
-  const order = m.chapitres.map((c,ci)=>({c,ci})).sort((a,b)=>a.c.pct-b.c.pct);
+  const moy = moyenne(m.chapitres);   // le badge reste basé sur le Cours (mesure de référence de l'app)
+  const list = curListView();
+  chartDom = chartDomain(list);   // échelle de temps partagée par tous les graphes de la page active
+  // chapitres triés du % le plus faible au plus élevé, selon la note de l'onglet actif (les moins maîtrisés en haut)
+  const order = list.map((c,ci)=>({c,ci})).sort((a,b)=>a.c.pct-b.c.pct);
+  const isPrat = detailTab==='pratique';
   d.innerHTML = `
     <button class="back" onclick="goHome()">${ic('back',18)}<span>Toutes les matières</span></button>
     <div class="dhead">
@@ -1697,13 +1760,18 @@ function renderDetail(){
     </div>
     <p class="dsub" id="dsub">${subText(m)}</p>
     ${examRow(m)}
+    <div class="nav" role="tablist" aria-label="Cours ou Pratique">
+      <button class="navt${isPrat?'':' on'}" role="tab" aria-selected="${!isPrat}" onclick="setDetailTab('chapitres')">Cours</button>
+      <button class="navt${isPrat?' on':''}" role="tab" aria-selected="${isPrat}" onclick="setDetailTab('pratique')">Pratique</button>
+    </div>
     <div class="chartbox">
       <h3>Évolution</h3>
-      <div id="chart">${avgChartSVG(m)}</div>
+      <div id="chart">${avgChartSVG(list)}</div>
     </div>
     <div class="add-row">${ic('plus',18)}<input class="addchap" type="text" placeholder="Ajouter un chapitre"
-           onkeydown="if(event.key==='Enter'){addChapitre(${current},this.value);this.value=''}"></div>
-    ${order.map(({c,ci},pos)=>chapCard(ci,c,pos)).join('')}
+           onkeydown="if(event.key==='Enter'){addChapitre(this.value);this.value=''}"></div>
+    ${list.length ? order.map(({c,ci},pos)=>chapCard(ci,c,pos)).join('')
+      : '<p class="chartempty">Ajoute un chapitre pour suivre ta progression.</p>'}
   `;
 }
 
@@ -1728,13 +1796,15 @@ function chapCard(ci,c,pos){
 }
 
 // ---------- Navigation ----------
-function open_(i){ current=i; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function open_(i){ current=i; detailTab='chapitres'; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function setDetailTab(k){ if(detailTab===k) return; detailTab=k; render(); }
 function goHome(){ current=null; render(); window.scrollTo({top:0}); }
 
 // ---------- Actions ----------
-// Enregistre la valeur du jour (un seul point par jour, écrasé si on rebouge le même jour).
-function recordToday(c,v){
-  const h=c.hist||(c.hist=[]);
+// Enregistre la valeur du jour dans le champ hf ('hist' ou 'histP') — un seul point par jour, écrasé si on rebouge le même jour.
+function recordToday(c,v,hf){
+  hf=hf||'hist';
+  const h=c[hf]||(c[hf]=[]);
   const key=dateKey(Date.now());          // jour LOCAL (même base que sessions/agenda)
   if(h.length && h[h.length-1].t.slice(0,10)===key) h[h.length-1].p=v;
   else h.push({t:key+'T12:00:00.000Z',p:v});
@@ -1744,7 +1814,7 @@ function recordToday(c,v){
 function redrawCharts(ci){
   const c=data.matieres[current].chapitres[ci];
   const mc=document.getElementById('mc-'+ci);
-  if(mc) mc.innerHTML=lineChart(c.hist, couleur(c.pct), {w:480,h:165,labels:true});
+  if(mc) mc.innerHTML=lineChart(c[hField()], couleur(c[pField()]), {w:480,h:165,labels:true});
   renderChartAvg();
 }
 // Pendant le glissement (oninput) : patch DOM en place (pas de re-render qui casserait le
@@ -1752,14 +1822,14 @@ function redrawCharts(ci){
 function setPct(ci,v){
   v=+v;
   const c=data.matieres[current].chapitres[ci];
-  c.pct=v;
+  c[pField()]=v;
   const col=couleur(v);
   const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
   if(card){
     const p=card.querySelector('.cpct'); p.textContent=v+'%'; p.style.color=col;
     const bar=card.querySelector('.bar>span'); bar.style.width=v+'%'; bar.style.background=col;
   }
-  recordToday(c,v);
+  recordToday(c,v,hField());
   redrawCharts(ci);
   refreshBadge(); save();
 }
@@ -1767,8 +1837,8 @@ function setPct(ci,v){
 function commitPct(ci,v){
   v=+v;
   const c=data.matieres[current].chapitres[ci];
-  c.pct=v;
-  recordToday(c,v);
+  c[pField()]=v;
+  recordToday(c,v,hField());
   redrawCharts(ci);
   const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
   if(card) card.classList.toggle('done', v>=100);
@@ -1779,9 +1849,9 @@ function subText(m){ return `Maîtrise moyenne sur ${m.chapitres.length} chapitr
 // ---------- Graphes : temps (x) × % de maîtrise (y) ----------
 // Domaine de temps commun à tous les graphes d'une matière. Le 1er point se cale à
 // GAUCHE (= début du suivi) et la courbe se remplit vers la droite avec le temps.
-function chartDomain(m){
+function chartDomain(list){
   let tmin=Infinity,tmax=-Infinity;
-  m.chapitres.forEach(c=>(c.hist||[]).forEach(pt=>{const t=new Date(pt.t).getTime(); if(t<tmin)tmin=t; if(t>tmax)tmax=t;}));
+  list.forEach(c=>(c.hist||[]).forEach(pt=>{const t=new Date(pt.t).getTime(); if(t<tmin)tmin=t; if(t>tmax)tmax=t;}));
   const now=Date.now();
   chartReal = isFinite(tmin) ? [tmin,tmax] : [now,now];   // vraie plage avant rembourrage
   if(!isFinite(tmin)){ tmin=now; tmax=now; }
@@ -1790,9 +1860,9 @@ function chartDomain(m){
   return [tmin,tmax];
 }
 // Série de la maîtrise MOYENNE de la matière dans le temps (valeur reportée jour par jour).
-function avgSeries(m){
+function avgSeries(list){
   // On trie chaque chapitre UNE seule fois (avant : un re-tri par jour → lent pendant le glissement).
-  const chs=m.chapitres.map(c=>(c.hist||[]).slice().sort((a,b)=>new Date(a.t)-new Date(b.t)));
+  const chs=list.map(c=>(c.hist||[]).slice().sort((a,b)=>new Date(a.t)-new Date(b.t)));
   const days=[...new Set(chs.flat().map(pt=>pt.t.slice(0,10)))].sort();
   return days.map(day=>{
     let sum=0,n=0;
@@ -1860,17 +1930,21 @@ function lineChart(points, color, o){
   }
   return `<svg viewBox="0 0 ${W} ${H}" class="chartsvg">${grid}${xl}${path}</svg>`;
 }
-function avgChartSVG(m){
-  if(!m.chapitres.length) return '<p class="chartempty">Ajoute un chapitre pour suivre ta progression.</p>';
-  return lineChart(avgSeries(m), getCSS('--primary'), {w:600,h:210,labels:true});
+function avgChartSVG(list){
+  if(!list.length) return '<p class="chartempty">Ajoute un chapitre pour suivre ta progression.</p>';
+  return lineChart(avgSeries(list), getCSS('--primary'), {w:600,h:210,labels:true});
 }
-function renderChartAvg(){ const el=document.getElementById('chart'); if(el) el.innerHTML=avgChartSVG(data.matieres[current]); }
+function renderChartAvg(){ const el=document.getElementById('chart'); if(el) el.innerHTML=avgChartSVG(curListView()); }
 function refreshBadge(){
   const m=data.matieres[current];
   const badge=document.querySelector('#detail .badge');
   if(badge){ const moy=moyenne(m.chapitres); badge.textContent=moy+'%'; badge.style.background=couleur(moy); }
 }
-function addChapitre(mi,nom){ nom=nom.trim(); if(!nom)return; data.matieres[mi].chapitres.push({nom,pct:0,hist:[{t:dateKey(Date.now())+'T12:00:00.000Z',p:0}]}); render(); }
+// Un chapitre est PARTAGÉ entre Cours et Pratique : ajouté une seule fois (peu importe l'onglet où
+// on l'ajoute), il apparaît aussitôt dans les deux vues, chacune avec sa propre note à 0%.
+function addChapitre(nom){ nom=nom.trim(); if(!nom)return;
+  const t=dateKey(Date.now())+'T12:00:00.000Z';
+  data.matieres[current].chapitres.push({nom,pct:0,hist:[{t,p:0}],pctP:0,histP:[{t,p:0}]}); render(); }
 async function renameChap(ci){ const c=data.matieres[current].chapitres[ci]; const n=await uiPrompt(c.nom,{title:'Renommer le chapitre'}); if(n&&n.trim()){ c.nom=n.trim(); render(); } }
 async function renameMat(){ const m=data.matieres[current]; const n=await uiPrompt(m.nom,{title:'Renommer la matière'}); if(n&&n.trim()){ m.nom=n.trim(); render(); } }
 // Affiche/cache le graphe d'un chapitre (caché par défaut, à la demande)
@@ -1880,8 +1954,8 @@ function toggleChap(ci){
   const b=document.querySelector(`#detail .chap[data-ci="${ci}"] .seegraph`);
   if(b){ b.classList.toggle('on',open); const s=b.querySelector('span'); if(s) s.textContent = open ? 'Masquer' : 'Graphe'; }
 }
-async function delChapitre(ci){ const m=data.matieres[current];
-  if(await uiConfirm("Supprimer « "+m.chapitres[ci].nom+" » ?",{title:'Supprimer le chapitre',ok:'Supprimer',danger:true})){ m.chapitres.splice(ci,1); render(); } }
+async function delChapitre(ci){ const list=data.matieres[current].chapitres;   // supprime le chapitre entier : Cours ET Pratique (même chapitre, même identité)
+  if(await uiConfirm("Supprimer « "+list[ci].nom+" » ?",{title:'Supprimer le chapitre',ok:'Supprimer',danger:true})){ list.splice(ci,1); render(); } }
 async function addMatiere(){
   const used=new Set(data.matieres.map(m=>m.color).filter(Boolean));
   newMatColor = MAT_PALETTE.find(c=>!used.has(c)) || MAT_PALETTE[0];   // pré-sélection : 1re couleur libre
@@ -1891,9 +1965,9 @@ async function addMatiere(){
 async function delMatiere(i){ const m=data.matieres[i];
   if(await uiConfirm("Supprimer « "+m.nom+" » et tous ses chapitres ?",{title:'Supprimer la matière',ok:'Supprimer',danger:true})){
   data.sessions=(data.sessions||[]).filter(s=>s.mat!==m.id);            // purge les sessions orphelines
-  if(data.active && data.active.mat===m.id){ stopNoise(); data.active=null; }
+  if(data.active && data.active.mat===m.id){ data.active=null; }
   data.matieres.splice(i,1); current=null; render(); } }
-async function resetData(){ if(await uiConfirm("Tout effacer et repartir de zéro ? Tes changements seront perdus.",{title:'Réinitialiser',ok:'Tout effacer',danger:true})){ stopNoise(); data=prepare(clone(DEFAULT)); current=null; render(); } }
+async function resetData(){ if(await uiConfirm("Tout effacer et repartir de zéro ? Tes changements seront perdus.",{title:'Réinitialiser',ok:'Tout effacer',danger:true})){ data=prepare(clone(DEFAULT)); current=null; render(); } }
 
 function exportData(){ const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='revisions-sauvegarde.json'; a.click(); }
@@ -1908,104 +1982,9 @@ function importData(ev){ const f=ev.target.files[0]; if(!f){return;} const r=new
 
 // ================= Brique « Temps de travail » =================
 function matById(id){ return data.matieres.find(m=>m.id===id); }
-// ---- Mélangeur d'ambiances généré en Web Audio (100% hors-ligne, aucun fichier) ----
-// Plusieurs couches mixables, chacune avec son volume ; tout est SYNTHÉTISÉ (pas d'enregistrement).
-const MIX_KEY = "suivi-revisions-bac-mix";   // niveaux du mix (préférence appareil, hors export)
-// Ambiances = vrais enregistrements (fichiers du dossier `sons/`), mixables. `file` = nom attendu.
-const SOUNDS = [
-  {key:'pluie',   label:'Pluie',         icon:'rain',    file:'pluie.mp3'},
-  {key:'vagues',  label:'Vagues',        icon:'waves',   file:'vagues.mp3'},
-  {key:'vent',    label:'Vent',          icon:'wind',    file:'vent.mp3'},
-  {key:'feu',     label:'Feu',           icon:'flame',   file:'feu.mp3'},
-  {key:'oiseaux', label:'Oiseaux',       icon:'bird',    file:'oiseaux.mp3'},
-  {key:'foret',   label:'Forêt la nuit', icon:'tree',    file:'foret.mp3'},
-  {key:'ruisseau',label:'Ruisseau',      icon:'droplet', file:'ruisseau.mp3'},
-  {key:'bol',     label:'Bol tibétain',  icon:'bowl',    file:'bol.mp3'},
-];
-const SND_DIR='sons/';   // dossier des ambiances (chargées à la demande, à la 1re activation)
-function loadMix(){ try{ const r=JSON.parse(localStorage.getItem(MIX_KEY)); if(r && typeof r==='object') return r; }catch(e){} return {pluie:40}; }
-function saveMix(){ localStorage.setItem(MIX_KEY, JSON.stringify(mix)); }
-let mix = loadMix();
-let mixActive=false, actx=null;
-const layers={};        // key -> {setVol, stop, el?}
-const bufCache={};      // key -> AudioBuffer décodé (réutilisé d'une session à l'autre)
-const bufPending={};    // key -> Promise de chargement en cours (évite de décoder 2×)
-// AudioContext créé à la 1re activation (sur geste utilisateur : lancement session/médi).
-function ensureCtx(){
-  if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } }
-  if(actx && actx.state==='suspended'){ try{ actx.resume(); }catch(e){} }
-  return actx;
-}
-// Charge + décode le fichier en AudioBuffer → permet une boucle SANS coupure (sample-précise,
-// sans le silence technique du MP3). Peut échouer en file:// (accès local bloqué) → renvoie
-// null et on retombe sur <audio> (qui a un léger blanc à la reprise, mais lit le fichier local).
-function loadBuffer(def){
-  if(bufCache[def.key]) return Promise.resolve(bufCache[def.key]);
-  if(bufPending[def.key]) return bufPending[def.key];
-  const ctx=ensureCtx(); if(!ctx) return Promise.resolve(null);
-  // XHR (pas fetch) : gère le protocole file:// (fetch ne le gère pas), et marche aussi en https.
-  const pr=new Promise((resolve)=>{
-    const fail=()=>{ delete bufPending[def.key]; resolve(null); };   // échec → on oublie, pour pouvoir retenter (ex. fichier ajouté après)
-    try{ const x=new XMLHttpRequest(); x.open('GET', SND_DIR+def.file, true); x.responseType='arraybuffer';
-      x.onload=()=>{ const ok = x.status===0 || (x.status>=200 && x.status<300);   // status 0 = file:// en succès
-        (ok && x.response) ? ctx.decodeAudioData(x.response, b=>{ bufCache[def.key]=b; resolve(b); }, fail) : fail(); };
-      x.onerror=fail; x.send();
-    }catch(e){ fail(); }
-  });
-  bufPending[def.key]=pr; return pr;
-}
-// Couche GAPLESS : AudioBufferSourceNode(loop) → gain → sortie. Boucle vraiment continue.
-function buildBufferLayer(v, buf){
-  const ctx=actx;
-  const src=ctx.createBufferSource(); src.buffer=buf; src.loop=true;
-  const g=ctx.createGain(); g.gain.value=Math.max(0,Math.min(1,v));
-  src.connect(g).connect(ctx.destination); src.start();
-  return { setVol(nv){ g.gain.value=Math.max(0,Math.min(1,nv)); },
-           stop(){ try{src.stop();}catch(e){} try{src.disconnect(); g.disconnect(); }catch(e){} } };
-}
-// Repli <audio loop> (quand le décodage Web Audio est impossible, ex. fichier local en file://).
-function buildFileLayer(def, v){
-  const a=new Audio();
-  a.src=SND_DIR+def.file; a.loop=true; a.preload='auto';
-  a.volume=Math.max(0,Math.min(1,v));
-  const play=()=>{ const p=a.play(); if(p&&p.catch) p.catch(()=>{}); };
-  play();
-  return { el:a,
-    setVol(nv){ a.volume=Math.max(0,Math.min(1,nv)); if(a.paused) play(); },
-    stop(){ try{a.pause();}catch(e){} try{a.removeAttribute('src'); a.load();}catch(e){} } };
-}
-// Démarre une couche : on tente le Web Audio gapless, repli <audio> si indisponible.
-// Le chargement est async → on réserve tout de suite un jeton pour éviter les doubles départs
-// et pour capter un stop()/réglage de volume survenu avant la fin du décodage.
-function startLayer(key){
-  if(layers[key]) return;
-  const def=SOUNDS.find(s=>s.key===key); if(!def) return;
-  const token={ v:(mix[key]||0)/100, stopped:false, setVol(nv){ this.v=nv; }, stop(){ this.stopped=true; } };
-  layers[key]=token;
-  loadBuffer(def).then(buf=>{
-    if(token.stopped || layers[key]!==token) return;   // arrêté / relancé entre-temps
-    try{ layers[key] = (buf && actx) ? buildBufferLayer(token.v, buf) : buildFileLayer(def, token.v); }
-    catch(e){ try{ layers[key]=buildFileLayer(def, token.v); }catch(_){} }
-  });
-}
-function stopLayer(key){ const L=layers[key]; if(!L) return; try{L.stop();}catch(e){} delete layers[key]; }
-function applyLayerVol(key){
-  const v=(mix[key]||0)/100, L=layers[key];
-  if(v<=0){ stopLayer(key); return; }
-  if(!L){ startLayer(key); return; }
-  L.setVol(v);
-}
-// Curseur d'une ambiance : on stocke toujours le niveau ; on agit sur le son seulement si le mix tourne.
-function setLayerVol(key,v,el){
-  mix[key]=+v; saveMix();
-  if(el){ const cell=el.closest('.sndcell'); if(cell) cell.classList.toggle('on', +v>0); }
-  if(mixActive) applyLayerVol(key);
-}
-// Démarre / arrête tout le mix (au lancement/arrêt de session et pendant la méditation).
-// On garde les noms startNoise/stopNoise/noisePlaying pour les appelants existants.
-function startNoise(){ ensureCtx(); mixActive=true; SOUNDS.forEach(s=>{ if((mix[s.key]||0)>0) startLayer(s.key); }); }
-function stopNoise(){ mixActive=false; Object.keys(layers).forEach(stopLayer); }
-function noisePlaying(){ return mixActive; }
+// Ambiances sonores retirées (31/08→01/09) : trop de temps passé à sourcer/valider les fichiers
+// audio pour peu d'usage réel. Eric branchera un lien externe (playlist/site tout fait) s'il veut
+// du bruit de fond pendant une session — plus rien à maintenir côté app.
 
 // ---------- Méditation (« Respire » avant une session) ----------
 let brTotal=300, brLeft=300, brTick=null, brPhaseTick=null, brArmed=null;
@@ -2032,7 +2011,6 @@ function openBreathe(mins){
   brArmed = armed;                       // si une matière est armée, on enchaîne la session à la fin
   brTotal=(mins||5)*60; brLeft=brTotal;
   const ov=document.getElementById('breathe'); ov.classList.remove('hidden'); ov.innerHTML=breatheHTML();
-  startNoise();                          // ambiance pendant la respiration (le tap = geste utilisateur requis pour l'audio)
   let phase=0; setBreathePhase(0);
   if(brTick) clearInterval(brTick);
   brTick=setInterval(()=>{ brLeft--; updateBreathe(); if(brLeft<=0) endBreathe(true); },1000);
@@ -2043,8 +2021,8 @@ function endBreathe(launch){
   if(brTick){ clearInterval(brTick); brTick=null; }
   if(brPhaseTick){ clearInterval(brPhaseTick); brPhaseTick=null; }
   document.getElementById('breathe').classList.add('hidden');
-  if(launch && brArmed && matById(brArmed)){ armed=brArmed; startSession(); }   // le bruit continue dans la session
-  else { if(!data.active) stopNoise(); render(); }   // ne coupe pas le son si une session tourne déjà
+  if(launch && brArmed && matById(brArmed)){ armed=brArmed; startSession(); }
+  else render();
   brArmed=null;
 }
 
@@ -2053,7 +2031,7 @@ function armMat(id){ armed=(armed===id?null:id); renderTemps(); }
 function startSession(){
   if(!armed || !matById(armed)) return;
   data.active={mat:armed, start:new Date().toISOString()};
-  armed=null; startNoise(); save(); render();   // render() affiche le mode focus plein écran
+  armed=null; save(); render();   // render() affiche le mode focus plein écran
 }
 function stopSession(){
   if(data.active){
@@ -2062,7 +2040,7 @@ function stopSession(){
       data.sessions.push({mat:s.mat, start:s.start, end});
     data.active=null;
   }
-  stopNoise(); save(); render();   // render() masque le mode focus
+  save(); render();   // render() masque le mode focus
 }
 
 // ---- Affichage du chrono (cosmétique : la durée réelle reste fin − début) ----
@@ -2200,18 +2178,6 @@ function renderTemps(){
   staleRecovered=false;
   t.innerHTML = note + pickerCard() + agendaCard();   // la session active s'affiche en plein écran (#focus), pas ici
 }
-// Sélecteur du type de bruit de fond (généré, hors-ligne).
-// Mélangeur d'ambiances : une cellule (icône + label + curseur) par son, mixables.
-function soundMixer(){
-  const cells=SOUNDS.map(s=>{ const v=mix[s.key]||0;
-    return `<div class="sndcell${v>0?' on':''}">
-      <span class="sndic">${ic(s.icon,24)}</span>
-      <span class="sndlbl">${s.label}</span>
-      <input class="volrange sndrange" type="range" min="0" max="100" value="${v}" aria-label="${s.label}"
-        oninput="setLayerVol('${s.key}',this.value,this)">
-    </div>`;}).join('');
-  return `<div class="mixer">${cells}</div>`;
-}
 // ---------- Page Stats (« Temps de travail », façon temps d'écran) ----------
 function renderStats(){
   const s=document.getElementById('stats');
@@ -2238,7 +2204,7 @@ function pickerCard(){
   return `<div class="sessionwrap withag"><div class="card sessioncard">
     <div class="sesshead">${ic('clock',30)}
       <h2>Prêt·e à bosser ?</h2>
-      <p>Choisis une matière et ton ambiance sonore, puis lance le chrono.</p></div>
+      <p>Choisis une matière, puis lance le chrono.</p></div>
     <div class="matchips">${chips}</div>
     <button class="bigbtn bigwork" ${armed?'':'disabled'} onclick="startSession()">${ic('play',20)}<span>${armed?'Travailler':'Choisis une matière'}</span></button>
     <button class="bigbtn bigbreathe" onclick="openBreathe(5)">${ic('breath',20)}<span>${armed?'Respirer puis travailler':'Respirer 5 min'}</span></button>
@@ -2249,14 +2215,9 @@ function focusCard(){
   const m=matById(data.active.mat);
   const name=m?escapeH(m.nom):'Matière supprimée';
   const col=m?m.color:'var(--muted)';
-  const sound=noisePlaying()
-    ? `<div class="mixlbl">${ic('volume',16)}<span>Ambiance sonore</span></div>`
-    : `<button class="rsound" onclick="startNoise();refreshFocus()">${ic('volume',14)}<span>Activer le son</span></button>`;
   return `<div class="focuswrap" style="--c:${col}">
     <div class="runtop"><span class="rdot"></span><span class="rname">${name}</span></div>
     <div class="rtimer" id="rtimer">00:00</div>
-    ${sound}
-    ${soundMixer()}
     <div class="rwarn" id="rwarn" style="display:none">${ic('clock',14)}<span>En session depuis plus de ${MAX_SESSION_H} h — pense à terminer.</span></div>
     <button class="bigbtn bigstop" onclick="stopSession()">${ic('stop',20)}<span>Terminer</span></button>
   </div>`;
@@ -2273,9 +2234,6 @@ function renderFocus(){
     if(tick){ clearInterval(tick); tick=null; }
   }
 }
-// Reconstruit le contenu du focus (ex. après « Activer le son »).
-function refreshFocus(){ if(!data.active) return; document.getElementById('focus').innerHTML=focusCard();
-  if(tick) clearInterval(tick); updateTimer(); tick=setInterval(updateTimer,1000); }
 function graphCard(){
   const tot=matTotals();
   const sum=Object.values(tot).reduce((a,b)=>a+b,0);
@@ -2470,8 +2428,6 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
   document.getElementById('cpHex').addEventListener('change', e=>{ const v=hexToHsv(e.target.value.trim());
     if(v){ cpH=v.h; cpS=v.s; cpV=v.v; document.getElementById('cpHue').value=Math.round(cpH); } cpickRender(); });
 })();
-// iOS suspend l'audio en arrière-plan : on le relance au retour si une session tourne.
-document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && mixActive){ if(actx&&actx.state==='suspended'){ try{actx.resume();}catch(e){} } Object.values(layers).forEach(L=>{ if(L.el&&L.el.paused){ const p=L.el.play(); if(p&&p.catch) p.catch(()=>{}); } }); } });
 
 let savedTheme = localStorage.getItem(THEME_KEY);
 if(savedTheme!=='auto' && !THEMES[savedTheme]) savedTheme='slate';   // 'auto' est valide ; migration des anciens thèmes (bleu/bleuvert…) → clair
@@ -2500,6 +2456,9 @@ catch(e){
         ${ic('reset',18)}<span>Réinitialiser l'affichage</span></button>
     </div>`;
 }
+// Notif "chapitres à réévaluer" (bonus desktop, no-op ailleurs) : seulement si l'écran de connexion
+// n'est pas affiché, pour ne pas interrompre une saisie avec une demande de permission navigateur.
+{ const ag=document.getElementById('authgate'); if(!ag || ag.classList.contains('hidden')) maybeNotifyReeval(); }
 
 // --- Mise à jour automatique ---
 // À l'ouverture, si EN LIGNE, on vérifie discrètement une version plus récente et on la
