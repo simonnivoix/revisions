@@ -217,13 +217,6 @@
                       padding:12px 2px;margin:-12px -2px}
   .authforgot button:hover{color:var(--primary)}
 
-  /* ---------- Navigation Maîtrise / Temps ---------- */
-  .nav{display:inline-flex;background:var(--bg2);border-radius:11px;padding:3px;gap:2px;margin-top:14px}
-  .navt{border:none;background:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--muted);
-        padding:8px 16px;border-radius:9px;cursor:pointer;min-height:40px;transition:.15s}
-  .navt.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
-  .navt:active{transform:scale(.97)}
-
   /* ---------- Page « Temps de travail » ---------- */
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;
         box-shadow:var(--shadow);animation:rise .4s cubic-bezier(.22,.61,.36,1) backwards}
@@ -257,19 +250,18 @@
   .brquit{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);
           background:var(--card);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
   .brhint{margin:0;font-size:14px;color:var(--muted);max-width:260px;line-height:1.5}
-  .brcircle{width:190px;height:190px;border-radius:50%;
-            background:radial-gradient(circle at 50% 42%, var(--primary), transparent 72%);
-            box-shadow:0 0 55px rgba(99,102,241,.22);
-            animation:breathe 8s ease-in-out infinite;margin:6px 0}
-  .brphase{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:.01em}
-  .brtime{font-size:30px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+  .brtime{font-size:56px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;margin:10px 0}
   .brdurs{display:flex;gap:8px}
   .brdur{background:var(--bg2);border:1.5px solid transparent;border-radius:999px;padding:8px 16px;font-family:inherit;
          font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;min-height:40px;transition:.15s}
   .brdur.on{border-color:var(--primary);background:var(--card)}
   .brchain{margin:0;font-size:13px;color:var(--muted);max-width:280px;line-height:1.45}
   .brstart{max-width:300px;margin-top:2px}
-  @keyframes breathe{0%,100%{transform:scale(.6)}50%{transform:scale(1)}}
+  /* État « chrono terminé » : cloche + phrase, avant la fermeture auto de l'overlay */
+  .brdone{width:76px;height:76px;border-radius:50%;background:var(--bg2);color:var(--primary);
+          display:flex;align-items:center;justify-content:center;margin:4px 0;animation:brpop .4s ease}
+  .brready{margin:0;font-size:18px;font-weight:700;color:var(--ink);max-width:280px;line-height:1.4}
+  @keyframes brpop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
   /* Session en cours — mode focus plein écran (couvre la barre d'onglets) */
   .focusov{position:fixed;inset:0;z-index:55;background:var(--bg);overflow:auto;display:flex;flex-direction:column;
            align-items:center;justify-content:flex-start;animation:fade .25s ease;
@@ -699,7 +691,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260903-141731';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260905-173656';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -745,6 +737,7 @@ const ICONS = {
   'bowl':'<path d="M3 10c0 4.2 4 7.5 9 7.5s9-3.3 9-7.5"/><path d="M3 10c0-1.6 4-2.6 9-2.6s9 1 9 2.6"/><path d="M16.5 4.5l2.5 4.5"/>',
   'tree':'<path d="M12 3l5.5 8H14l4 6H6l4-6H6.5z"/><path d="M12 17v4"/>',
   'droplet':'<path d="M12 3s6 6.4 6 11a6 6 0 01-12 0c0-4.6 6-11 6-11z"/>',
+  'bell':'<path d="M6 8a6 6 0 1112 0c0 4.2 1.5 6.2 2 7H4c.5-.8 2-2.8 2-7z"/><path d="M9.5 19a2.5 2.5 0 005 0"/>',
 };
 function ic(name,size){ size=size||20; return `<svg class="ic" viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`; }
 
@@ -766,31 +759,22 @@ const LIGHT_DEFAULTS = {
   '--shadow':'0 1px 3px rgba(15,23,42,.08)','--ring':'rgba(3,105,161,.16)'
 };
 
-// Renvoie le vrai thème à peindre : 'auto' suit le système (sombre/clair).
-function effectiveTheme(name){
-  if(name==='auto'){
-    try{ return matchMedia('(prefers-color-scheme: dark)').matches ? 'sombre' : 'slate'; }catch(e){ return 'slate'; }
-  }
-  return THEMES[name] ? name : 'slate';
-}
 function applyTheme(name){
-  if(name!=='auto' && !THEMES[name]) name='slate';
-  const t = THEMES[effectiveTheme(name)];
+  if(!THEMES[name]) name='slate';
+  const t = THEMES[name];
   const root = document.documentElement;
   Object.entries(LIGHT_DEFAULTS).forEach(([k,v])=>root.style.setProperty(k,v)); // base claire
   Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));          // puis l'ambiance
   localStorage.setItem(THEME_KEY, name);
   document.querySelectorAll('.topt').forEach(s=>s.classList.toggle('on', s.dataset.t===name));
 }
-// Liste des options de thème, avec « Auto » en plus (suit le système).
-const THEME_OPTS = [['slate','Clair'],['sauge','Sauge'],['sombre','Sombre'],['auto','Auto']];
+const THEME_OPTS = [['slate','Clair'],['sauge','Sauge'],['sombre','Sombre']];
 function buildThemeOpts(active){
   const box = document.getElementById('themeOpts');
   if(!box) return;
   box.innerHTML = THEME_OPTS.map(([k,label])=>{
-    const eff = effectiveTheme(k);
-    const bg = THEMES[eff].vars['--bg']||LIGHT_DEFAULTS['--bg'];
-    const ac = THEMES[eff].vars['--primary']||LIGHT_DEFAULTS['--primary'];
+    const bg = THEMES[k].vars['--bg']||LIGHT_DEFAULTS['--bg'];
+    const ac = THEMES[k].vars['--primary']||LIGHT_DEFAULTS['--primary'];
     return `<button class="topt${k===active?' on':''}" data-t="${k}" onclick="applyTheme('${k}')">
       <span class="tdot" style="background:linear-gradient(135deg,${bg},${ac})"></span>
       <span class="tlabel">${label}</span>
@@ -798,10 +782,6 @@ function buildThemeOpts(active){
     </button>`;
   }).join('');
 }
-// Suivi du changement de thème système quand « Auto » est sélectionné.
-try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
-  if((localStorage.getItem(THEME_KEY)||'')==='auto') applyTheme('auto');
-}); }catch(e){}
 
 // ---------- Page Réglages ----------
 function renderReglages(){
@@ -846,18 +826,6 @@ function pickColor(used){
 
 let data = load();
 let current = null;       // index matière ouverte, ou null = grille des matières
-let detailTab = 'chapitres';   // sous-page active dans le détail d'une matière : 'chapitres' (Cours) | 'pratique'
-// Les chapitres sont PARTAGÉS entre Cours et Pratique (même nom, créés une seule fois) ; seule la
-// note de maîtrise diffère : pct/hist (Cours) vs pctP/histP (Pratique). pField()/hField() donnent
-// les noms de champs à lire/écrire selon l'onglet actif.
-function pField(){ return detailTab==='pratique' ? 'pctP' : 'pct'; }
-function hField(){ return detailTab==='pratique' ? 'histP' : 'hist'; }
-// Vue "aplatie" des chapitres pour l'onglet actif (nom + pct + hist du bon champ) — utilisée pour
-// l'affichage et les graphes ; l'ordre est préservé donc son index `ci` reste valide sur data.matieres[current].chapitres.
-function curListView(){
-  const pf=pField(), hf=hField();
-  return data.matieres[current].chapitres.map(c=>({nom:c.nom, pct:c[pf]||0, hist:c[hf]||[]}));
-}
 let page = 'accueil';     // 'accueil' | 'matieres' | 'session' | 'stats' | 'reglages'
 let armed = null;         // id de la matière sélectionnée avant de lancer une session
 let period = 'jour';      // période du graphe temps : 'jour' | 'semaine'
@@ -884,11 +852,8 @@ function prepare(d){
     m.chapitres.forEach(c=>{
       c.pct=Math.max(0,Math.min(100,+c.pct||0));
       if(!Array.isArray(c.hist)||!c.hist.length) c.hist=[{t:dateKey(Date.now())+'T12:00:00.000Z', p:c.pct}];
-      // Chaque chapitre porte 2 notes de maîtrise indépendantes : Cours (pct/hist) et Pratique (pctP/histP) —
-      // même chapitre, même nom, 2 progressions suivies séparément (voir detailTab / renderDetail).
-      c.pctP=Math.max(0,Math.min(100,+c.pctP||0));
-      if(!Array.isArray(c.histP)||!c.histP.length) c.histP=[{t:dateKey(Date.now())+'T12:00:00.000Z', p:c.pctP}];
       delete c.last;
+      delete c.pctP; delete c.histP;   // ancien essai « Cours/Pratique », abandonné avant tout déploiement
     });
   });
   // Brique « Temps » : chaque matière reçoit un id stable + une couleur d'identité (rétro-compatible).
@@ -913,22 +878,20 @@ function prepare(d){
 function backfillDaily(d){
   const todayStr=dateKey(Date.now());   // jour LOCAL (aligné sur les sessions et l'agenda)
   (d.matieres||[]).forEach(m=>(m.chapitres||[]).forEach(c=>{
-    ['hist','histP'].forEach(hf=>{   // même traitement pour les 2 historiques (Cours et Pratique)
-      const h=c[hf];
-      if(!Array.isArray(h)||!h.length) return;
-      h.sort((a,b)=>new Date(a.t)-new Date(b.t));
-      // 1) la courbe atteint aujourd'hui : un point « aujourd'hui » à la dernière valeur connue
-      const last=h[h.length-1];
-      if(last.t.slice(0,10) < todayStr) h.push({t:todayStr+'T12:00:00.000Z', p:last.p});
-      // 2) compactage : on retire les points intermédiaires égaux à leurs DEUX voisins.
-      //    Un palier plat ne garde que ses deux extrémités → stockage borné au nombre de
-      //    changements (plus O(jours)), tout en conservant exactement la forme en marches.
-      if(h.length<=2) return;
-      const out=[h[0]];
-      for(let i=1;i<h.length-1;i++){ if(!(h[i].p===h[i-1].p && h[i].p===h[i+1].p)) out.push(h[i]); }
-      out.push(h[h.length-1]);
-      c[hf]=out;
-    });
+    const h=c.hist;
+    if(!Array.isArray(h)||!h.length) return;
+    h.sort((a,b)=>new Date(a.t)-new Date(b.t));
+    // 1) la courbe atteint aujourd'hui : un point « aujourd'hui » à la dernière valeur connue
+    const last=h[h.length-1];
+    if(last.t.slice(0,10) < todayStr) h.push({t:todayStr+'T12:00:00.000Z', p:last.p});
+    // 2) compactage : on retire les points intermédiaires égaux à leurs DEUX voisins.
+    //    Un palier plat ne garde que ses deux extrémités → stockage borné au nombre de
+    //    changements (plus O(jours)), tout en conservant exactement la forme en marches.
+    if(h.length<=2) return;
+    const out=[h[0]];
+    for(let i=1;i<h.length-1;i++){ if(!(h[i].p===h[i-1].p && h[i].p===h[i+1].p)) out.push(h[i]); }
+    out.push(h[h.length-1]);
+    c.hist=out;
   }));
   return d;
 }
@@ -936,7 +899,10 @@ function backfillDaily(d){
 // ---------- Compte & synchronisation cloud (Supabase, en fetch() brut — pas de SDK) ----------
 // Principe : le localStorage reste la source de vérité IMMÉDIATE (jamais bloqué par le réseau) ;
 // la synchro cloud est un best-effort asynchrone qui pousse/tire en tâche de fond.
-function supaConfigured(){ return SUPABASE_URL.indexOf('YOUR-PROJECT')===-1 && SUPABASE_ANON_KEY.indexOf('YOUR-ANON-KEY')===-1; }
+// Hors du site en ligne (file://, localhost, aperçu…) : jamais de vrai Supabase, même avec les bonnes clés —
+// évite qu'un test local (même email que le vrai compte) n'écrase les données réelles (incident du 05/09).
+function supaConfigured(){ return location.hostname==='simonnivoix.github.io'
+  && SUPABASE_URL.indexOf('YOUR-PROJECT')===-1 && SUPABASE_ANON_KEY.indexOf('YOUR-ANON-KEY')===-1; }
 const SUPA_REST = 'https://'+SUPABASE_URL.replace(/^https?:\/\//,'');
 
 function loadAuth(){ try{ const r=JSON.parse(localStorage.getItem(AUTH_KEY)); if(r && r.access_token) return r; }catch(e){} return null; }
@@ -1336,7 +1302,7 @@ function staleChapitres(){
 // Depuis l'Accueil, saute direct sur le chapitre concerné (pas juste le haut de la page matière) :
 // ouvre la matière puis scrolle jusqu'à la carte du chapitre + petit flash pour la repérer.
 function goReeval(mi,ci){
-  current=mi; detailTab='chapitres'; page='matieres'; render();
+  current=mi; page='matieres'; render();
   const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
   if(card){ card.scrollIntoView({behavior:'smooth', block:'center'});
     card.classList.add('justopened'); setTimeout(()=>card.classList.remove('justopened'), 1600); }
@@ -1484,6 +1450,7 @@ function agendaCard(){
         <div class="agpicklbl">Matière de la tâche</div>
         <div class="matchips mini">${matChips}</div>
         <div class="agpicklbl">Jour</div>
+        ${nav}
         <div class="agdays">${dayChips}</div>
         <div class="todoadd">
           <input id="agInput" type="text" placeholder="Nouvelle tâche…" maxlength="120" onkeydown="if(event.key==='Enter')addTask()">
@@ -1691,7 +1658,7 @@ function renderAccueil(){
   a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + reeval + recap + subjects + apercu;
 }
 // Ouvre une matière depuis l'accueil (bascule sur l'onglet Matières en vue détail).
-function openMatiere(i){ current=i; detailTab='chapitres'; page='matieres'; render(); window.scrollTo({top:0}); }
+function openMatiere(i){ current=i; page='matieres'; render(); window.scrollTo({top:0}); }
 
 function renderHome(){
   document.getElementById('detail').classList.add('hidden');
@@ -1745,12 +1712,11 @@ function renderDetail(){
   const d = document.getElementById('detail');
   d.classList.remove('hidden'); d.classList.remove('fade'); void d.offsetWidth; d.classList.add('fade');
   const m = data.matieres[current];
-  const moy = moyenne(m.chapitres);   // le badge reste basé sur le Cours (mesure de référence de l'app)
-  const list = curListView();
-  chartDom = chartDomain(list);   // échelle de temps partagée par tous les graphes de la page active
-  // chapitres triés du % le plus faible au plus élevé, selon la note de l'onglet actif (les moins maîtrisés en haut)
+  const moy = moyenne(m.chapitres);
+  const list = m.chapitres;
+  chartDom = chartDomain(list);   // échelle de temps partagée par tous les graphes de la matière
+  // chapitres triés du % le plus faible au plus élevé (les moins maîtrisés en haut)
   const order = list.map((c,ci)=>({c,ci})).sort((a,b)=>a.c.pct-b.c.pct);
-  const isPrat = detailTab==='pratique';
   d.innerHTML = `
     <button class="back" onclick="goHome()">${ic('back',18)}<span>Toutes les matières</span></button>
     <div class="dhead">
@@ -1760,10 +1726,6 @@ function renderDetail(){
     </div>
     <p class="dsub" id="dsub">${subText(m)}</p>
     ${examRow(m)}
-    <div class="nav" role="tablist" aria-label="Cours ou Pratique">
-      <button class="navt${isPrat?'':' on'}" role="tab" aria-selected="${!isPrat}" onclick="setDetailTab('chapitres')">Cours</button>
-      <button class="navt${isPrat?' on':''}" role="tab" aria-selected="${isPrat}" onclick="setDetailTab('pratique')">Pratique</button>
-    </div>
     <div class="chartbox">
       <h3>Évolution</h3>
       <div id="chart">${avgChartSVG(list)}</div>
@@ -1796,15 +1758,13 @@ function chapCard(ci,c,pos){
 }
 
 // ---------- Navigation ----------
-function open_(i){ current=i; detailTab='chapitres'; render(); window.scrollTo({top:0,behavior:'smooth'}); }
-function setDetailTab(k){ if(detailTab===k) return; detailTab=k; render(); }
+function open_(i){ current=i; render(); window.scrollTo({top:0,behavior:'smooth'}); }
 function goHome(){ current=null; render(); window.scrollTo({top:0}); }
 
 // ---------- Actions ----------
-// Enregistre la valeur du jour dans le champ hf ('hist' ou 'histP') — un seul point par jour, écrasé si on rebouge le même jour.
-function recordToday(c,v,hf){
-  hf=hf||'hist';
-  const h=c[hf]||(c[hf]=[]);
+// Enregistre la valeur du jour dans hist — un seul point par jour, écrasé si on rebouge le même jour.
+function recordToday(c,v){
+  const h=c.hist||(c.hist=[]);
   const key=dateKey(Date.now());          // jour LOCAL (même base que sessions/agenda)
   if(h.length && h[h.length-1].t.slice(0,10)===key) h[h.length-1].p=v;
   else h.push({t:key+'T12:00:00.000Z',p:v});
@@ -1814,7 +1774,7 @@ function recordToday(c,v,hf){
 function redrawCharts(ci){
   const c=data.matieres[current].chapitres[ci];
   const mc=document.getElementById('mc-'+ci);
-  if(mc) mc.innerHTML=lineChart(c[hField()], couleur(c[pField()]), {w:480,h:165,labels:true});
+  if(mc) mc.innerHTML=lineChart(c.hist, couleur(c.pct), {w:480,h:165,labels:true});
   renderChartAvg();
 }
 // Pendant le glissement (oninput) : patch DOM en place (pas de re-render qui casserait le
@@ -1822,14 +1782,14 @@ function redrawCharts(ci){
 function setPct(ci,v){
   v=+v;
   const c=data.matieres[current].chapitres[ci];
-  c[pField()]=v;
+  c.pct=v;
   const col=couleur(v);
   const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
   if(card){
     const p=card.querySelector('.cpct'); p.textContent=v+'%'; p.style.color=col;
     const bar=card.querySelector('.bar>span'); bar.style.width=v+'%'; bar.style.background=col;
   }
-  recordToday(c,v,hField());
+  recordToday(c,v);
   redrawCharts(ci);
   refreshBadge(); save();
 }
@@ -1837,8 +1797,8 @@ function setPct(ci,v){
 function commitPct(ci,v){
   v=+v;
   const c=data.matieres[current].chapitres[ci];
-  c[pField()]=v;
-  recordToday(c,v,hField());
+  c.pct=v;
+  recordToday(c,v);
   redrawCharts(ci);
   const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
   if(card) card.classList.toggle('done', v>=100);
@@ -1934,17 +1894,15 @@ function avgChartSVG(list){
   if(!list.length) return '<p class="chartempty">Ajoute un chapitre pour suivre ta progression.</p>';
   return lineChart(avgSeries(list), getCSS('--primary'), {w:600,h:210,labels:true});
 }
-function renderChartAvg(){ const el=document.getElementById('chart'); if(el) el.innerHTML=avgChartSVG(curListView()); }
+function renderChartAvg(){ const el=document.getElementById('chart'); if(el) el.innerHTML=avgChartSVG(data.matieres[current].chapitres); }
 function refreshBadge(){
   const m=data.matieres[current];
   const badge=document.querySelector('#detail .badge');
   if(badge){ const moy=moyenne(m.chapitres); badge.textContent=moy+'%'; badge.style.background=couleur(moy); }
 }
-// Un chapitre est PARTAGÉ entre Cours et Pratique : ajouté une seule fois (peu importe l'onglet où
-// on l'ajoute), il apparaît aussitôt dans les deux vues, chacune avec sa propre note à 0%.
 function addChapitre(nom){ nom=nom.trim(); if(!nom)return;
   const t=dateKey(Date.now())+'T12:00:00.000Z';
-  data.matieres[current].chapitres.push({nom,pct:0,hist:[{t,p:0}],pctP:0,histP:[{t,p:0}]}); render(); }
+  data.matieres[current].chapitres.push({nom,pct:0,hist:[{t,p:0}]}); render(); }
 async function renameChap(ci){ const c=data.matieres[current].chapitres[ci]; const n=await uiPrompt(c.nom,{title:'Renommer le chapitre'}); if(n&&n.trim()){ c.nom=n.trim(); render(); } }
 async function renameMat(){ const m=data.matieres[current]; const n=await uiPrompt(m.nom,{title:'Renommer la matière'}); if(n&&n.trim()){ m.nom=n.trim(); render(); } }
 // Affiche/cache le graphe d'un chapitre (caché par défaut, à la demande)
@@ -1954,7 +1912,7 @@ function toggleChap(ci){
   const b=document.querySelector(`#detail .chap[data-ci="${ci}"] .seegraph`);
   if(b){ b.classList.toggle('on',open); const s=b.querySelector('span'); if(s) s.textContent = open ? 'Masquer' : 'Graphe'; }
 }
-async function delChapitre(ci){ const list=data.matieres[current].chapitres;   // supprime le chapitre entier : Cours ET Pratique (même chapitre, même identité)
+async function delChapitre(ci){ const list=data.matieres[current].chapitres;
   if(await uiConfirm("Supprimer « "+list[ci].nom+" » ?",{title:'Supprimer le chapitre',ok:'Supprimer',danger:true})){ list.splice(ci,1); render(); } }
 async function addMatiere(){
   const used=new Set(data.matieres.map(m=>m.color).filter(Boolean));
@@ -1987,7 +1945,10 @@ function matById(id){ return data.matieres.find(m=>m.id===id); }
 // du bruit de fond pendant une session — plus rien à maintenir côté app.
 
 // ---------- Méditation (« Respire » avant une session) ----------
-let brTotal=300, brLeft=300, brTick=null, brPhaseTick=null, brArmed=null;
+// Pas de guide visuel de rythme (cercle qui pulse, Inspire/Expire) : chacun respire à son
+// rythme, les yeux fermés — un indicateur à regarder n'a pas de sens dans ce cas.
+const READY_PHRASE = "Esprit clair. Prêt·e à travailler.";
+let brTotal=300, brLeft=300, brTick=null, brDoneTick=null, brArmed=null;
 function brClock(s){ const m=Math.floor(s/60), x=s%60; return m+':'+String(x).padStart(2,'0'); }
 function breatheHTML(){
   const mins=Math.round(brTotal/60);
@@ -1995,35 +1956,56 @@ function breatheHTML(){
   const chain = (brArmed&&matById(brArmed)) ? `<p class="brchain">À la fin, ta session « ${escapeH(matById(brArmed).nom)} » démarre toute seule.</p>` : '';
   return `<div class="brwrap">
     <button class="brquit" onclick="endBreathe(false)" title="Quitter" aria-label="Quitter">${ic('x',22)}</button>
-    <p class="brhint">Pose-toi. Respire profondément, ne pense à rien.</p>
-    <div class="brcircle"></div>
-    <div class="brphase" id="brPhase">Inspire</div>
+    <p class="brhint">Ferme les yeux. Respire à ton rythme jusqu'à la fin du chrono.</p>
     <div class="brtime" id="brTime">${brClock(brLeft)}</div>
     <div class="brdurs">${durs}</div>
     ${chain}
     <button class="bigbtn bigwork brstart" onclick="endBreathe(true)"><span>${(brArmed&&matById(brArmed))?'Lancer ma session':'Terminer'}</span></button>
   </div>`;
 }
-function setBreathePhase(p){ const el=document.getElementById('brPhase'); if(el) el.textContent = p?'Expire':'Inspire'; }
+function breatheDoneHTML(){
+  return `<div class="brwrap">
+    <button class="brquit" onclick="cancelBreatheDone()" title="Quitter" aria-label="Quitter">${ic('x',22)}</button>
+    <span class="brdone">${ic('bell',36)}</span>
+    <p class="brready">${escapeH(READY_PHRASE)}</p>
+  </div>`;
+}
 function updateBreathe(){ const el=document.getElementById('brTime'); if(el) el.textContent=brClock(Math.max(0,brLeft)); }
 function setBreatheDur(mins){ brTotal=mins*60; brLeft=brTotal; document.querySelectorAll('#breathe .brdur').forEach(b=>b.classList.toggle('on', +b.dataset.m===mins)); updateBreathe(); }
 function openBreathe(mins){
   brArmed = armed;                       // si une matière est armée, on enchaîne la session à la fin
   brTotal=(mins||5)*60; brLeft=brTotal;
   const ov=document.getElementById('breathe'); ov.classList.remove('hidden'); ov.innerHTML=breatheHTML();
-  let phase=0; setBreathePhase(0);
   if(brTick) clearInterval(brTick);
-  brTick=setInterval(()=>{ brLeft--; updateBreathe(); if(brLeft<=0) endBreathe(true); },1000);
-  if(brPhaseTick) clearInterval(brPhaseTick);
-  brPhaseTick=setInterval(()=>{ phase^=1; setBreathePhase(phase); },4000);   // calé sur l'animation 8 s (4 s inspire / 4 s expire)
+  brTick=setInterval(()=>{ brLeft--; updateBreathe(); if(brLeft<=0){ clearInterval(brTick); brTick=null; finishBreathe(); } },1000);
 }
+// Chrono à zéro : cloche + phrase, avant de continuer (session enchaînée ou simple sortie).
+function finishBreathe(){
+  playBell();
+  const el=document.getElementById('breathe'); if(el) el.innerHTML=breatheDoneHTML();
+  brDoneTick=setTimeout(()=>{ brDoneTick=null; endBreathe(true); },1600);
+}
+function cancelBreatheDone(){ if(brDoneTick){ clearTimeout(brDoneTick); brDoneTick=null; } endBreathe(false); }
 function endBreathe(launch){
   if(brTick){ clearInterval(brTick); brTick=null; }
-  if(brPhaseTick){ clearInterval(brPhaseTick); brPhaseTick=null; }
+  if(brDoneTick){ clearTimeout(brDoneTick); brDoneTick=null; }
   document.getElementById('breathe').classList.add('hidden');
   if(launch && brArmed && matById(brArmed)){ armed=brArmed; startSession(); }
   else render();
   brArmed=null;
+}
+// Petit carillon synthétisé (Web Audio, aucun fichier) — joué quand le chrono de méditation se termine.
+function playBell(){
+  try{
+    const Ctx = window.AudioContext||window.webkitAudioContext; if(!Ctx) return;
+    const ctx=new Ctx(), now=ctx.currentTime;
+    [[880,0.5,1.8],[880*2.76,0.18,1.1],[880*4.1,0.09,0.7]].forEach(([freq,gain,dec])=>{
+      const osc=ctx.createOscillator(); osc.type='sine'; osc.frequency.value=freq;
+      const g=ctx.createGain(); g.gain.setValueAtTime(gain,now); g.gain.exponentialRampToValueAtTime(0.001,now+dec);
+      osc.connect(g); g.connect(ctx.destination); osc.start(now); osc.stop(now+dec+0.05);
+    });
+    setTimeout(()=>ctx.close(),2200);
+  }catch(e){}
 }
 
 // ---- Cycle de vie d'une session (mesurée par horodatage début/fin) ----
@@ -2033,10 +2015,11 @@ function startSession(){
   data.active={mat:armed, start:new Date().toISOString()};
   armed=null; save(); render();   // render() affiche le mode focus plein écran
 }
+const MIN_SESSION_MS = 10*60000;   // < 10 min = pas assez significatif pour être noté, on ignore
 function stopSession(){
   if(data.active){
     const s=data.active, end=new Date().toISOString();
-    if(Date.parse(end)-Date.parse(s.start) >= 5000)   // < 5 s = tap accidentel, on ignore
+    if(Date.parse(end)-Date.parse(s.start) >= MIN_SESSION_MS)
       data.sessions.push({mat:s.mat, start:s.start, end});
     data.active=null;
   }
@@ -2430,7 +2413,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
 })();
 
 let savedTheme = localStorage.getItem(THEME_KEY);
-if(savedTheme!=='auto' && !THEMES[savedTheme]) savedTheme='slate';   // 'auto' est valide ; migration des anciens thèmes (bleu/bleuvert…) → clair
+if(!THEMES[savedTheme]) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…, ou l'ancien « auto ») → clair
 applyTheme(savedTheme);
 recoverStaleSession();
 // Retour du lien "mot de passe oublié" : Supabase redirige ici avec #access_token=…&type=recovery.
