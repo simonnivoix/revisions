@@ -282,6 +282,13 @@
   .note .nclose{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;display:inline-flex;
                 padding:4px;border-radius:8px;flex-shrink:0}
   .note .nclose:hover{color:var(--ink)}
+  .undotoast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom));
+             z-index:45;background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 12px 12px 16px;
+             display:flex;align-items:center;gap:14px;font-size:13.5px;box-shadow:0 4px 16px rgba(0,0,0,.22);
+             max-width:calc(100vw - 32px);animation:rise .2s ease backwards}
+  .undotoast button{background:none;border:none;color:var(--bg);font-weight:700;font-family:inherit;font-size:13.5px;
+                    cursor:pointer;padding:6px 10px;border-radius:8px;flex-shrink:0;min-height:44px}
+  .undotoast button:hover{background:rgba(128,128,128,.25)}
   .rvol{display:flex;align-items:center;gap:11px;margin:0 0 18px;color:var(--muted)}
   /* Graphe façon « temps d'écran » */
   .seg{display:inline-flex;background:var(--bg2);border-radius:10px;padding:3px;gap:2px;margin-bottom:14px}
@@ -691,7 +698,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260905-173656';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260905-181839';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1023,6 +1030,10 @@ async function pullFromCloud(){
   return (j && j[0]) ? j[0] : null;
 }
 // Réconciliation au login (une fois par appareil/session) : voir CLAUDE.md pour la règle "dernier écrit gagne".
+// Mesure grossière de la "richesse" d'un jeu de données, pour repérer un remplacement qui ferait perdre du contenu.
+function richness(d){ return (d.matieres||[]).length
+  + (d.matieres||[]).reduce((s,m)=>s+(m.chapitres||[]).length,0)
+  + (d.sessions||[]).length + (d.todos||[]).length; }
 async function reconcileOnLogin(){
   if(!supaConfigured() || !authSession) return;
   try{
@@ -1039,7 +1050,17 @@ async function reconcileOnLogin(){
     } else if((!meta.lastLocalChangeAt || cloud.updated_at > meta.lastLocalChangeAt) && !data.active){
       // !data.active : on ne remplace jamais les données pendant une session en cours sur CET appareil
       // (sinon le focus plein écran se ferme et la session en cours disparaît sans être enregistrée).
-      data = backfillDaily(prepare(cloud.data && Object.keys(cloud.data).length ? cloud.data : clone(DEFAULT)));
+      const incoming = cloud.data && Object.keys(cloud.data).length ? cloud.data : clone(DEFAULT);
+      // Garde-fou : si cet appareil a des données qui ont l'air plus riches que ce qui va les remplacer
+      // (nouvel appareil jamais synchronisé, ou incohérence quelconque), on demande avant d'écraser
+      // plutôt que de remplacer en silence (voir CLAUDE.md, incident du 05/09).
+      if(hasLocalContent && richness(data) > richness(incoming)){
+        const ok=await uiConfirm(
+          `Les données de cet appareil semblent plus complètes que celles de ton compte (${richness(data)} éléments ici, ${richness(incoming)} dans le compte). Remplacer quand même par la version du compte ?`,
+          {title:'Données différentes', ok:'Remplacer', danger:true});
+        if(!ok){ authState='online'; return; }   // on garde les données de cet appareil ; reconcileOnLogin() redemandera au prochain boot
+      }
+      data = backfillDaily(prepare(incoming));
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}   // écrit direct : évite de re-pousser ce qu'on vient de tirer
       current=null;   // la vue détail pouvait pointer sur un index qui n'existe plus dans la copie cloud
       meta.migrated=true; meta.lastLocalChangeAt=cloud.updated_at; saveSyncMeta(meta);
@@ -1912,8 +1933,24 @@ function toggleChap(ci){
   const b=document.querySelector(`#detail .chap[data-ci="${ci}"] .seegraph`);
   if(b){ b.classList.toggle('on',open); const s=b.querySelector('span'); if(s) s.textContent = open ? 'Masquer' : 'Graphe'; }
 }
+// ---- Annuler une suppression (fenêtre de quelques secondes, toast en bas) ----
+let pendingUndo=null;   // {timer, restore}
+function clearPendingUndo(){ if(pendingUndo){ clearTimeout(pendingUndo.timer); pendingUndo=null; }
+  const t=document.getElementById('undotoast'); if(t) t.remove(); }
+function showUndo(label, restore){
+  clearPendingUndo();
+  const el=document.createElement('div'); el.id='undotoast'; el.className='undotoast';
+  el.innerHTML=`<span>${escapeH(label)}</span><button onclick="undoDelete()">Annuler</button>`;
+  document.body.appendChild(el);
+  pendingUndo={restore, timer:setTimeout(clearPendingUndo, 6000)};
+}
+function undoDelete(){ if(!pendingUndo) return; const {restore}=pendingUndo; clearPendingUndo(); restore(); }
+
 async function delChapitre(ci){ const list=data.matieres[current].chapitres;
-  if(await uiConfirm("Supprimer « "+list[ci].nom+" » ?",{title:'Supprimer le chapitre',ok:'Supprimer',danger:true})){ list.splice(ci,1); render(); } }
+  if(await uiConfirm("Supprimer « "+list[ci].nom+" » ?",{title:'Supprimer le chapitre',ok:'Supprimer',danger:true})){
+    const [removed]=list.splice(ci,1); render();
+    showUndo("Chapitre « "+removed.nom+" » supprimé", ()=>{ list.splice(ci,0,removed); render(); });
+  } }
 async function addMatiere(){
   const used=new Set(data.matieres.map(m=>m.color).filter(Boolean));
   newMatColor = MAT_PALETTE.find(c=>!used.has(c)) || MAT_PALETTE[0];   // pré-sélection : 1re couleur libre
@@ -1922,10 +1959,20 @@ async function addMatiere(){
     data.matieres.push({nom:r.nom.trim(),chapitres:[],id:genId(data.matieres.length),color:r.color||pickColor(used)}); render(); } }
 async function delMatiere(i){ const m=data.matieres[i];
   if(await uiConfirm("Supprimer « "+m.nom+" » et tous ses chapitres ?",{title:'Supprimer la matière',ok:'Supprimer',danger:true})){
+  const removedSessions=(data.sessions||[]).filter(s=>s.mat===m.id);
   data.sessions=(data.sessions||[]).filter(s=>s.mat!==m.id);            // purge les sessions orphelines
-  if(data.active && data.active.mat===m.id){ data.active=null; }
-  data.matieres.splice(i,1); current=null; render(); } }
-async function resetData(){ if(await uiConfirm("Tout effacer et repartir de zéro ? Tes changements seront perdus.",{title:'Réinitialiser',ok:'Tout effacer',danger:true})){ data=prepare(clone(DEFAULT)); current=null; render(); } }
+  const wasActive = (data.active && data.active.mat===m.id) ? data.active : null;
+  if(wasActive){ data.active=null; }
+  data.matieres.splice(i,1); current=null; render();
+  showUndo("Matière « "+m.nom+" » supprimée", ()=>{
+    data.matieres.splice(i,0,m);
+    if(removedSessions.length) data.sessions=(data.sessions||[]).concat(removedSessions);
+    if(wasActive) data.active=wasActive;
+    render();
+  }); } }
+async function resetData(){ if(await uiConfirm("Tout effacer et repartir de zéro ? Tes changements seront perdus.",{title:'Réinitialiser',ok:'Tout effacer',danger:true})){
+  const prev=data; data=prepare(clone(DEFAULT)); current=null; render();
+  showUndo("Toutes les données ont été effacées", ()=>{ data=prev; render(); }); } }
 
 function exportData(){ const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='revisions-sauvegarde.json'; a.click(); }
