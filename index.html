@@ -698,7 +698,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260906-113326';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260906-212242';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -2458,6 +2458,15 @@ document.querySelectorAll('#tabbar .tab').forEach(b=>{
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
   const cp=document.getElementById('cpick'); if(cp && !cp.classList.contains('hidden')){ closeCPick(); return; }
   const md=document.getElementById('modal'); if(md && !md.classList.contains('hidden')) closeModal(null); } });
+// Synchro entre onglets/fenêtres de la même origine (même localStorage) : sans ceci, un onglet
+// resté ouvert avec une copie périmée de `data` en mémoire écrase silencieusement le localStorage
+// avec ses vieilles données au premier save() qu'il déclenche — perte de données réelle, sans
+// jamais passer par le cloud ni afficher le moindre message (incident du 06/09, 3 fenêtres ouvertes
+// avec le même compte : un onglet périmé a écrasé les données fraîches d'un autre onglet).
+window.addEventListener('storage', e=>{
+  if(e.key!==STORE_KEY || e.newValue==null || data.active) return;   // session en cours sur CET onglet : ne rien toucher
+  try{ data = backfillDaily(prepare(JSON.parse(e.newValue))); current=null; render(); }catch(err){}
+});
 // Interactions du sélecteur de couleur maison (carré S/V + teinte + hex), câblées une fois.
 (function(){ const sv=document.getElementById('cpSV'); if(!sv) return; let drag=false;
   const pick=e=>{ const r=sv.getBoundingClientRect();
@@ -2515,6 +2524,7 @@ catch(e){
         const m=t.match(/const VERSION = '([^']+)'/);
         if(m && m[1] && m[1]!==VERSION && sessionStorage.getItem('vseen')!==m[1]){
           const ag=document.getElementById('authgate'); if(ag && !ag.classList.contains('hidden')) return;   // pas d'interruption pendant une saisie
+          if(data.active) return;   // pas d'interruption pendant une session de travail en cours — on retentera au prochain chargement
           sessionStorage.setItem('vseen', m[1]);   // garde-fou anti-boucle
           location.replace(location.pathname+'?v='+encodeURIComponent(m[1]));
         }
