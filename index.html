@@ -698,7 +698,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260906-112640';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260906-113326';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -933,6 +933,7 @@ function applySession(s){
 // Confirmation d'email ACTIVÉE côté Supabase : l'inscription ne renvoie pas de session tant que
 // le lien reçu par mail n'a pas été cliqué. Renvoie 'confirmed' (session ouverte) ou 'pending' (mail envoyé).
 async function signup(email,password){
+  if(!supaConfigured()) throw new Error("Comptes indisponibles ici.");
   const r=await fetch(SUPA_REST+'/auth/v1/signup', {method:'POST',
     headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({email,password})});
   const j=await r.json().catch(()=>({}));
@@ -941,6 +942,7 @@ async function signup(email,password){
   return 'pending';
 }
 async function login(email,password){
+  if(!supaConfigured()) throw new Error("Comptes indisponibles ici.");
   const r=await fetch(SUPA_REST+'/auth/v1/token?grant_type=password', {method:'POST',
     headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({email,password})});
   const j=await r.json().catch(()=>({}));
@@ -956,12 +958,14 @@ function translateAuthErr(msg){
 }
 // Mot de passe oublié : demande un email de récupération (GoTrue renvoie 200 même si l'email n'existe pas, pour ne pas révéler les comptes).
 async function requestReset(email){
+  if(!supaConfigured()) throw new Error("Comptes indisponibles ici.");
   const r=await fetch(SUPA_REST+'/auth/v1/recover', {method:'POST',
     headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({email})});
   if(!r.ok){ const j=await r.json().catch(()=>({})); throw new Error(j.error_description || j.msg || "Envoi impossible"); }
 }
 // Applique le nouveau mot de passe avec le token temporaire du lien reçu par mail, puis ouvre une vraie session.
 async function updatePassword(newPw){
+  if(!supaConfigured()) throw new Error("Comptes indisponibles ici.");
   if(!recoverySession) throw new Error('Lien invalide ou expiré, redemande un email.');
   const r=await fetch(SUPA_REST+'/auth/v1/user', {method:'PUT',
     headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json',Authorization:'Bearer '+recoverySession.access_token},
@@ -979,7 +983,7 @@ function parseRecoveryHash(){
   return {access_token:p.get('access_token'), refresh_token:p.get('refresh_token'), expires_in:+(p.get('expires_in')||3600)};
 }
 async function refreshSession(){
-  if(!authSession || !authSession.refresh_token) return;
+  if(!supaConfigured() || !authSession || !authSession.refresh_token) return;
   try{
     const r=await fetch(SUPA_REST+'/auth/v1/token?grant_type=refresh_token', {method:'POST',
       headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({refresh_token:authSession.refresh_token})});
