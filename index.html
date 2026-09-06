@@ -157,7 +157,7 @@
   .cname,.dhead h2{cursor:text}
 
   .add-row{display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px dashed var(--line);
-           border-radius:12px;padding:0 14px;margin-bottom:14px;color:var(--muted);transition:.15s}
+           border-radius:12px;padding:0 6px 0 14px;margin-bottom:14px;color:var(--muted);transition:.15s}
   .add-row:focus-within{border-color:var(--primary);color:var(--primary)}
   .addchap{flex:1;background:none;border:none;padding:15px 0;font-size:16px;color:var(--ink);font-family:inherit}
   .addchap::placeholder{color:var(--muted)}
@@ -698,7 +698,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260905-181839';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260906-112640';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1751,8 +1751,8 @@ function renderDetail(){
       <h3>Évolution</h3>
       <div id="chart">${avgChartSVG(list)}</div>
     </div>
-    <div class="add-row">${ic('plus',18)}<input class="addchap" type="text" placeholder="Ajouter un chapitre"
-           onkeydown="if(event.key==='Enter'){addChapitre(this.value);this.value=''}"></div>
+    <div class="add-row"><input id="addChapInput" class="addchap" type="text" placeholder="Ajouter un chapitre" enterkeyhint="done"
+           onkeydown="if(event.key==='Enter'){addChapitre(this.value);this.value=''}"><button type="button" class="addbtn" aria-label="Ajouter le chapitre" onclick="submitAddChapitre()">${ic('plus',18)}</button></div>
     ${list.length ? order.map(({c,ci},pos)=>chapCard(ci,c,pos)).join('')
       : '<p class="chartempty">Ajoute un chapitre pour suivre ta progression.</p>'}
   `;
@@ -1921,6 +1921,7 @@ function refreshBadge(){
   const badge=document.querySelector('#detail .badge');
   if(badge){ const moy=moyenne(m.chapitres); badge.textContent=moy+'%'; badge.style.background=couleur(moy); }
 }
+function submitAddChapitre(){ const i=document.getElementById('addChapInput'); if(!i) return; addChapitre(i.value); i.value=''; i.focus(); }
 function addChapitre(nom){ nom=nom.trim(); if(!nom)return;
   const t=dateKey(Date.now())+'T12:00:00.000Z';
   data.matieres[current].chapitres.push({nom,pct:0,hist:[{t,p:0}]}); render(); }
@@ -2326,7 +2327,7 @@ function drillDay(i){
 // ---- Sélecteur de couleur maison (offline, ancré au clic) ----
 // Panneau interne = carré saturation/valeur + curseur de teinte + hex. Aucun panneau OS
 // (le natif ne s'ouvre pas de façon fiable dans Safari et se plaçait dans un coin).
-let cpH=0, cpS=0, cpV=0, cpOnPick=null;   // teinte 0-360, sat/val 0-1
+let cpH=0, cpS=0, cpV=0, cpOnPick=null, cpOnLive=null;   // teinte 0-360, sat/val 0-1
 function hexToHsv(hex){ if(!/^#?[0-9a-f]{6}$/i.test(hex||'')) return null; hex=hex.replace('#','');
   const r=parseInt(hex.slice(0,2),16)/255, g=parseInt(hex.slice(2,4),16)/255, b=parseInt(hex.slice(4,6),16)/255;
   const mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn; let h=0;
@@ -2336,9 +2337,12 @@ function hsvToHex(h,s,v){ const c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c; let 
   if(h<60){r=c;g=x;b=0;} else if(h<120){r=x;g=c;b=0;} else if(h<180){r=0;g=c;b=x;}
   else if(h<240){r=0;g=x;b=c;} else if(h<300){r=x;g=0;b=c;} else {r=c;g=0;b=x;}
   const to=n=>Math.round((n+m)*255).toString(16).padStart(2,'0'); return '#'+to(r)+to(g)+to(b); }
-// Ouvre le sélecteur près de `anchor`, initialisé sur `currentHex` ; `onPick(hex)` à la fermeture.
-function openPicker(anchor, currentHex, onPick){
-  cpOnPick=onPick; const hsv=hexToHsv(currentHex)||{h:210,s:.55,v:.9}; cpH=hsv.h; cpS=hsv.s; cpV=hsv.v;
+// Ouvre le sélecteur près de `anchor`, initialisé sur `currentHex` ; `onPick(hex)` à la fermeture,
+// `onLive(hex)` (optionnel) à chaque mouvement — pour un aperçu en direct sans coût de save()/render().
+function openPicker(anchor, currentHex, onPick, onLive){
+  cpOnPick=onPick; cpOnLive=null;   // onLive branché après le positionnement (voir plus bas) : sinon un aperçu en direct
+                                    // qui reconstruit l'ancre (cas "nouvelle matière") la détache avant qu'on lise sa position.
+  const hsv=hexToHsv(currentHex)||{h:210,s:.55,v:.9}; cpH=hsv.h; cpS=hsv.s; cpV=hsv.v;
   document.getElementById('cpHue').value=Math.round(cpH);
   document.getElementById('cpick').classList.remove('hidden');
   cpickRender();
@@ -2349,6 +2353,7 @@ function openPicker(anchor, currentHex, onPick){
   left=Math.max(8, Math.min(left, innerWidth  - panel.offsetWidth  - 8));
   top =Math.max(8, Math.min(top,  innerHeight - panel.offsetHeight - 8));
   panel.style.left=left+'px'; panel.style.top=top+'px';
+  cpOnLive=onLive||null;   // n'active l'aperçu en direct qu'une fois le panneau positionné
 }
 function cpickRender(){
   const hex=hsvToHex(cpH,cpS,cpV);
@@ -2358,12 +2363,15 @@ function cpickRender(){
   th.style.background=hex;
   document.getElementById('cpPrev').style.background=hex;
   const hx=document.getElementById('cpHex'); if(document.activeElement!==hx) hx.value=hex.toUpperCase();
+  if(cpOnLive) cpOnLive(hex);
 }
 function closeCPick(){ const ov=document.getElementById('cpick'); if(!ov||ov.classList.contains('hidden')) return;
   ov.classList.add('hidden'); const cb=cpOnPick; cpOnPick=null; if(cb) cb(hsvToHex(cpH,cpS,cpV)); }
 // Compat : les appelants existants (.dotbtn, .legdot) passent une matière → applique + re-render.
 function openColorPick(id, anchor){ const m=matById(id); if(!m) return;
-  openPicker(anchor, m.color, hex=>{ const mm=matById(id); if(mm){ mm.color=hex; save(); render(); } }); }
+  openPicker(anchor, m.color,
+    hex=>{ const mm=matById(id); if(mm){ mm.color=hex; save(); render(); } },
+    hex=>{ const dot=anchor.querySelector('.mdot'); if(dot) dot.style.background=hex; else anchor.style.background=hex; }); }
 
 // ---- Modale maison : remplace prompt()/confirm() natifs (rendu cohérent avec l'app) ----
 let modalResolve=null;
@@ -2413,7 +2421,7 @@ let newMatColor=null;
 // Une seule pastille = la couleur choisie ; taper ouvre le sélecteur maison (pas de presets).
 function nmColorHTML(){ const v=newMatColor||'#888888';
   return `<button type="button" class="nmcolor" title="Choisir la couleur" aria-label="Choisir la couleur" style="background:${v}"
-    onclick="openPicker(this, newMatColor||'#888888', function(hex){ pickNewMatColor(hex); })"></button>`; }
+    onclick="openPicker(this, newMatColor||'#888888', pickNewMatColor, pickNewMatColor)"></button>`; }
 function pickNewMatColor(c){ newMatColor=c; const box=document.getElementById('nmSwatches'); if(box) box.innerHTML=nmColorHTML(); }
 function promptNewMatiere(){
   return new Promise(res=>{ modalResolve=res;
