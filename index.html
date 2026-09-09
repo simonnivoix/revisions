@@ -368,6 +368,12 @@
 
   /* ---------- Barre du haut : stats persistantes + CTA (façon tableau de bord) ---------- */
   /* Collée en haut (sticky) : reste visible sur toutes les pages quand on descend. */
+  .reevalbanner{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+                min-height:44px;box-sizing:border-box;
+                background:var(--rouge);color:#fff;font-weight:700;font-size:14.5px;
+                border:none;cursor:pointer;font-family:inherit;padding:13px 16px;
+                position:sticky;top:0;z-index:41;text-align:center}
+  .reevalbanner:hover{filter:brightness(1.08)}
   .topbar{position:sticky;top:0;z-index:30;background:var(--bg);
           display:flex;align-items:center;gap:34px;margin-bottom:26px;
           padding:30px 0 20px;border-bottom:1px solid var(--line)}
@@ -403,7 +409,13 @@
        display:flex;flex-direction:row;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;
        text-align:left;transition:color .15s,background .15s}
   .tab .tabic{display:inline-flex}
+  .tab .tabicwrap{position:relative;display:inline-flex}
   .tab .tablbl{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+  .tabbadge{position:absolute;top:-7px;right:-13px;min-width:22px;height:19px;padding:0 5px;
+            border-radius:999px;background:var(--rouge);color:#fff;font-size:11px;font-weight:800;
+            display:flex;align-items:center;justify-content:center;line-height:1;
+            border:2px solid var(--card)}
+  .tab.reevaldue .tablbl{color:var(--rouge)}
   .tab:hover{background:var(--bg2);color:var(--ink)}
   .tab:active{transform:scale(.98)}
   .tab.on{color:var(--primary);background:var(--ring)}
@@ -635,6 +647,9 @@
 </head>
 <body>
 <div class="wrap">
+  <!-- RAPPEL « À RÉÉVALUER » : bannière globale, visible sur TOUTES les pages (pas juste Accueil) -->
+  <button id="reevalBanner" class="reevalbanner hidden" onclick="goReeval()" aria-label="Rappel de réévaluation"></button>
+
   <!-- BARRE DU HAUT : stats persistantes + CTA (desktop uniquement) -->
   <div class="topbar" id="topbar">
     <div class="tbstat"><span class="k">Série actuelle</span><span class="v" id="tbStreak">—</span></div>
@@ -664,7 +679,7 @@
 <!-- NAVIGATION : sidebar à gauche (desktop) / barre en bas (mobile) -->
 <nav class="tabbar" id="tabbar">
   <div class="sbbrand"><span class="logo" id="sbLogo"></span><span>Mes révisions</span></div>
-  <button class="tab" data-p="accueil" onclick="goPage('accueil')"><span class="tabic"></span><span class="tablbl">Accueil</span></button>
+  <button class="tab" data-p="accueil" onclick="goPage('accueil')"><span class="tabicwrap"><span class="tabic"></span><span class="tabbadge hidden" id="tabBadgeAccueil"></span></span><span class="tablbl">Accueil</span></button>
   <button class="tab" data-p="matieres" onclick="goPage('matieres')"><span class="tabic"></span><span class="tablbl">Matières</span></button>
   <button class="tab" data-p="session" onclick="goPage('session')"><span class="tabic"></span><span class="tablbl">Travail</span></button>
   <button class="tab" data-p="stats" onclick="goPage('stats')"><span class="tabic"></span><span class="tablbl">Stats</span></button>
@@ -698,7 +713,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260906-212242';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260909-114737';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1244,7 +1259,38 @@ function render(){
   renderFocus();   // mode focus plein écran si une session est active (couvre la barre d'onglets)
   updateTopbar();
   updateSbFoot();
+  updateTabBadge();
+  updateReevalBanner();
   save();
+}
+// Pastille rouge sur l'onglet Accueil : rappel « à réévaluer » dû, visible depuis n'importe quel onglet.
+function updateTabBadge(){
+  const b=document.getElementById('tabBadgeAccueil'); if(!b) return;
+  const due=reevalDue();
+  b.classList.toggle('hidden', !due);
+  if(due) b.textContent = REEVAL_DAYS+'j';
+  const tab=document.querySelector('#tabbar .tab[data-p="accueil"]');
+  if(tab) tab.classList.toggle('reevaldue', due);
+}
+// Bannière globale « À réévaluer », visible sur toutes les pages (pas juste Accueil).
+function updateReevalBanner(){
+  const b=document.getElementById('reevalBanner'); if(!b) return;
+  const due=reevalDue();
+  b.classList.toggle('hidden', !due);
+  if(due) b.innerHTML = `${ic('reset',17)}<span>Ça fait ${REEVAL_DAYS} jours — pense à repasser réévaluer tes chapitres</span>`;
+}
+// Popup au tout premier chargement du jour où le rappel est dû (pas à chaque render, une seule
+// fois par jour — sinon ça interromprait sans arrêt). « Plus tard » n'efface rien : bannière et
+// pastille restent affichées, seul « J'y vais » relance le cycle de REEVAL_DAYS jours.
+const REEVAL_POPUP_KEY = "suivi-revisions-bac-reevalpopup";
+async function maybeShowReevalPopup(){
+  if(!reevalDue()) return;
+  const today=dateKey(Date.now());
+  // localStorage protégé (quota/navigation privée) : au pire on redemande le lendemain, jamais de crash.
+  try{ if(localStorage.getItem(REEVAL_POPUP_KEY)===today) return;
+    localStorage.setItem(REEVAL_POPUP_KEY, today); }catch(e){}
+  const go=await uiConfirm('Pense à repasser réévaluer tes chapitres.', {title:`Ça fait ${REEVAL_DAYS} jours`, ok:"J'y vais", danger:false});
+  if(go) goReeval();
 }
 // Pied de sidebar : reflète l'état du compte (pas de compte / synchronisé / hors ligne).
 function updateSbFoot(){
@@ -1308,48 +1354,46 @@ function aBosser(){
   });
   return out.slice(0,4);
 }
-// « À réévaluer » : chapitres dont la note Cours n'a pas été retouchée depuis REEVAL_DAYS jours
-// (auto-évaluation périodique demandée par Eric — un chapitre à 90% jamais reconfirmé reste affiché,
-// contrairement à aBosser() qui ne regarde que les chapitres faibles).
+// « À réévaluer » : simple rappel périodique tous les REEVAL_DAYS jours (« pense à repasser
+// réévaluer tes chapitres »), pas un suivi par chapitre — demandé volontairement simple par Eric,
+// une logique par chapitre (touché/pas touché) a été essayée puis jugée trop compliquée.
 const REEVAL_DAYS = 4;
-function staleChapitres(){
-  const DAY=86400000, today=localDay(Date.now());
-  const out=[];
-  data.matieres.forEach((m,mi)=>m.chapitres.forEach((c,ci)=>{
-    const h=c.hist||[]; if(!h.length) return;
-    const last=localDay(new Date(h[h.length-1].t).getTime());
-    const days=Math.round((today-last)/DAY);
-    if(days>=REEVAL_DAYS) out.push({mi, ci, color:m.color, txt:c.nom, sub:m.nom, pct:+c.pct||0, days});
-  }));
-  out.sort((a,b)=>b.days-a.days);
-  return out;
+const REEVAL_KEY = "suivi-revisions-bac-lastreeval";
+// localStorage protégé par try/catch (comme load()/loadSyncMeta()) : appelée à CHAQUE render(),
+// pas juste au boot — une exception non catchée ici (quota/navigation privée) ferait planter
+// render() avant d'atteindre save() et bloquerait toute sauvegarde ultérieure.
+function reevalDue(){
+  try{
+    if(!data.matieres.some(m=>m.chapitres.length)) return false;   // rien à réévaluer sans chapitre
+    const anchor=localStorage.getItem(REEVAL_KEY);
+    if(!anchor){ localStorage.setItem(REEVAL_KEY, dateKey(Date.now())); return false; }   // amorce le 1er cycle
+    const days=Math.round((localDay(Date.now())-localDay(new Date(anchor+'T00:00:00').getTime()))/86400000);
+    return days>=REEVAL_DAYS;
+  }catch(e){ return false; }
 }
-// Depuis l'Accueil, saute direct sur le chapitre concerné (pas juste le haut de la page matière) :
-// ouvre la matière puis scrolle jusqu'à la carte du chapitre + petit flash pour la repérer.
-function goReeval(mi,ci){
-  current=mi; page='matieres'; render();
-  const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
-  if(card){ card.scrollIntoView({behavior:'smooth', block:'center'});
-    card.classList.add('justopened'); setTimeout(()=>card.classList.remove('justopened'), 1600); }
-  else window.scrollTo({top:0});
-}
+// Le cycle ne repart que quand l'utilisateur clique effectivement sur le rappel (goReeval) —
+// pas automatiquement à chaque affichage, sinon la pastille/bannière disparaîtrait après le
+// premier rendu de la journée au lieu de rester visible tant qu'on n'a pas agi.
+function ackReeval(){ try{ localStorage.setItem(REEVAL_KEY, dateKey(Date.now())); }catch(e){} }
+// Depuis l'Accueil, le rappel envoie simplement vers l'onglet Matières (pas de chapitre précis
+// visé, ce n'est plus un suivi par chapitre).
+function goReeval(){ ackReeval(); page='matieres'; render(); window.scrollTo({top:0}); }
 // Notif navigateur (bonus, desktop uniquement — Safari iOS ne supporte l'API Notification que
 // dans une PWA installée avec Push, pas dans un onglet classique : `'Notification' in window`
 // est simplement false là-bas, donc no-op silencieux, rien ne casse). Une seule fois par jour.
 const REEVAL_NOTIF_KEY = "suivi-revisions-bac-reevalnotif";
 function maybeNotifyReeval(){
   if(!('Notification' in window)) return;
-  const stale=staleChapitres();
-  if(!stale.length) return;
+  if(!reevalDue()) return;
   const today=dateKey(Date.now());
-  if(localStorage.getItem(REEVAL_NOTIF_KEY)===today) return;
+  try{ if(localStorage.getItem(REEVAL_NOTIF_KEY)===today) return; }catch(e){}
   const fire=()=>{
-    try{ new Notification('Mes révisions', {body:`${stale.length} chapitre${stale.length>1?'s':''} à réévaluer.`}); }catch(e){}
-    localStorage.setItem(REEVAL_NOTIF_KEY, today);
+    try{ new Notification('Mes révisions', {body:'Pense à repasser réévaluer tes chapitres.'}); }catch(e){}
+    try{ localStorage.setItem(REEVAL_NOTIF_KEY, today); }catch(e){}
   };
   if(Notification.permission==='granted') fire();
   else if(Notification.permission!=='denied'){
-    Notification.requestPermission().then(p=>{ if(p==='granted') fire(); else localStorage.setItem(REEVAL_NOTIF_KEY, today); });
+    Notification.requestPermission().then(p=>{ if(p==='granted') fire(); else{ try{ localStorage.setItem(REEVAL_NOTIF_KEY, today); }catch(e){} } });
   }
 }
 // Recap du jour (compilé automatiquement) : temps, répartition, chapitres modifiés, tâches faites.
@@ -1625,20 +1669,8 @@ function renderAccueil(){
     bosser=`<div class="seclabel"><span class="t">À bosser</span></div><div class="prevlist">${rows}</div>`;
   }
 
-  // — À réévaluer (auto-évaluation périodique, indépendante du niveau de maîtrise) —
-  let reeval='';
-  const stale=staleChapitres();
-  if(stale.length){
-    const rows=stale.slice(0,4).map(s=>{ const col=couleur(s.pct);
-      return `<div class="prevrow reeval">
-        <button class="bosswork" onclick="goReeval(${s.mi},${s.ci})" aria-label="Réévaluer ${escapeH(s.txt)}">
-          <span class="pdot" style="background:${s.color}"></span>
-          <span class="pmid"><span class="pnm">${escapeH(s.txt)}</span><span class="psub">${escapeH(s.sub)} · pas réévalué depuis ${s.days} jours</span></span>
-          <span class="ppct" style="color:${col}">${s.pct}%</span></button>
-      </div>`;
-    }).join('');
-    reeval=`<div class="seclabel"><span class="t">À réévaluer</span></div><div class="prevlist">${rows}</div>`;
-  }
+  // « À réévaluer » : rappel affiché en bannière GLOBALE tout en haut (voir updateReevalBanner(),
+  // visible sur toutes les pages) — plus dans le corps de l'Accueil, pour être bien plus visible.
 
   // — Recap du jour —
   const rc=recapToday();
@@ -1680,7 +1712,7 @@ function renderAccueil(){
       <div class="countcard"><div class="n">${ns}</div><div class="l">Session${ns>1?'s':''}</div></div>
     </div>`;
 
-  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + reeval + recap + subjects + apercu;
+  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + recap + subjects + apercu;
 }
 // Ouvre une matière depuis l'accueil (bascule sur l'onglet Matières en vue détail).
 function openMatiere(i){ current=i; page='matieres'; render(); window.scrollTo({top:0}); }
@@ -2509,7 +2541,7 @@ catch(e){
 }
 // Notif "chapitres à réévaluer" (bonus desktop, no-op ailleurs) : seulement si l'écran de connexion
 // n'est pas affiché, pour ne pas interrompre une saisie avec une demande de permission navigateur.
-{ const ag=document.getElementById('authgate'); if(!ag || ag.classList.contains('hidden')) maybeNotifyReeval(); }
+{ const ag=document.getElementById('authgate'); if(!ag || ag.classList.contains('hidden')){ maybeNotifyReeval(); maybeShowReevalPopup(); } }
 
 // --- Mise à jour automatique ---
 // À l'ouverture, si EN LIGNE, on vérifie discrètement une version plus récente et on la
