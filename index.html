@@ -575,7 +575,8 @@
   .agarrow:disabled{opacity:.35;cursor:default}
   .aglabel{font-size:14.5px;font-weight:700;min-width:150px;text-align:center}
   .aglist{display:flex;flex-direction:column;gap:2px}
-  .agday{padding:6px 0}
+  .agday{padding:10px 0}
+  .agday+.agday{border-top:1px solid var(--line)}
   .agday.today .aghead{color:var(--primary)}
   .aghead{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted);
           text-transform:uppercase;letter-spacing:.03em;margin:4px 0 4px}
@@ -583,7 +584,7 @@
                  background:var(--bg2);color:var(--ink);font-size:11px}
   .agday.today .aghead .agdow{background:var(--primary);color:#fff}
   .agempty{font-size:13px;color:var(--muted);opacity:.75;padding:2px 0 2px 28px}
-  .agtask{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:5px 0}
+  .agtask{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;padding:5px 0}
   .agtxt{display:flex;align-items:center;gap:9px;min-width:0;background:var(--bg2);border:1px solid var(--line);
          border-radius:11px;padding:10px 12px;font-family:inherit;color:var(--ink);cursor:pointer;text-align:left;transition:.15s}
   .agtxt:active{transform:scale(.99)}
@@ -607,7 +608,6 @@
   .agdaypick.on span,.agdaypick.on b{color:#fff}
   .agdaypick.past{opacity:.32;cursor:not-allowed}
   .agday.pastday .aghead{opacity:.5}
-  .agtask.late{grid-template-columns:auto 1fr auto auto}
   .agreb{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--orange);
          display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.15s}
   .agreb:active{transform:scale(.92)}
@@ -714,7 +714,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260911-152938';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260911-153428';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
