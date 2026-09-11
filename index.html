@@ -572,6 +572,7 @@
   .agarrow{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);
            display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
   .agarrow:active{transform:scale(.94)}
+  .agarrow:disabled{opacity:.35;cursor:default}
   .aglabel{font-size:14.5px;font-weight:700;min-width:150px;text-align:center}
   .aglist{display:flex;flex-direction:column;gap:2px}
   .agday{padding:6px 0}
@@ -713,7 +714,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260909-114737';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260911-152938';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1413,7 +1414,8 @@ function recapToday(){
 
 // ---------- Agenda (onglet Session) ----------
 // Une tâche est datée et rattachée à une matière ; la taper pré-arme cette matière pour lancer la session.
-let agendaOffset=0;   // semaine affichée : 0 = courante, +1 = suivante, -1 = précédente…
+// Fenêtre glissante de 7 jours (jamais de jours passés) : 0 = aujourd'hui + les 6 suivants, +1 = les 7 jours d'après…
+let agendaOffset=0;
 let agMat=null;       // matière sélectionnée pour la nouvelle tâche
 let agDayISO=null;    // jour (YYYY-MM-DD) sélectionné pour la nouvelle tâche
 
@@ -1421,12 +1423,14 @@ const DOW_LET=['L','M','M','J','V','S','D'];
 const MONTHS_AB=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 function dateKey(ms){ const d=new Date(ms); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function todayKey(){ return dateKey(Date.now()); }
-// Lundi 00:00 (local) de la semaine décalée de `offset` semaines.
-function mondayOf(offset){ const d=new Date(); d.setHours(0,0,0,0); const dow=(d.getDay()+6)%7; d.setDate(d.getDate()-dow+offset*7); return d.getTime(); }
-function weekDays(offset){ const mon=mondayOf(offset),out=[]; for(let i=0;i<7;i++){ const ms=mon+i*86400000,d=new Date(ms); out.push({ms, iso:dateKey(ms), let:DOW_LET[i], num:d.getDate(), mon:MONTHS_AB[d.getMonth()]}); } return out; }
-function weekLabel(offset){ if(offset===0)return 'Cette semaine'; if(offset===1)return 'Semaine prochaine'; if(offset===-1)return 'Semaine dernière'; const d=weekDays(offset); return `${d[0].num} ${d[0].mon} – ${d[6].num} ${d[6].mon}`; }
+// Début (00:00 local) de la fenêtre de 7 jours décalée de `offset` blocs de 7 jours à partir d'aujourd'hui.
+function windowStart(offset){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+offset*7); return d.getTime(); }
+function windowDays(offset){ const start=windowStart(offset),out=[]; for(let i=0;i<7;i++){ const ms=start+i*86400000,d=new Date(ms); out.push({ms, iso:dateKey(ms), let:DOW_LET[(d.getDay()+6)%7], num:d.getDate(), mon:MONTHS_AB[d.getMonth()]}); } return out; }
+// ⚠️ nommé agWindowLabel (pas windowLabel) : un `windowLabel()` sans argument existe déjà plus bas pour le libellé
+// de période des Stats (Screen Time) — un même nom de fonction déclarée deux fois au top-level se serait écrasé.
+function agWindowLabel(offset){ const d=windowDays(offset); if(offset===0) return `Aujourd'hui – ${d[6].num} ${d[6].mon}`; return `${d[0].num} ${d[0].mon} – ${d[6].num} ${d[6].mon}`; }
 function isPast(iso){ return iso < todayKey(); }   // jour révolu (comparaison de chaînes YYYY-MM-DD = ok)
-function shiftAgenda(n){ agendaOffset+=n; agDayISO=null; refreshTemps(); }
+function shiftAgenda(n){ const next=agendaOffset+n; if(next<0) return; agendaOffset=next; agDayISO=null; refreshTemps(); }
 function setAgMat(id){ agMat=(agMat===id?null:id); refreshTemps(); }
 function setAgDay(iso){ if(isPast(iso)) return; agDayISO=iso; refreshTemps(); }   // pas de planif dans le passé
 
@@ -1465,57 +1469,81 @@ function doReschedule(id,iso){
 }
 // Bosser une matière depuis l'Accueil (À bosser) : pré-arme la matière et bascule sur l'onglet Travail.
 function workSubject(mi){ const m=data.matieres[mi]; if(!m) return; if(!data.active) armed=m.id; goPage('session'); }
-// Taper une tâche dans l'agenda (onglet Session) : pré-arme sa matière et remonte au lanceur.
-function armFromTask(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t||data.active) return; if(t.mat&&matById(t.mat)) armed=t.mat; renderTemps(); window.scrollTo({top:0,behavior:'smooth'}); }
+// Taper une tâche dans l'agenda (onglet Session) : pré-arme sa matière (arme + redessine tout de suite —
+// aucun scroll ici, voir handleTaskClick ci-dessous pour la raison).
+function armFromTask(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t||data.active) return; if(t.mat&&matById(t.mat)) armed=t.mat; renderTemps(); }
+// Détection manuelle du double-clic sur une tâche (pas le `dblclick` natif du navigateur), pour deux raisons :
+// 1) armFromTask() redessine l'agenda à chaque clic, remplaçant le nœud DOM sous le curseur — certains
+//    navigateurs (Safari en tête) n'émettent alors jamais `dblclick`, son suivi natif étant lié à ce nœud précis.
+// 2) même en comparant id+horodatage entre deux clics, un `window.scrollTo` déclenché DÈS le 1er clic ferait
+//    dériver la page sous le curseur immobile avant que le 2e clic n'arrive (repéré en pratique : le double-clic
+//    marchait sur les tâches déjà tout en haut — bloc « En retard », peu/pas affectées par le scroll vers le
+//    haut — mais jamais plus bas dans la liste, où le scroll les fait justement sortir de sous le curseur).
+//    Le scroll est donc différé : s'il n'y a pas de 2e clic dans la fenêtre, on scrolle ; sinon on l'annule.
+let lastTaskClick={id:null, t:0};
+let taskScrollTimer=null;
+function handleTaskClick(id){
+  const now=Date.now();
+  if(lastTaskClick.id===id && (now-lastTaskClick.t)<350){
+    lastTaskClick={id:null, t:0};
+    if(taskScrollTimer){ clearTimeout(taskScrollTimer); taskScrollTimer=null; }
+    renameTask(id);
+    return;
+  }
+  lastTaskClick={id, t:now};
+  armFromTask(id);
+  if(taskScrollTimer) clearTimeout(taskScrollTimer);
+  taskScrollTimer=setTimeout(()=>{ taskScrollTimer=null; window.scrollTo({top:0,behavior:'smooth'}); }, 350);
+}
 // Taper une tâche depuis l'Accueil : pré-arme sa matière et bascule sur l'onglet Session.
 function goWorkTask(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return; if(t.mat&&matById(t.mat)&&!data.active) armed=t.mat; goPage('session'); }
 // Re-rend la page concernée (en préservant le champ d'ajout sur Session).
 function refreshTemps(){ const inp=document.getElementById('agInput'); const v=inp?inp.value:''; renderTemps(); const ni=document.getElementById('agInput'); if(ni) ni.value=v; }
 function refreshTodos(){ if(page==='session') refreshTemps(); else render(); }
 
-// Ligne de tâche réutilisable. `mode` : 'arm' (agenda) → tape = arme la matière ; 'late' ajoute le report.
+// Ligne de tâche réutilisable. Double-clic sur le texte → renommer. Le bouton « reprogrammer » est toujours visible
+// (pas seulement sur les tâches en retard) pour pouvoir changer la date d'une tâche déjà planifiée.
 function taskRow(t, late){
   const m=matById(t.mat), col=m?m.color:'var(--muted)';
   return `<div class="agtask${late?' late':''}">
     <button class="todochk ${t.done?'on':''}" onclick="toggleTodo('${t.id}')" aria-label="Cocher">${ic('check',14)}</button>
-    <button class="agtxt ${t.done?'done':''}" onclick="armFromTask('${t.id}')">
+    <button class="agtxt ${t.done?'done':''}" onclick="handleTaskClick('${t.id}')" title="Double-clic pour renommer">
       <span class="cdot" style="background:${col}"></span><span class="agname">${escapeH(t.txt)}</span>
       ${(m&&!t.done&&!data.active)?`<span class="agplay">${ic('play',13)}</span>`:''}
     </button>
-    ${late?`<button class="agreb" onclick="reschedulePick('${t.id}')" title="Reporter à un autre jour" aria-label="Reporter à un autre jour">${ic('reset',15)}</button>`:''}
+    <button class="agreb" onclick="reschedulePick('${t.id}')" title="Changer le jour" aria-label="Changer le jour">${ic('reset',15)}</button>
     <button class="iconbtn tododel" onclick="delTodo('${t.id}')" title="Supprimer" aria-label="Supprimer la tâche">${ic('x',16)}</button>
   </div>`;
 }
+async function renameTask(id){
+  const t=(data.todos||[]).find(x=>x.id===id); if(!t) return;
+  const n=await uiPrompt(t.txt,{title:'Renommer la tâche'});
+  if(n&&n.trim()){ t.txt=n.trim(); save(); refreshTodos(); }
+}
 function agendaCard(){
-  const days=weekDays(agendaOffset), tk=todayKey();
-  // jour d'ajout par défaut : aujourd'hui s'il est dans la semaine, sinon le 1er jour non passé (ou aucun si semaine révolue)
-  if(!agDayISO || !days.some(x=>x.iso===agDayISO) || isPast(agDayISO)){
-    const future=days.find(x=>!isPast(x.iso)); agDayISO = future?future.iso:null;
-  }
+  const days=windowDays(agendaOffset), tk=todayKey();
+  // jour d'ajout par défaut : le premier jour de la fenêtre affichée (jamais un jour passé, la fenêtre ne peut pas en contenir)
+  if(!agDayISO || !days.some(x=>x.iso===agDayISO)) agDayISO = days[0].iso;
   const nav=`<div class="agnav">
-    <button class="agarrow" onclick="shiftAgenda(-1)" aria-label="Semaine précédente">${ic('chevleft',18)}</button>
-    <span class="aglabel">${weekLabel(agendaOffset)}</span>
-    <button class="agarrow" onclick="shiftAgenda(1)" aria-label="Semaine suivante">${ic('chevron',18)}</button></div>`;
-  // En retard (global, indépendant de la semaine affichée) : tâches passées non faites.
+    <button class="agarrow" ${agendaOffset<=0?'disabled':''} onclick="shiftAgenda(-1)" aria-label="7 jours précédents">${ic('chevleft',18)}</button>
+    <span class="aglabel">${agWindowLabel(agendaOffset)}</span>
+    <button class="agarrow" onclick="shiftAgenda(1)" aria-label="7 jours suivants">${ic('chevron',18)}</button></div>`;
+  // En retard (global, indépendant de la fenêtre affichée) : tâches passées non faites.
   const overdue=(data.todos||[]).filter(t=>!t.done && isPast(t.date)).sort((a,b)=>a.date<b.date?-1:1);
   const lateBlock = overdue.length
     ? `<div class="aglate"><div class="aglatehd">${ic('clock',15)}<span>En retard · ${overdue.length} à replanifier</span></div>
         ${overdue.map(t=>taskRow(t,true)).join('')}</div>`
     : '';
   const blocks=days.map(d=>{
-    // une tâche passée non faite migre dans le bloc « En retard » → on ne la montre plus dans son jour
-    const tasks=(data.todos||[]).filter(t=>t.date===d.iso && !(isPast(d.iso) && !t.done));
+    const tasks=(data.todos||[]).filter(t=>t.date===d.iso);
     const rows=tasks.map(t=>taskRow(t,false)).join('');
-    return `<div class="agday${d.iso===tk?' today':''}${isPast(d.iso)?' pastday':''}">
+    return `<div class="agday${d.iso===tk?' today':''}">
       <div class="aghead"><span class="agdow">${d.let}</span>${d.num} ${d.mon}${d.iso===tk?` · Aujourd'hui`:''}</div>
       ${rows||`<div class="agempty">—</div>`}</div>`;
   }).join('');
   const matChips=data.matieres.map(m=>`<button class="matchip mini${agMat===m.id?' on':''}" style="--c:${m.color}" onclick="setAgMat('${m.id}')"><span class="dot"></span>${escapeH(m.nom)}</button>`).join('');
-  const dayChips=days.map(d=>{ const past=isPast(d.iso);
-    return `<button class="agdaypick${agDayISO===d.iso?' on':''}${d.iso===tk?' td':''}${past?' past':''}" ${past?'disabled':''} onclick="setAgDay('${d.iso}')"><span>${d.let}</span><b>${d.num}</b></button>`;
-  }).join('');
-  const add = agDayISO
-    ? `<div class="agadd">
+  const dayChips=days.map(d=>`<button class="agdaypick${agDayISO===d.iso?' on':''}${d.iso===tk?' td':''}" onclick="setAgDay('${d.iso}')"><span>${d.let}</span><b>${d.num}</b></button>`).join('');
+  const add = `<div class="agadd">
         <div class="agpicklbl">Matière de la tâche</div>
         <div class="matchips mini">${matChips}</div>
         <div class="agpicklbl">Jour</div>
@@ -1524,8 +1552,7 @@ function agendaCard(){
         <div class="todoadd">
           <input id="agInput" type="text" placeholder="Nouvelle tâche…" maxlength="120" onkeydown="if(event.key==='Enter')addTask()">
           <button class="addbtn" onclick="addTask()" aria-label="Ajouter la tâche">${ic('plus',18)}</button>
-        </div></div>`
-    : `<div class="agadd"><p class="rcempty">Semaine passée — on ne planifie que sur aujourd'hui ou plus tard. Reviens à <b>Cette semaine</b> pour ajouter une tâche.</p></div>`;
+        </div></div>`;
   return `<div class="card agendacard">
     <div class="aghdr">${ic('list',20)}<h3>Mon agenda</h3></div>
     ${lateBlock}${nav}<div class="aglist">${blocks}</div>${add}</div>`;
@@ -2032,7 +2059,7 @@ function matById(id){ return data.matieres.find(m=>m.id===id); }
 // Pas de guide visuel de rythme (cercle qui pulse, Inspire/Expire) : chacun respire à son
 // rythme, les yeux fermés — un indicateur à regarder n'a pas de sens dans ce cas.
 const READY_PHRASE = "Esprit clair. Prêt·e à travailler.";
-let brTotal=300, brLeft=300, brTick=null, brDoneTick=null, brArmed=null;
+let brTotal=300, brLeft=300, brTick=null, brDoneTick=null, brArmed=null, brCtx=null;
 function brClock(s){ const m=Math.floor(s/60), x=s%60; return m+':'+String(x).padStart(2,'0'); }
 function breatheHTML(){
   const mins=Math.round(brTotal/60);
@@ -2059,6 +2086,7 @@ function setBreatheDur(mins){ brTotal=mins*60; brLeft=brTotal; document.querySel
 function openBreathe(mins){
   brArmed = armed;                       // si une matière est armée, on enchaîne la session à la fin
   brTotal=(mins||5)*60; brLeft=brTotal;
+  primeBell();                           // crée/débloque l'AudioContext PENDANT le geste (clic) qui ouvre la méditation
   const ov=document.getElementById('breathe'); ov.classList.remove('hidden'); ov.innerHTML=breatheHTML();
   if(brTick) clearInterval(brTick);
   brTick=setInterval(()=>{ brLeft--; updateBreathe(); if(brLeft<=0){ clearInterval(brTick); brTick=null; finishBreathe(); } },1000);
@@ -2073,16 +2101,31 @@ function cancelBreatheDone(){ if(brDoneTick){ clearTimeout(brDoneTick); brDoneTi
 function endBreathe(launch){
   if(brTick){ clearInterval(brTick); brTick=null; }
   if(brDoneTick){ clearTimeout(brDoneTick); brDoneTick=null; }
+  // brCtx encore défini = la cloche n'a jamais joué (sortie avant la fin) → on libère le contexte audio primé pour rien.
+  // S'il a déjà joué, playBell() se l'est approprié (brCtx=null) et gère sa propre fermeture différée : ne pas y toucher ici.
+  if(brCtx){ try{ brCtx.close(); }catch(e){} brCtx=null; }
   document.getElementById('breathe').classList.add('hidden');
   if(launch && brArmed && matById(brArmed)){ armed=brArmed; startSession(); }
   else render();
   brArmed=null;
 }
+// Débloque l'AudioContext pendant le clic qui ouvre la méditation (politique autoplay des navigateurs/iOS Safari :
+// un AudioContext créé plus tard, sans geste utilisateur au même instant, reste "suspended" et ne joue aucun son).
+function primeBell(){
+  try{
+    const Ctx = window.AudioContext||window.webkitAudioContext; if(!Ctx) return;
+    brCtx=new Ctx();
+    if(brCtx.state==='suspended') brCtx.resume();
+  }catch(e){}
+}
 // Petit carillon synthétisé (Web Audio, aucun fichier) — joué quand le chrono de méditation se termine.
 function playBell(){
   try{
     const Ctx = window.AudioContext||window.webkitAudioContext; if(!Ctx) return;
-    const ctx=new Ctx(), now=ctx.currentTime;
+    const ctx=(brCtx && brCtx.state!=='closed') ? brCtx : new Ctx();
+    brCtx=null;   // la cloche prend possession du contexte ; endBreathe() ne doit plus le fermer, on s'en charge ici
+    if(ctx.state==='suspended') ctx.resume();
+    const now=ctx.currentTime;
     [[880,0.5,1.8],[880*2.76,0.18,1.1],[880*4.1,0.09,0.7]].forEach(([freq,gain,dec])=>{
       const osc=ctx.createOscillator(); osc.type='sine'; osc.frequency.value=freq;
       const g=ctx.createGain(); g.gain.setValueAtTime(gain,now); g.gain.exponentialRampToValueAtTime(0.001,now+dec);
