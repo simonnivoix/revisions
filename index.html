@@ -714,7 +714,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260911-153428';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260912-101816';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1414,7 +1414,9 @@ function recapToday(){
 
 // ---------- Agenda (onglet Session) ----------
 // Une tâche est datée et rattachée à une matière ; la taper pré-arme cette matière pour lancer la session.
-// Fenêtre glissante de 7 jours (jamais de jours passés) : 0 = aujourd'hui + les 6 suivants, +1 = les 7 jours d'après…
+// Fenêtre glissante de 7 jours : 0 = aujourd'hui + les 6 suivants, +1 = les 7 jours d'après…
+// ‹ reste cliquable en dessous de 0 (12/09 : Eric veut pouvoir revoir les jours passés et leurs tâches
+// barrées) — seule la PLANIFICATION reste interdite dans le passé (setAgDay/addTask le bloquent toujours).
 let agendaOffset=0;
 let agMat=null;       // matière sélectionnée pour la nouvelle tâche
 let agDayISO=null;    // jour (YYYY-MM-DD) sélectionné pour la nouvelle tâche
@@ -1430,7 +1432,7 @@ function windowDays(offset){ const start=windowStart(offset),out=[]; for(let i=0
 // de période des Stats (Screen Time) — un même nom de fonction déclarée deux fois au top-level se serait écrasé.
 function agWindowLabel(offset){ const d=windowDays(offset); if(offset===0) return `Aujourd'hui – ${d[6].num} ${d[6].mon}`; return `${d[0].num} ${d[0].mon} – ${d[6].num} ${d[6].mon}`; }
 function isPast(iso){ return iso < todayKey(); }   // jour révolu (comparaison de chaînes YYYY-MM-DD = ok)
-function shiftAgenda(n){ const next=agendaOffset+n; if(next<0) return; agendaOffset=next; agDayISO=null; refreshTemps(); }
+function shiftAgenda(n){ agendaOffset+=n; agDayISO=null; refreshTemps(); }
 function setAgMat(id){ agMat=(agMat===id?null:id); refreshTemps(); }
 function setAgDay(iso){ if(isPast(iso)) return; agDayISO=iso; refreshTemps(); }   // pas de planif dans le passé
 
@@ -1522,10 +1524,11 @@ async function renameTask(id){
 }
 function agendaCard(){
   const days=windowDays(agendaOffset), tk=todayKey();
-  // jour d'ajout par défaut : le premier jour de la fenêtre affichée (jamais un jour passé, la fenêtre ne peut pas en contenir)
-  if(!agDayISO || !days.some(x=>x.iso===agDayISO)) agDayISO = days[0].iso;
+  // jour d'ajout par défaut : le premier jour NON passé de la fenêtre affichée (la fenêtre peut désormais
+  // en contenir en naviguant en arrière) ; si toute la fenêtre est passée, aucun jour n'est pré-sélectionné.
+  if(!agDayISO || !days.some(x=>x.iso===agDayISO)){ const firstFuture=days.find(x=>!isPast(x.iso)); agDayISO = firstFuture ? firstFuture.iso : null; }
   const nav=`<div class="agnav">
-    <button class="agarrow" ${agendaOffset<=0?'disabled':''} onclick="shiftAgenda(-1)" aria-label="7 jours précédents">${ic('chevleft',18)}</button>
+    <button class="agarrow" onclick="shiftAgenda(-1)" aria-label="7 jours précédents">${ic('chevleft',18)}</button>
     <span class="aglabel">${agWindowLabel(agendaOffset)}</span>
     <button class="agarrow" onclick="shiftAgenda(1)" aria-label="7 jours suivants">${ic('chevron',18)}</button></div>`;
   // En retard (global, indépendant de la fenêtre affichée) : tâches passées non faites.
@@ -1535,14 +1538,15 @@ function agendaCard(){
         ${overdue.map(t=>taskRow(t,true)).join('')}</div>`
     : '';
   const blocks=days.map(d=>{
+    const past=isPast(d.iso);
     const tasks=(data.todos||[]).filter(t=>t.date===d.iso);
     const rows=tasks.map(t=>taskRow(t,false)).join('');
-    return `<div class="agday${d.iso===tk?' today':''}">
+    return `<div class="agday${d.iso===tk?' today':''}${past?' pastday':''}">
       <div class="aghead"><span class="agdow">${d.let}</span>${d.num} ${d.mon}${d.iso===tk?` · Aujourd'hui`:''}</div>
       ${rows||`<div class="agempty">—</div>`}</div>`;
   }).join('');
   const matChips=data.matieres.map(m=>`<button class="matchip mini${agMat===m.id?' on':''}" style="--c:${m.color}" onclick="setAgMat('${m.id}')"><span class="dot"></span>${escapeH(m.nom)}</button>`).join('');
-  const dayChips=days.map(d=>`<button class="agdaypick${agDayISO===d.iso?' on':''}${d.iso===tk?' td':''}" onclick="setAgDay('${d.iso}')"><span>${d.let}</span><b>${d.num}</b></button>`).join('');
+  const dayChips=days.map(d=>`<button class="agdaypick${agDayISO===d.iso?' on':''}${d.iso===tk?' td':''}${isPast(d.iso)?' past':''}" onclick="setAgDay('${d.iso}')" ${isPast(d.iso)?'aria-disabled="true"':''}><span>${d.let}</span><b>${d.num}</b></button>`).join('');
   const add = `<div class="agadd">
         <div class="agpicklbl">Matière de la tâche</div>
         <div class="matchips mini">${matChips}</div>
