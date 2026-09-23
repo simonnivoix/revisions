@@ -165,7 +165,9 @@
 
   /* ---------- Menu réglages (overlay) ---------- */
   .overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:flex-start;justify-content:center;
-           padding:56px 16px;z-index:50;animation:fade .2s ease}
+           padding:56px 16px;z-index:65;animation:fade .2s ease}
+  /* z-index 65 (pas 50) : #modal doit passer au-dessus du plein écran session (.focusov, 55) et méditation
+     (.brov, 60) — depuis que la confirmation de session trop longue peut s'ouvrir depuis le mode focus. */
   .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;width:100%;max-width:360px;
          max-height:calc(100vh - 112px);overflow:auto;
          box-shadow:0 14px 44px rgba(15,23,42,.28);animation:rise .25s cubic-bezier(.22,.61,.36,1)}
@@ -311,6 +313,12 @@
   .chartsvg .cavg{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3}
   .chartsvg .cay{fill:var(--muted);font-size:11px;text-anchor:start}
   .chartsvg rect{transition:none}
+  /* Liste des sessions individuelles (vue Jour des Stats) — corriger une session erronée sans console. */
+  .sesslist{margin-top:10px;border-top:1px dashed var(--line);padding-top:6px}
+  .sessrow{display:flex;align-items:center;gap:10px;padding:6px 0}
+  .sessdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .sessname{font-size:13px;color:var(--ink);flex-shrink:0;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sesstime{flex:1;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
   .legend{margin-top:6px;border-top:1px dashed var(--line);padding-top:10px}
   .legrow{display:flex;align-items:center;gap:11px;padding:7px 0}
   .legdot{width:15px;height:15px;border-radius:4px;background:var(--c);border:none;cursor:pointer;flex-shrink:0;padding:0;
@@ -344,6 +352,9 @@
   .mdinput{width:100%;border:1px solid var(--line);background:var(--bg2);color:var(--ink);border-radius:12px;
            padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:16px}
   .mdinput:focus{border-color:var(--primary)}
+  .durpick{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+  .durpick .mdinput{width:70px;margin-bottom:0;text-align:center}
+  .durpick span{font-size:14px;color:var(--muted)}
   .mdactions{display:flex;gap:10px;justify-content:flex-end}
   .mdbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:11px;padding:11px 18px;
          font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;min-height:44px;transition:.15s}
@@ -463,9 +474,9 @@
   .statcard .mini{font-size:13px;color:var(--muted);margin-top:6px}
   .seclabel{display:flex;align-items:baseline;justify-content:space-between;margin:22px 0 10px}
   .seclabel .t{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-  .seclabel .lk{background:none;border:none;color:var(--primary);font-family:inherit;font-size:13px;font-weight:600;
+  .lk{background:none;border:none;color:var(--primary);font-family:inherit;font-size:13px;font-weight:600;
                 cursor:pointer;padding:0}
-  .seclabel .lk:active{transform:scale(.97)}
+  .lk:active{transform:scale(.97)}
   .prevlist{display:flex;flex-direction:column;gap:9px}
   .prevrow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;background:var(--card);
            border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;
@@ -535,6 +546,20 @@
   .recap .rchip .cdot{width:8px;height:8px;border-radius:50%}
   .rcempty{font-size:13.5px;color:var(--muted);margin:0;line-height:1.45}
   .recap .rcmore{font-size:13px;color:var(--muted);font-style:italic}
+
+  /* ---------- Journal (qu'as-tu appris) : notes courtes taguées, carte Accueil + index #modal ---------- */
+  .journalcard{padding:14px 16px;display:flex;flex-direction:column;gap:2px;animation:rise .4s ease backwards}
+  .jnlist{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+  .jnrow{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg2);border:1px solid var(--line);
+         border-radius:11px}
+  .jnrow .cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .jnrow .cdot.jnnone{background:var(--line)}
+  .jntxt{flex:1;min-width:0;font-size:14px;line-height:1.4;color:var(--ink);overflow-wrap:anywhere}
+  .jntxt b{font-weight:600}
+  .jlist{display:flex;flex-direction:column;gap:16px;max-height:60vh;overflow:auto}
+  .jday .jdate{display:block;font-size:12.5px;font-weight:600;color:var(--muted);text-transform:capitalize;margin-bottom:7px}
+  .jday .jnrow{margin-bottom:7px}
+  .jday .jnrow:last-child{margin-bottom:0}
 
   /* ---------- To-do ---------- */
   .todo{padding:6px 14px 14px;animation:rise .4s ease backwards}
@@ -714,7 +739,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260912-101816';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20260923-215053';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -882,6 +907,15 @@ function prepare(d){
   // Brique « Temps » : chaque matière reçoit un id stable + une couleur d'identité (rétro-compatible).
   if(!Array.isArray(d.sessions)) d.sessions=[];
   if(!('active' in d)) d.active=null;
+  // Journal perso : {id,date,txt,mat,createdAt} — notes courtes, plusieurs par jour possibles. Migre l'ancien
+  // format (une seule entrée par jour, {date,txt,mat,updatedAt}, testé en local le 18/09 avant cette refonte).
+  if(!Array.isArray(d.journal)) d.journal=[];
+  d.journal.forEach((e,i)=>{
+    if(!e.id) e.id='j'+Date.now().toString(36)+i+Math.floor(Math.random()*1e4).toString(36);
+    if(!('mat' in e)) e.mat=null;
+    if(!e.createdAt) e.createdAt=e.updatedAt||new Date().toISOString();
+    delete e.updatedAt;
+  });
   if(!Array.isArray(d.todos)) d.todos=[];   // agenda (onglet Session) : {id,txt,mat,date,done,doneAt,created}
   d.todos.forEach(t=>{                       // migration de l'ancien modèle {when:'demain'|'semaine'} → date réelle + matière
     if(!t.date){ const b=new Date(); b.setHours(0,0,0,0); b.setDate(b.getDate()+(t.when==='demain'?1:0)); t.date=dateKey(b.getTime()); }
@@ -1412,6 +1446,83 @@ function recapToday(){
   return {work, perMat, changed, done};
 }
 
+// ---------- Journal (« Qu'as-tu appris aujourd'hui ? ») ----------
+// Seule entrée manuelle de l'app (tout le reste est calculé depuis les données). Refondu (18/09) après retour
+// d'Eric : un carnet « page blanche » plein écran, un seul texte par jour, ne colle pas à l'usage réel — on
+// révise plusieurs matières par jour et personne n'a envie de rédiger un essai le soir. Remplacé par des
+// NOTES COURTES, autant qu'on veut par jour, chacune taguée à une matière (facultatif) — aussi rapide à
+// ajouter qu'une tâche d'agenda (même `.todoadd`/chips), pas un exercice de rédaction.
+let jnMat=null;   // matière pré-sélectionnée pour la prochaine note (persiste jusqu'au changement, comme agMat)
+function todayJournalNotes(){ const tk=todayKey(); return (data.journal||[]).filter(e=>e.date===tk); }
+function setJnMat(id){ jnMat=(jnMat===id?null:id); refreshJournalSection(); }
+function addJournalNote(){
+  const inp=document.getElementById('jnInput'); if(!inp) return;
+  const v=(inp.value||'').trim(); if(!v) return;
+  const arr=data.journal||(data.journal=[]);
+  arr.push({id:'j'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36), date:todayKey(), mat:jnMat, txt:v, createdAt:new Date().toISOString()});
+  inp.value=''; save(); refreshJournalSection();
+  const ni=document.getElementById('jnInput'); if(ni) ni.focus();
+}
+// Une note peut être supprimée depuis la carte Accueil OU l'index (#modal) : on redessine les deux
+// contextes qui existent réellement (l'un des deux, ou aucun) plutôt que deux fonctions séparées.
+function delJournalNote(id){
+  data.journal=(data.journal||[]).filter(e=>e.id!==id); save();
+  refreshJournalSection();
+  const md=document.getElementById('modal'); if(md && !md.classList.contains('hidden') && md.querySelector('.jlist')) openJournalList();
+}
+function journalNoteRow(n){
+  const m=n.mat?matById(n.mat):null;
+  return `<div class="jnrow">
+    <span class="cdot${m?'':' jnnone'}"${m?` style="background:${m.color}"`:''}></span>
+    <span class="jntxt">${m?`<b>${escapeH(m.nom)}</b> · `:''}${escapeH(n.txt)}</span>
+    <button class="iconbtn" onclick="delJournalNote('${n.id}')" title="Supprimer" aria-label="Supprimer la note">${ic('x',15)}</button>
+  </div>`;
+}
+// Carte Accueil : ajout rapide (matière optionnelle + texte court) + liste des notes du jour, plus récente en haut.
+function journalSectionHTML(){
+  const notes=todayJournalNotes();
+  const hasAny=(data.journal||[]).length>0;
+  const chips=data.matieres.map(m=>`<button class="matchip mini${jnMat===m.id?' on':''}" style="--c:${m.color}"
+    onclick="setJnMat('${m.id}')"><span class="dot"></span>${escapeH(m.nom)}</button>`).join('');
+  const rows=notes.length
+    ? notes.slice().reverse().map(journalNoteRow).join('')
+    : `<p class="rcempty">Rien noté aujourd'hui — ajoute ce que tu retiens au fil de la journée, matière par matière.</p>`;
+  return `<div class="seclabel"><span class="t">Qu'as-tu appris aujourd'hui ?</span>
+      ${hasAny?`<button class="lk" onclick="openJournalList()">Journal</button>`:''}
+    </div>
+    <div class="panel journalcard">
+      ${data.matieres.length?`<div class="agpicklbl">Matière (facultatif)</div><div class="matchips mini">${chips}</div>`:''}
+      <div class="todoadd">
+        <input id="jnInput" type="text" placeholder="Qu'as-tu retenu ?" maxlength="300" onkeydown="if(event.key==='Enter')addJournalNote()">
+        <button class="addbtn" onclick="addJournalNote()" aria-label="Ajouter la note">${ic('plus',18)}</button>
+      </div>
+      <div class="jnlist">${rows}</div>
+    </div>`;
+}
+// Réaffiche juste #journalSection (pas tout l'Accueil) en préservant la saisie en cours — un clic sur un chip
+// matière est un geste discret, mais on ne veut jamais perdre ce qui est déjà tapé dans le champ.
+function refreshJournalSection(){
+  const el=document.getElementById('journalSection'); if(!el) return;
+  const inp=document.getElementById('jnInput'); const v=inp?inp.value:''; const focused=document.activeElement===inp;
+  el.innerHTML=journalSectionHTML();
+  const ni=document.getElementById('jnInput'); if(ni){ ni.value=v; if(focused) ni.focus(); }
+}
+// Historique complet groupé par jour (plus récent en haut) — réutilise #modal comme reschedulePick (pas de Promise).
+function openJournalList(){
+  const m=document.getElementById('modal');
+  const byDate={};
+  (data.journal||[]).forEach(e=>(byDate[e.date]=byDate[e.date]||[]).push(e));
+  const dates=Object.keys(byDate).sort().reverse();
+  const rows = dates.length
+    ? dates.map(d=>`<div class="jday"><span class="jdate">${fmtExamDate(d)}</span>${byDate[d].map(journalNoteRow).join('')}</div>`).join('')
+    : `<p class="rcempty">Rien enregistré pour l'instant.</p>`;
+  m.innerHTML=`<div class="panel wide" role="dialog" aria-modal="true">
+    <div class="phead"><span>Journal</span>
+      <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
+    <div class="jlist">${rows}</div></div>`;
+  modalResolve=null; m.classList.remove('hidden');
+}
+
 // ---------- Agenda (onglet Session) ----------
 // Une tâche est datée et rattachée à une matière ; la taper pré-arme cette matière pour lancer la session.
 // Fenêtre glissante de 7 jours : 0 = aujourd'hui + les 6 suivants, +1 = les 7 jours d'après…
@@ -1743,7 +1854,7 @@ function renderAccueil(){
       <div class="countcard"><div class="n">${ns}</div><div class="l">Session${ns>1?'s':''}</div></div>
     </div>`;
 
-  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + recap + subjects + apercu;
+  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + recap + `<div id="journalSection">${journalSectionHTML()}</div>` + subjects + apercu;
 }
 // Ouvre une matière depuis l'accueil (bascule sur l'onglet Matières en vue détail).
 function openMatiere(i){ current=i; page='matieres'; render(); window.scrollTo({top:0}); }
@@ -2147,14 +2258,68 @@ function startSession(){
   armed=null; save(); render();   // render() affiche le mode focus plein écran
 }
 const MIN_SESSION_MS = 10*60000;   // < 10 min = pas assez significatif pour être noté, on ignore
+// Une session > MAX_SESSION_H (page laissée ouverte par oubli) n'est jamais enregistrée sans confirmation
+// explicite — au lieu de faire confiance à « Terminer » comme avant (qui laissait passer des durées absurdes,
+// ex : 9h de maths pour une page oubliée ouverte). pendingLongSession porte la session en attente de décision.
+let pendingLongSession=null;
 function stopSession(){
-  if(data.active){
-    const s=data.active, end=new Date().toISOString();
-    if(Date.parse(end)-Date.parse(s.start) >= MIN_SESSION_MS)
-      data.sessions.push({mat:s.mat, start:s.start, end});
+  if(!data.active) return;
+  const s=data.active, end=new Date().toISOString(), ms=Date.parse(end)-Date.parse(s.start);
+  if(ms>MAX_SESSION_MS){ pendingLongSession={s,end}; openLongSessionModal(ms); return; }
+  if(ms>=MIN_SESSION_MS) data.sessions.push({mat:s.mat, start:s.start, end});
+  data.active=null; save(); render();   // render() masque le mode focus
+}
+function openLongSessionModal(ms){
+  const mat=matById(pendingLongSession.s.mat);
+  const m=document.getElementById('modal');
+  m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+    <div class="phead"><span>Session très longue</span>
+      <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
+    <p class="mdmsg">Cette session en <b>${escapeH(mat?mat.nom:'—')}</b> dure <b>${fmtDur(ms)}</b>. Si tu as oublié la page ouverte, corrige la durée ou ignore-la ; sinon garde-la telle quelle.</p>
+    <div class="mdactions" style="flex-direction:column;align-items:stretch">
+      <button class="mdbtn primary" onclick="resolveLongSession('keep')">Garder ${fmtDur(ms)}</button>
+      <button class="mdbtn" onclick="editLongSessionDuration()">Corriger la durée</button>
+      <button class="mdbtn danger" onclick="resolveLongSession('discard')">Ne pas enregistrer</button>
+    </div></div>`;
+  modalResolve=null;   // pas de Promise ici : X/Échap/clic dehors = annuler (session reste active, rien de perdu)
+  m.classList.remove('hidden');
+}
+function editLongSessionDuration(){
+  const mat=matById(pendingLongSession.s.mat);
+  const m=document.getElementById('modal');
+  m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+    <div class="phead"><span>Corriger la durée</span>
+      <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
+    <p class="mdmsg">Durée réelle de la session en <b>${escapeH(mat?mat.nom:'—')}</b> :</p>
+    <div class="durpick">
+      <input id="durH" class="mdinput" type="number" min="0" max="23" value="0" inputmode="numeric"><span>h</span>
+      <input id="durM" class="mdinput" type="number" min="0" max="59" value="0" inputmode="numeric"><span>min</span>
+    </div>
+    <div class="mdactions">
+      <button class="mdbtn" onclick="closeModal(null)">Annuler</button>
+      <button class="mdbtn primary" onclick="submitLongSessionEdit()">Valider</button>
+    </div></div>`;
+  modalResolve=null;
+  m.classList.remove('hidden');
+  const i=document.getElementById('durH'); if(i){ i.focus(); i.select(); }
+}
+function submitLongSessionEdit(){
+  const h=Math.max(0, parseInt(document.getElementById('durH').value,10)||0);
+  const mn=Math.max(0, parseInt(document.getElementById('durM').value,10)||0);
+  resolveLongSession('set', h*3600000+mn*60000);
+}
+function resolveLongSession(action, ms){
+  if(!pendingLongSession) return;
+  const {s,end}=pendingLongSession;
+  const m=document.getElementById('modal'); m.classList.add('hidden'); m.innerHTML='';
+  if(action==='discard'){ data.active=null; }
+  else{
+    const dur = action==='set' ? ms : (Date.parse(end)-Date.parse(s.start));
+    const realEnd = action==='set' ? new Date(Date.parse(s.start)+dur).toISOString() : end;
+    if(dur>=MIN_SESSION_MS) data.sessions.push({mat:s.mat, start:s.start, end:realEnd});
     data.active=null;
   }
-  save(); render();   // render() masque le mode focus
+  pendingLongSession=null; save(); render();
 }
 
 // ---- Affichage du chrono (cosmétique : la durée réelle reste fin − début) ----
@@ -2379,8 +2544,36 @@ function graphCard(){
     <div class="sttotal">${fmtDur(sum)}</div>
     ${sub?`<div class="stsub">${sub}</div>`:''}
     ${barsHtml}
+    ${daySessionsHTML()}
     ${legend}
   </div>`;
+}
+// Vue Jour uniquement : liste des sessions individuelles de la journée affichée, avec suppression —
+// permet de corriger une session erronée (ex : page oubliée ouverte) sans passer par la console.
+function daySessionsHTML(){
+  if(period!=='jour') return '';
+  const list=sessionsInPeriod().slice().sort((a,b)=>Date.parse(a.start)-Date.parse(b.start));
+  if(!list.length) return '';
+  const rows=list.map(s=>{
+    const idx=data.sessions.indexOf(s), mat=matById(s.mat);
+    const t1=new Date(s.start).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const t2=new Date(s.end).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="sessrow">
+      <span class="sessdot" style="background:${mat?mat.color:'var(--muted)'}"></span>
+      <span class="sessname">${escapeH(mat?mat.nom:'—')}</span>
+      <span class="sesstime">${t1}–${t2} · ${fmtDur(Date.parse(s.end)-Date.parse(s.start))}</span>
+      <button class="iconbtn" aria-label="Supprimer cette session" title="Supprimer" onclick="delSession(${idx})">${ic('trash',16)}</button>
+    </div>`;
+  }).join('');
+  return `<div class="sesslist">${rows}</div>`;
+}
+async function delSession(idx){
+  const s=data.sessions[idx]; if(!s) return;
+  const mat=matById(s.mat), dur=fmtDur(Date.parse(s.end)-Date.parse(s.start));
+  const ok=await uiConfirm(`Supprimer cette session${mat?' en '+mat.nom:''} (${dur}) ? Elle ne sera plus comptée dans ton temps de travail.`,
+    {title:'Supprimer la session', ok:'Supprimer', danger:true});
+  if(!ok) return;
+  data.sessions.splice(idx,1); save(); renderTempsStats();
 }
 // Changer Jour⇄Semaine garde la position dans le temps (façon « temps d'écran ») :
 // revenir de Jour → Semaine ramène sur LA semaine du jour affiché, pas la semaine courante.
