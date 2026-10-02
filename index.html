@@ -245,6 +245,19 @@
   .bigstop{background:var(--ink);color:var(--card)}
   .bigbreathe{background:var(--bg2);color:var(--ink);border:1px solid var(--line);margin-top:10px;font-size:15px;font-weight:600;padding:14px}
   .bigbreathe svg{color:var(--primary)}
+  .card.noanim{animation:none}
+  /* Objectif + mode (chrono libre / Pomodoro), choisis avant chaque session */
+  .sesslbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;text-align:center;margin:2px 0 8px}
+  .optchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 16px}
+  .optchip{background:var(--bg2);border:1.5px solid transparent;border-radius:999px;padding:8px 15px;font-family:inherit;
+           font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;min-height:44px;transition:.15s;font-variant-numeric:tabular-nums}
+  .optchip.on{border-color:var(--primary);background:var(--card)}
+  .optchip:active{transform:scale(.97)}
+  .sessseg{display:flex;justify-content:center}
+  .sessseg .seg{margin-bottom:12px}
+  .sessseg .segb{min-height:44px;padding-left:16px;padding-right:16px}
+  .sesshint{text-align:center;font-size:12.5px;color:var(--muted);margin:-6px 0 16px}
+  .bigsec{background:var(--bg2);color:var(--ink);border:1px solid var(--line);margin-top:10px;font-size:15px;font-weight:600;padding:14px}
 
   /* ---------- Méditation (« Respire ») ---------- */
   .brov{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;align-items:center;justify-content:center;animation:fade .25s ease}
@@ -277,6 +290,16 @@
   .rname{font-size:16px;font-weight:600}
   .rtimer{font-size:46px;font-weight:700;font-variant-numeric:tabular-nums;margin:6px 0 6px;color:var(--ink);line-height:1}
   .rstate{font-size:12px;color:var(--muted);margin-bottom:18px;display:inline-flex;align-items:center;gap:6px}
+  .rphase{font-size:12.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 0}
+  .rphase.brk{color:var(--vert)}
+  .rgoal{margin:8px auto 20px;max-width:280px}
+  .rgbar{height:8px;border-radius:99px;background:var(--bg2);overflow:hidden}
+  .rgbar i{display:block;height:100%;width:0;background:var(--c);border-radius:99px;transition:width .6s}
+  .rglab{display:block;font-size:13px;color:var(--muted);margin-top:7px;font-variant-numeric:tabular-nums}
+  .focuswrap .brdone{margin:16px auto 6px}
+  .rsum{margin:4px 0 20px;font-size:14px;color:var(--muted)}
+  .rreached{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;color:var(--ink);margin:0 0 4px}
+  .rreached svg{color:var(--primary)}
   .rwarn{font-size:12px;font-weight:600;color:var(--ink);background:var(--bg2);border-radius:9px;
          padding:8px 12px;margin:0 0 14px;display:inline-flex;align-items:center;gap:7px}
   .note{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;
@@ -547,20 +570,6 @@
   .rcempty{font-size:13.5px;color:var(--muted);margin:0;line-height:1.45}
   .recap .rcmore{font-size:13px;color:var(--muted);font-style:italic}
 
-  /* ---------- Journal (qu'as-tu appris) : notes courtes taguées, carte Accueil + index #modal ---------- */
-  .journalcard{padding:14px 16px;display:flex;flex-direction:column;gap:2px;animation:rise .4s ease backwards}
-  .jnlist{display:flex;flex-direction:column;gap:7px;margin-top:12px}
-  .jnrow{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg2);border:1px solid var(--line);
-         border-radius:11px}
-  .jnrow .cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-  .jnrow .cdot.jnnone{background:var(--line)}
-  .jntxt{flex:1;min-width:0;font-size:14px;line-height:1.4;color:var(--ink);overflow-wrap:anywhere}
-  .jntxt b{font-weight:600}
-  .jlist{display:flex;flex-direction:column;gap:16px;max-height:60vh;overflow:auto}
-  .jday .jdate{display:block;font-size:12.5px;font-weight:600;color:var(--muted);text-transform:capitalize;margin-bottom:7px}
-  .jday .jnrow{margin-bottom:7px}
-  .jday .jnrow:last-child{margin-bottom:0}
-
   /* ---------- To-do ---------- */
   .todo{padding:6px 14px 14px;animation:rise .4s ease backwards}
   .todogroup{padding-top:8px}
@@ -739,7 +748,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20260923-215053';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261002-223836';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -876,6 +885,14 @@ let data = load();
 let current = null;       // index matière ouverte, ou null = grille des matières
 let page = 'accueil';     // 'accueil' | 'matieres' | 'session' | 'stats' | 'reglages'
 let armed = null;         // id de la matière sélectionnée avant de lancer une session
+let goalMin = null;       // objectif (minutes) de la prochaine session — jamais présélectionné, à choisir à chaque fois
+let sessMode = 'libre';   // 'libre' (chrono qui monte) | 'pomo' (blocs de travail + pauses de 5 min)
+let pomoMin = 25;         // durée du prochain bloc Pomodoro (minutes)
+// Onglet « pilote » de la session en cours (celui qui l'a lancée, ou qui l'a rechargée). Les autres onglets
+// ouverts la reçoivent via l'événement `storage` et l'affichent en LECTURE SEULE : sinon chaque onglet faisait
+// avancer sa propre copie (blocs Pomodoro comptés en double, session terminée qui « revient », Terminer
+// enregistré deux fois) — vu en revue QA du 02/10, Eric ouvre souvent plusieurs fenêtres (incident du 06/09).
+let ownSession = false;
 let period = 'jour';      // période du graphe temps : 'jour' | 'semaine'
 let periodOffset = 0;     // décalage de fenêtre : 0 = courante, -1 = précédente, …
 let tick = null;          // intervalle d'affichage du chrono en cours
@@ -907,15 +924,6 @@ function prepare(d){
   // Brique « Temps » : chaque matière reçoit un id stable + une couleur d'identité (rétro-compatible).
   if(!Array.isArray(d.sessions)) d.sessions=[];
   if(!('active' in d)) d.active=null;
-  // Journal perso : {id,date,txt,mat,createdAt} — notes courtes, plusieurs par jour possibles. Migre l'ancien
-  // format (une seule entrée par jour, {date,txt,mat,updatedAt}, testé en local le 18/09 avant cette refonte).
-  if(!Array.isArray(d.journal)) d.journal=[];
-  d.journal.forEach((e,i)=>{
-    if(!e.id) e.id='j'+Date.now().toString(36)+i+Math.floor(Math.random()*1e4).toString(36);
-    if(!('mat' in e)) e.mat=null;
-    if(!e.createdAt) e.createdAt=e.updatedAt||new Date().toISOString();
-    delete e.updatedAt;
-  });
   if(!Array.isArray(d.todos)) d.todos=[];   // agenda (onglet Session) : {id,txt,mat,date,done,doneAt,created}
   d.todos.forEach(t=>{                       // migration de l'ancien modèle {when:'demain'|'semaine'} → date réelle + matière
     if(!t.date){ const b=new Date(); b.setHours(0,0,0,0); b.setDate(b.getDate()+(t.when==='demain'?1:0)); t.date=dateKey(b.getTime()); }
@@ -1446,83 +1454,6 @@ function recapToday(){
   return {work, perMat, changed, done};
 }
 
-// ---------- Journal (« Qu'as-tu appris aujourd'hui ? ») ----------
-// Seule entrée manuelle de l'app (tout le reste est calculé depuis les données). Refondu (18/09) après retour
-// d'Eric : un carnet « page blanche » plein écran, un seul texte par jour, ne colle pas à l'usage réel — on
-// révise plusieurs matières par jour et personne n'a envie de rédiger un essai le soir. Remplacé par des
-// NOTES COURTES, autant qu'on veut par jour, chacune taguée à une matière (facultatif) — aussi rapide à
-// ajouter qu'une tâche d'agenda (même `.todoadd`/chips), pas un exercice de rédaction.
-let jnMat=null;   // matière pré-sélectionnée pour la prochaine note (persiste jusqu'au changement, comme agMat)
-function todayJournalNotes(){ const tk=todayKey(); return (data.journal||[]).filter(e=>e.date===tk); }
-function setJnMat(id){ jnMat=(jnMat===id?null:id); refreshJournalSection(); }
-function addJournalNote(){
-  const inp=document.getElementById('jnInput'); if(!inp) return;
-  const v=(inp.value||'').trim(); if(!v) return;
-  const arr=data.journal||(data.journal=[]);
-  arr.push({id:'j'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36), date:todayKey(), mat:jnMat, txt:v, createdAt:new Date().toISOString()});
-  inp.value=''; save(); refreshJournalSection();
-  const ni=document.getElementById('jnInput'); if(ni) ni.focus();
-}
-// Une note peut être supprimée depuis la carte Accueil OU l'index (#modal) : on redessine les deux
-// contextes qui existent réellement (l'un des deux, ou aucun) plutôt que deux fonctions séparées.
-function delJournalNote(id){
-  data.journal=(data.journal||[]).filter(e=>e.id!==id); save();
-  refreshJournalSection();
-  const md=document.getElementById('modal'); if(md && !md.classList.contains('hidden') && md.querySelector('.jlist')) openJournalList();
-}
-function journalNoteRow(n){
-  const m=n.mat?matById(n.mat):null;
-  return `<div class="jnrow">
-    <span class="cdot${m?'':' jnnone'}"${m?` style="background:${m.color}"`:''}></span>
-    <span class="jntxt">${m?`<b>${escapeH(m.nom)}</b> · `:''}${escapeH(n.txt)}</span>
-    <button class="iconbtn" onclick="delJournalNote('${n.id}')" title="Supprimer" aria-label="Supprimer la note">${ic('x',15)}</button>
-  </div>`;
-}
-// Carte Accueil : ajout rapide (matière optionnelle + texte court) + liste des notes du jour, plus récente en haut.
-function journalSectionHTML(){
-  const notes=todayJournalNotes();
-  const hasAny=(data.journal||[]).length>0;
-  const chips=data.matieres.map(m=>`<button class="matchip mini${jnMat===m.id?' on':''}" style="--c:${m.color}"
-    onclick="setJnMat('${m.id}')"><span class="dot"></span>${escapeH(m.nom)}</button>`).join('');
-  const rows=notes.length
-    ? notes.slice().reverse().map(journalNoteRow).join('')
-    : `<p class="rcempty">Rien noté aujourd'hui — ajoute ce que tu retiens au fil de la journée, matière par matière.</p>`;
-  return `<div class="seclabel"><span class="t">Qu'as-tu appris aujourd'hui ?</span>
-      ${hasAny?`<button class="lk" onclick="openJournalList()">Journal</button>`:''}
-    </div>
-    <div class="panel journalcard">
-      ${data.matieres.length?`<div class="agpicklbl">Matière (facultatif)</div><div class="matchips mini">${chips}</div>`:''}
-      <div class="todoadd">
-        <input id="jnInput" type="text" placeholder="Qu'as-tu retenu ?" maxlength="300" onkeydown="if(event.key==='Enter')addJournalNote()">
-        <button class="addbtn" onclick="addJournalNote()" aria-label="Ajouter la note">${ic('plus',18)}</button>
-      </div>
-      <div class="jnlist">${rows}</div>
-    </div>`;
-}
-// Réaffiche juste #journalSection (pas tout l'Accueil) en préservant la saisie en cours — un clic sur un chip
-// matière est un geste discret, mais on ne veut jamais perdre ce qui est déjà tapé dans le champ.
-function refreshJournalSection(){
-  const el=document.getElementById('journalSection'); if(!el) return;
-  const inp=document.getElementById('jnInput'); const v=inp?inp.value:''; const focused=document.activeElement===inp;
-  el.innerHTML=journalSectionHTML();
-  const ni=document.getElementById('jnInput'); if(ni){ ni.value=v; if(focused) ni.focus(); }
-}
-// Historique complet groupé par jour (plus récent en haut) — réutilise #modal comme reschedulePick (pas de Promise).
-function openJournalList(){
-  const m=document.getElementById('modal');
-  const byDate={};
-  (data.journal||[]).forEach(e=>(byDate[e.date]=byDate[e.date]||[]).push(e));
-  const dates=Object.keys(byDate).sort().reverse();
-  const rows = dates.length
-    ? dates.map(d=>`<div class="jday"><span class="jdate">${fmtExamDate(d)}</span>${byDate[d].map(journalNoteRow).join('')}</div>`).join('')
-    : `<p class="rcempty">Rien enregistré pour l'instant.</p>`;
-  m.innerHTML=`<div class="panel wide" role="dialog" aria-modal="true">
-    <div class="phead"><span>Journal</span>
-      <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
-    <div class="jlist">${rows}</div></div>`;
-  modalResolve=null; m.classList.remove('hidden');
-}
-
 // ---------- Agenda (onglet Session) ----------
 // Une tâche est datée et rattachée à une matière ; la taper pré-arme cette matière pour lancer la session.
 // Fenêtre glissante de 7 jours : 0 = aujourd'hui + les 6 suivants, +1 = les 7 jours d'après…
@@ -1854,7 +1785,7 @@ function renderAccueil(){
       <div class="countcard"><div class="n">${ns}</div><div class="l">Session${ns>1?'s':''}</div></div>
     </div>`;
 
-  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + recap + `<div id="journalSection">${journalSectionHTML()}</div>` + subjects + apercu;
+  a.innerHTML = hello + countdownBanner() + streak + stats + cta + today + bosser + recap + subjects + apercu;
 }
 // Ouvre une matière depuis l'accueil (bascule sur l'onglet Matières en vue détail).
 function openMatiere(i){ current=i; page='matieres'; render(); window.scrollTo({top:0}); }
@@ -2199,7 +2130,7 @@ function breatheDoneHTML(){
 function updateBreathe(){ const el=document.getElementById('brTime'); if(el) el.textContent=brClock(Math.max(0,brLeft)); }
 function setBreatheDur(mins){ brTotal=mins*60; brLeft=brTotal; document.querySelectorAll('#breathe .brdur').forEach(b=>b.classList.toggle('on', +b.dataset.m===mins)); updateBreathe(); }
 function openBreathe(mins){
-  brArmed = armed;                       // si une matière est armée, on enchaîne la session à la fin
+  brArmed = (armed && goalMin) ? armed : null;   // matière + objectif choisis → on enchaîne la session à la fin
   brTotal=(mins||5)*60; brLeft=brTotal;
   primeBell();                           // crée/débloque l'AudioContext PENDANT le geste (clic) qui ouvre la méditation
   const ov=document.getElementById('breathe'); ov.classList.remove('hidden'); ov.innerHTML=breatheHTML();
@@ -2208,7 +2139,10 @@ function openBreathe(mins){
 }
 // Chrono à zéro : cloche + phrase, avant de continuer (session enchaînée ou simple sortie).
 function finishBreathe(){
-  playBell();
+  // Session enchaînée : endBreathe() partira d'un setTimeout (pas d'un clic) → un contexte créé là resterait muet.
+  // On donne donc à la session le contexte débloqué à l'ouverture de la méditation, au lieu de le fermer.
+  if(brArmed && brCtx && brCtx.state!=='closed'){ closeSessBell(); sessCtx=brCtx; brCtx=null; try{ chime(sessCtx); }catch(e){} }
+  else playBell();
   const el=document.getElementById('breathe'); if(el) el.innerHTML=breatheDoneHTML();
   brDoneTick=setTimeout(()=>{ brDoneTick=null; endBreathe(true); },1600);
 }
@@ -2221,7 +2155,7 @@ function endBreathe(launch){
   if(brCtx){ try{ brCtx.close(); }catch(e){} brCtx=null; }
   document.getElementById('breathe').classList.add('hidden');
   if(launch && brArmed && matById(brArmed)){ armed=brArmed; startSession(); }
-  else render();
+  else { if(!data.active) closeSessBell(); render(); }   // contexte passé à une session finalement pas lancée
   brArmed=null;
 }
 // Débloque l'AudioContext pendant le clic qui ouvre la méditation (politique autoplay des navigateurs/iOS Safari :
@@ -2239,23 +2173,118 @@ function playBell(){
     const Ctx = window.AudioContext||window.webkitAudioContext; if(!Ctx) return;
     const ctx=(brCtx && brCtx.state!=='closed') ? brCtx : new Ctx();
     brCtx=null;   // la cloche prend possession du contexte ; endBreathe() ne doit plus le fermer, on s'en charge ici
-    if(ctx.state==='suspended') ctx.resume();
-    const now=ctx.currentTime;
-    [[880,0.5,1.8],[880*2.76,0.18,1.1],[880*4.1,0.09,0.7]].forEach(([freq,gain,dec])=>{
-      const osc=ctx.createOscillator(); osc.type='sine'; osc.frequency.value=freq;
-      const g=ctx.createGain(); g.gain.setValueAtTime(gain,now); g.gain.exponentialRampToValueAtTime(0.001,now+dec);
-      osc.connect(g); g.connect(ctx.destination); osc.start(now); osc.stop(now+dec+0.05);
-    });
+    chime(ctx);
     setTimeout(()=>ctx.close(),2200);
   }catch(e){}
 }
+function chime(ctx){
+  if(ctx.state==='suspended') ctx.resume();
+  const now=ctx.currentTime;
+  [[880,0.5,1.8],[880*2.76,0.18,1.1],[880*4.1,0.09,0.7]].forEach(([freq,gain,dec])=>{
+    const osc=ctx.createOscillator(); osc.type='sine'; osc.frequency.value=freq;
+    const g=ctx.createGain(); g.gain.setValueAtTime(gain,now); g.gain.exponentialRampToValueAtTime(0.001,now+dec);
+    osc.connect(g); g.connect(ctx.destination); osc.start(now); osc.stop(now+dec+0.05);
+  });
+}
+// Cloche des sessions (fin de bloc / de pause / objectif atteint). Contexte audio créé pendant le clic « Travailler »
+// et gardé ouvert toute la session (même raison que primeBell) ; repris à chaque toucher de l'écran focus
+// (cas d'un rechargement en pleine session, où aucun clic n'a pu le débloquer). Fermé quand la session se termine.
+let sessCtx=null;
+function primeSessBell(){
+  try{
+    const Ctx = window.AudioContext||window.webkitAudioContext; if(!Ctx) return;
+    if(!sessCtx || sessCtx.state==='closed') sessCtx=new Ctx();
+    if(sessCtx.state==='suspended') sessCtx.resume();
+  }catch(e){}
+}
+function sessBell(){ try{ primeSessBell(); if(sessCtx) chime(sessCtx); }catch(e){} }
+function closeSessBell(){ if(sessCtx){ try{ sessCtx.close(); }catch(e){} sessCtx=null; } }
 
 // ---- Cycle de vie d'une session (mesurée par horodatage début/fin) ----
-function armMat(id){ armed=(armed===id?null:id); renderTemps(); }
+function armMat(id){ armed=(armed===id?null:id); refreshPicker(); }
+function setGoal(min){ goalMin=(goalMin===min?null:min); refreshPicker(); }
+function setSessMode(mode){ sessMode=mode; refreshPicker(); }
+function setPomoMin(min){ pomoMin=min; refreshPicker(); }
+// Objectif « Autre » : heures + minutes libres (même saisie que « Corriger la durée »).
+function openGoalCustom(){
+  const m=document.getElementById('modal');
+  const h=goalMin?Math.floor(goalMin/60):1, mn=goalMin?goalMin%60:0;
+  m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+    <div class="phead"><span>Objectif de la session</span>
+      <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
+    <p class="mdmsg">Combien de temps veux-tu bosser ?</p>
+    <div class="durpick">
+      <input id="goalH" class="mdinput" type="number" min="0" max="12" value="${h}" inputmode="numeric"><span>h</span>
+      <input id="goalM" class="mdinput" type="number" min="0" max="59" value="${mn}" inputmode="numeric"><span>min</span>
+    </div>
+    <div class="mdactions">
+      <button class="mdbtn" onclick="closeModal(null)">Annuler</button>
+      <button class="mdbtn primary" onclick="submitGoalCustom()">Valider</button>
+    </div></div>`;
+  modalResolve=null; m.classList.remove('hidden');
+  const i=document.getElementById('goalH'); if(i){ i.focus(); i.select(); }
+}
+function submitGoalCustom(){
+  const h=Math.max(0, parseInt(document.getElementById('goalH').value,10)||0);
+  const mn=Math.max(0, parseInt(document.getElementById('goalM').value,10)||0);
+  const tot=Math.min(h*60+mn, MAX_SESSION_H*60);   // au-delà du garde-fou « session oubliée », ça n'a pas de sens
+  if(tot<5) return;                                  // pas d'objectif minuscule (ni 0) : on laisse la modale ouverte
+  const m=document.getElementById('modal'); m.classList.add('hidden'); m.innerHTML='';
+  goalMin=tot; refreshPicker();
+}
+// Une session a toujours un objectif. Chrono libre : {mat,mode:'libre',start,goal,reached?}. Pomodoro :
+// {mat,mode:'pomo',goal,block,phase:'work'|'break'|'ready'|'done',start (= début de la phase),workDone,blocks} —
+// chaque bloc de travail terminé est enregistré comme une session normale ; les pauses ne comptent pas.
 function startSession(){
-  if(!armed || !matById(armed)) return;
-  data.active={mat:armed, start:new Date().toISOString()};
-  armed=null; save(); render();   // render() affiche le mode focus plein écran
+  if(!armed || !matById(armed) || !goalMin) return;
+  const now=new Date().toISOString(), goal=goalMin*60000;
+  data.active = sessMode==='pomo'
+    ? {mat:armed, mode:'pomo', goal, block:pomoMin, phase:'work', start:now, workDone:0, blocks:0}
+    : {mat:armed, mode:'libre', start:now, goal};
+  armed=null; goalMin=null; ownSession=true;
+  primeSessBell();                // pendant le clic : sinon la cloche de fin de bloc resterait muette (autoplay)
+  save(); render();               // render() affiche le mode focus plein écran
+}
+const POMO_BREAK_MS = 5*60000;
+// Bloc en cours, raccourci si besoin pour tomber pile sur l'objectif (2 h en blocs de 25 = 25+25+25+25+20).
+function curBlockMs(a){ const b=a.block*60000; return a.goal ? Math.min(b, a.goal-a.workDone) : b; }
+// Fait avancer la session selon l'horloge — rattrape d'un coup les phases écoulées (onglet en arrière-plan,
+// écran verrouillé, rechargement) : tout est calculé depuis les horodatages, jamais depuis le nombre de ticks.
+// Renvoie true si l'état a changé (→ cloche + réaffichage).
+function advanceSession(){
+  const a=data.active; if(!a) return false;
+  const now=Date.now(); let changed=false;
+  if(a.mode==='pomo'){
+    for(;;){
+      const st=Date.parse(a.start);
+      if(a.phase==='work'){
+        const len=curBlockMs(a); if(now-st<len) break;
+        const end=new Date(st+len).toISOString();
+        data.sessions.push({mat:a.mat, start:a.start, end});   // bloc complet : toujours noté, même court (dernier bloc)
+        a.workDone+=len; a.blocks++; a.start=end;
+        a.phase=(a.goal && a.workDone>=a.goal) ? 'done' : 'break'; changed=true;
+      } else if(a.phase==='break'){
+        if(now-st<POMO_BREAK_MS) break;
+        a.phase='ready'; a.start=new Date(st+POMO_BREAK_MS).toISOString(); changed=true;
+      } else break;   // 'ready' / 'done' : on attend un clic
+    }
+  } else if(a.goal && !a.reached && now-Date.parse(a.start)>=a.goal){ a.reached=true; changed=true; }
+  if(changed) save();
+  return changed;
+}
+// Pomodoro : relance un bloc après la pause (durée modifiable à chaque fois).
+function setNextBlock(min){ if(!data.active) return; data.active.block=min; save(); refreshFocus(); }
+function pomoGo(){
+  const a=data.active; if(!a || a.mode!=='pomo') return;
+  a.phase='work'; a.start=new Date().toISOString();
+  primeSessBell(); save(); refreshFocus();
+}
+// Objectif atteint → on continue sans objectif (chrono libre : le chrono continue ; Pomodoro : choix du prochain bloc).
+function continueSession(){
+  const a=data.active; if(!a) return;
+  a.goal=null; delete a.reached;
+  if(a.mode==='pomo'){ a.phase='ready'; a.start=new Date().toISOString(); }
+  save(); refreshFocus();
 }
 const MIN_SESSION_MS = 10*60000;   // < 10 min = pas assez significatif pour être noté, on ignore
 // Une session > MAX_SESSION_H (page laissée ouverte par oubli) n'est jamais enregistrée sans confirmation
@@ -2264,7 +2293,16 @@ const MIN_SESSION_MS = 10*60000;   // < 10 min = pas assez significatif pour êt
 let pendingLongSession=null;
 function stopSession(){
   if(!data.active) return;
-  const s=data.active, end=new Date().toISOString(), ms=Date.parse(end)-Date.parse(s.start);
+  const s=data.active;
+  if(s.mode==='pomo'){
+    advanceSession();   // un bloc fini entre deux ticks est enregistré entier, pas tronqué
+    if(s.phase==='work'){   // bloc interrompu : même règle qu'un chrono libre (≥ 10 min pour compter)
+      const end=new Date().toISOString();
+      if(Date.parse(end)-Date.parse(s.start)>=MIN_SESSION_MS) data.sessions.push({mat:s.mat, start:s.start, end});
+    }
+    data.active=null; save(); render(); return;   // pause / prêt / terminé : les blocs sont déjà notés
+  }
+  const end=new Date().toISOString(), ms=Date.parse(end)-Date.parse(s.start);
   if(ms>MAX_SESSION_MS){ pendingLongSession={s,end}; openLongSessionModal(ms); return; }
   if(ms>=MIN_SESSION_MS) data.sessions.push({mat:s.mat, start:s.start, end});
   data.active=null; save(); render();   // render() masque le mode focus
@@ -2327,9 +2365,31 @@ function clock(ms){ const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600)
   p=n=>String(n).padStart(2,'0'); return h?`${h}:${p(m)}:${p(x)}`:`${p(m)}:${p(x)}`; }
 function updateTimer(){
   if(!data.active) return;
-  const ms=Date.now()-Date.parse(data.active.start);
-  const el=document.getElementById('rtimer'); if(el) el.textContent=clock(ms);
-  const w=document.getElementById('rwarn'); if(w) w.style.display = ms>MAX_SESSION_MS ? '' : 'none';
+  if(ownSession && advanceSession()){ sessBell(); refreshFocus(); return; }
+  paintTimer();
+}
+function paintTimer(){
+  const a=data.active; if(!a) return;
+  const now=Date.now(), st=Date.parse(a.start);
+  let shown=null, done;
+  if(a.mode==='pomo'){
+    const ph=document.getElementById('rphase');
+    if(a.phase==='work'){
+      const len=curBlockMs(a); shown=clock(len-(now-st)); done=a.workDone+Math.min(now-st,len);
+      const tot=a.goal ? a.blocks+Math.ceil((a.goal-a.workDone)/(a.block*60000)) : 0;
+      if(ph) ph.textContent='Travail · bloc '+(a.blocks+1)+(tot?' sur '+tot:'');
+    } else if(a.phase==='break'){ shown=clock(POMO_BREAK_MS-(now-st)); done=a.workDone; if(ph) ph.textContent='Pause'; }
+    else done=a.workDone;
+  } else {
+    shown=clock(now-st); done=now-st;
+    const w=document.getElementById('rwarn'); if(w) w.style.display = (now-st)>MAX_SESSION_MS ? '' : 'none';
+  }
+  const el=document.getElementById('rtimer'); if(el && shown!=null) el.textContent=shown;
+  if(a.goal){
+    const fill=document.getElementById('rgfill'), lab=document.getElementById('rglab'), mins=ms=>fmtDur(Math.floor(ms/60000)*60000);
+    if(fill) fill.style.width=Math.min(100, done/a.goal*100).toFixed(1)+'%';
+    if(lab) lab.textContent=mins(done)+' / '+fmtDur(a.goal);
+  }
 }
 
 // ---- Agrégation par période ----
@@ -2473,33 +2533,84 @@ function renderStats(){
 function renderTempsStats(){ if(page==='stats') renderStats(); }
 // Au chargement : une session laissée ouverte depuis > MAX_SESSION_H est présumée oubliée → on l'annule (non comptée).
 function recoverStaleSession(){
+  const a=data.active;
+  if(a && a.mode==='pomo'){
+    advanceSession();   // blocs finis pendant l'absence : enregistrés à leur vraie heure de fin
+    // en attente d'un clic depuis des heures (pause finie / objectif atteint) : rien à perdre, on clôt sans bruit
+    if(a.phase!=='work' && Date.now()-Date.parse(a.start) > MAX_SESSION_MS){ data.active=null; save(); }
+    return;
+  }
   if(data.active && Date.now()-Date.parse(data.active.start) > MAX_SESSION_MS){
     data.active=null; staleRecovered=true; save();
   }
 }
-function pickerCard(){
+const GOAL_OPTS = [30,60,90,120,180];   // objectifs proposés (minutes) ; « Autre » pour le reste
+const POMO_OPTS = [20,25,30,45];        // durées de bloc Pomodoro (minutes)
+function pickerCard(noAnim){
   const chips=data.matieres.map(m=>`<button class="matchip${armed===m.id?' on':''}" style="--c:${m.color}" onclick="armMat('${m.id}')">
       <span class="dot"></span>${escapeH(m.nom)}</button>`).join('');
-  return `<div class="sessionwrap withag"><div class="card sessioncard">
+  const custom = goalMin && !GOAL_OPTS.includes(goalMin);
+  const goals=GOAL_OPTS.map(g=>`<button class="optchip${goalMin===g?' on':''}" onclick="setGoal(${g})">${fmtDur(g*60000)}</button>`).join('')
+    + `<button class="optchip${custom?' on':''}" onclick="openGoalCustom()">${custom?fmtDur(goalMin*60000):'Autre'}</button>`;
+  const modes=[['libre','Chrono libre'],['pomo','Pomodoro']].map(([k,l])=>
+    `<button class="segb${sessMode===k?' on':''}" onclick="setSessMode('${k}')">${l}</button>`).join('');
+  const pomo = sessMode==='pomo'
+    ? `<div class="optchips">${POMO_OPTS.map(b=>`<button class="optchip${pomoMin===b?' on':''}" onclick="setPomoMin(${b})">${b} min</button>`).join('')}</div>
+       <p class="sesshint">Blocs de ${pomoMin} min, pause de 5 min entre chaque.</p>`
+    : '';
+  const ready = armed && goalMin;
+  const lbl = !armed ? 'Choisis une matière' : !goalMin ? 'Choisis un objectif' : 'Travailler';
+  return `<div class="sessionwrap withag"><div class="card sessioncard${noAnim?' noanim':''}">
     <div class="sesshead">${ic('clock',30)}
       <h2>Prêt·e à bosser ?</h2>
-      <p>Choisis une matière, puis lance le chrono.</p></div>
+      <p>Choisis une matière et ton objectif, puis lance le chrono.</p></div>
     <div class="matchips">${chips}</div>
-    <button class="bigbtn bigwork" ${armed?'':'disabled'} onclick="startSession()">${ic('play',20)}<span>${armed?'Travailler':'Choisis une matière'}</span></button>
-    <button class="bigbtn bigbreathe" onclick="openBreathe(5)">${ic('breath',20)}<span>${armed?'Respirer puis travailler':'Respirer 5 min'}</span></button>
+    <div class="sesslbl">Combien de temps veux-tu bosser ?</div>
+    <div class="optchips">${goals}</div>
+    <div class="sessseg"><div class="seg">${modes}</div></div>
+    ${pomo}
+    <button class="bigbtn bigwork" ${ready?'':'disabled'} onclick="startSession()">${ic('play',20)}<span>${lbl}</span></button>
+    <button class="bigbtn bigbreathe" onclick="openBreathe(5)">${ic('breath',20)}<span>${ready?'Respirer puis travailler':'Respirer 5 min'}</span></button>
   </div></div>`;
+}
+// Redessine juste la carte de lancement (pas l'agenda en dessous : garde la saisie en cours, pas d'animation).
+function refreshPicker(){
+  const el=document.querySelector('#temps .sessionwrap');
+  if(el) el.outerHTML=pickerCard(true); else renderTemps();
 }
 // Contenu du mode focus plein écran (session en cours).
 function focusCard(){
-  const m=matById(data.active.mat);
+  const a=data.active, m=matById(a.mat);
   const name=m?escapeH(m.nom):'Matière supprimée';
   const col=m?m.color:'var(--muted)';
-  return `<div class="focuswrap" style="--c:${col}">
-    <div class="runtop"><span class="rdot"></span><span class="rname">${name}</span></div>
-    <div class="rtimer" id="rtimer">00:00</div>
+  const wrap=inner=>`<div class="focuswrap" style="--c:${col}">
+    <div class="runtop"><span class="rdot"></span><span class="rname">${name}</span></div>${inner}</div>`;
+  const stop=`<button class="bigbtn bigstop" onclick="stopSession()">${ic('stop',20)}<span>Terminer</span></button>`;
+  const prog = a.goal ? `<div class="rgoal"><div class="rgbar"><i id="rgfill"></i></div><span class="rglab" id="rglab"></span></div>` : '';
+  const more=`<button class="bigbtn bigsec" onclick="continueSession()">${ic('play',18)}<span>Continuer</span></button>`;
+  if(!ownSession){   // session pilotée par un autre onglet : affichage seul, aucun bouton qui écrirait une 2e copie
+    const idle = a.mode==='pomo' && (a.phase==='ready'||a.phase==='done');
+    const ph = a.mode==='pomo' ? `<p class="rphase" id="rphase">${a.phase==='ready'?'Pause finie':a.phase==='done'?'Objectif atteint':''}</p>` : '';
+    return wrap(`${ph}<div class="rtimer" id="rtimer">${idle?'—':'00:00'}</div>${prog}
+      <p class="rsum">Session en cours dans une autre fenêtre.<br>Tu l'as fermée ? Recharge cette page pour la reprendre ici.</p>`);
+  }
+  if(a.mode==='pomo'){
+    if(a.phase==='done') return wrap(`<span class="brdone">${ic('bell',36)}</span>
+      <p class="brready">Objectif atteint</p>
+      <p class="rsum">${fmtDur(a.workDone)} de travail en ${a.blocks} bloc${a.blocks>1?'s':''}</p>${stop}${more}`);
+    if(a.phase==='ready') return wrap(`<p class="rphase brk">Pause finie</p>
+      <p class="rsum">Durée du prochain bloc :</p>
+      <div class="optchips">${POMO_OPTS.map(b=>`<button class="optchip${a.block===b?' on':''}" onclick="setNextBlock(${b})">${b} min</button>`).join('')}</div>
+      ${prog}
+      <button class="bigbtn bigwork" onclick="pomoGo()">${ic('play',20)}<span>C'est reparti</span></button>
+      <button class="bigbtn bigsec" onclick="stopSession()">${ic('stop',18)}<span>Terminer</span></button>`);
+    return wrap(`<p class="rphase${a.phase==='break'?' brk':''}" id="rphase"></p>
+      <div class="rtimer" id="rtimer">00:00</div>${prog}${stop}`);
+  }
+  const reached = a.reached ? `<p class="rreached">${ic('bell',18)}<span>Objectif atteint</span></p>` : '';
+  return wrap(`<div class="rtimer" id="rtimer">00:00</div>${reached}${prog}
     <div class="rwarn" id="rwarn" style="display:none">${ic('clock',14)}<span>En session depuis plus de ${MAX_SESSION_H} h — pense à terminer.</span></div>
-    <button class="bigbtn bigstop" onclick="stopSession()">${ic('stop',20)}<span>Terminer</span></button>
-  </div>`;
+    ${stop}${a.reached?more:''}`);
 }
 // Affiche/masque le mode focus selon qu'une session est active. Idempotent (ne reconstruit qu'aux transitions).
 let focusShown=false;
@@ -2507,11 +2618,19 @@ function renderFocus(){
   const f=document.getElementById('focus');
   if(data.active && !focusShown){
     f.innerHTML=focusCard(); f.classList.remove('hidden'); focusShown=true;
+    f.onpointerdown=primeSessBell;   // débloque l'audio au 1er toucher si la session a été reprise sans clic (rechargement)
     if(tick) clearInterval(tick); updateTimer(); tick=setInterval(updateTimer,1000);
   } else if(!data.active && focusShown){
-    f.classList.add('hidden'); f.innerHTML=''; focusShown=false;
+    f.classList.add('hidden'); f.innerHTML=''; focusShown=false; ownSession=false;
     if(tick){ clearInterval(tick); tick=null; }
+    closeSessBell();
   }
+}
+// Changement de phase (fin de bloc, pause, objectif…) : reconstruit le contenu du plein écran.
+function refreshFocus(){
+  const f=document.getElementById('focus');
+  if(!focusShown || !data.active || !f) return;
+  f.innerHTML=focusCard(); paintTimer();
 }
 function graphCard(){
   const tot=matTotals();
@@ -2736,8 +2855,8 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
 // jamais passer par le cloud ni afficher le moindre message (incident du 06/09, 3 fenêtres ouvertes
 // avec le même compte : un onglet périmé a écrasé les données fraîches d'un autre onglet).
 window.addEventListener('storage', e=>{
-  if(e.key!==STORE_KEY || e.newValue==null || data.active) return;   // session en cours sur CET onglet : ne rien toucher
-  try{ data = backfillDaily(prepare(JSON.parse(e.newValue))); current=null; render(); }catch(err){}
+  if(e.key!==STORE_KEY || e.newValue==null || (data.active && ownSession)) return;   // session pilotée par CET onglet : ne rien toucher
+  try{ data = backfillDaily(prepare(JSON.parse(e.newValue))); current=null; render(); refreshFocus(); }catch(err){}
 });
 // Interactions du sélecteur de couleur maison (carré S/V + teinte + hex), câblées une fois.
 (function(){ const sv=document.getElementById('cpSV'); if(!sv) return; let drag=false;
@@ -2756,6 +2875,7 @@ let savedTheme = localStorage.getItem(THEME_KEY);
 if(!THEMES[savedTheme]) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…, ou l'ancien « auto ») → clair
 applyTheme(savedTheme);
 recoverStaleSession();
+ownSession = !!data.active;   // session reprise au chargement : cet onglet la pilote
 // Retour du lien "mot de passe oublié" : Supabase redirige ici avec #access_token=…&type=recovery.
 const recoveryFromLink = parseRecoveryHash();
 if(recoveryFromLink){ recoverySession = recoveryFromLink; history.replaceState(null, '', location.pathname + location.search); }
