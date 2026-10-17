@@ -256,6 +256,31 @@
   .sessseg{display:flex;justify-content:center}
   .sessseg .seg{margin-bottom:12px}
   .sessseg .segb{min-height:44px;padding-left:16px;padding-right:16px}
+  .planwrap{max-width:420px}
+  .plantitle{font-size:24px;font-weight:700;margin:14px 0 6px;color:var(--ink)}
+  .planwrap .bigsec{margin-top:8px}
+  .planadd{margin-bottom:10px}
+  .planadd input{font-size:16px;min-height:46px}
+  .planlist{display:flex;flex-direction:column;margin:0 0 16px;text-align:left}
+  .planrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 0 2px 4px;border-bottom:1px solid var(--line)}
+  .planrow:last-child{border-bottom:none}
+  .dbrow{display:flex;align-items:center;gap:11px;min-height:44px;width:100%;background:none;border:none;border-bottom:1px solid var(--line);
+         color:var(--ink);font-family:inherit;text-align:left;cursor:pointer;padding:6px 2px}
+  .dbrow:last-child{border-bottom:none}
+  .dbrow .todochk{flex-shrink:0}
+  .focusplan{max-width:320px;margin:0 auto 16px;background:var(--bg2);border-radius:14px;padding:12px 16px 12px 34px;text-align:left;
+             font-size:15px;line-height:1.4;color:var(--ink)}
+  .focusplan li{padding:3px 0;word-break:break-word}
+  .dbplan{margin:0 0 14px}
+  .moods{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 16px}
+  .moodbtn{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:72px;justify-content:center;background:var(--bg2);
+           border:1.5px solid transparent;border-radius:14px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+  .moodbtn.on{border-color:var(--primary);background:var(--card)}
+  .mdbtn:disabled{opacity:.45;cursor:default}
+  .wavebadge{display:inline-flex;align-items:center;justify-content:center;width:1.15em;height:1.15em;border-radius:.24em;
+             background:#F28C28;vertical-align:-.18em}
+  .wavebadge svg{width:.95em;height:.95em}
+  .moodemo{font-size:26px;line-height:1}
   .sesshint{text-align:center;font-size:12.5px;color:var(--muted);margin:-6px 0 16px}
   .bigsec{background:var(--bg2);color:var(--ink);border:1px solid var(--line);margin-top:10px;font-size:15px;font-weight:600;padding:14px}
 
@@ -337,6 +362,28 @@
   .chartsvg .cay{fill:var(--muted);font-size:11px;text-anchor:start}
   .chartsvg rect{transition:none}
   /* Liste des sessions individuelles (vue Jour des Stats) — corriger une session erronée sans console. */
+  .dbhist{margin-top:16px}
+  .dbhisthead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+  .dbhisthead h3{font-size:16px;font-weight:700;margin:0}
+  .dbtally{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .dbmore{margin-top:12px}
+  .rcdeb{width:100%;background:none;border:none;font-family:inherit;color:inherit;text-align:left;cursor:pointer;min-height:44px;padding:0}
+  .rcdeb>span:nth-child(2){flex:1}
+  .rcdeb .ic{color:var(--muted)}
+  .rcemos{font-size:16px;letter-spacing:1px}
+  .dblist{margin-top:12px;border-top:1px dashed var(--line);padding-top:8px}
+  .dbtitle{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:2px 0 6px}
+  .dbcard{padding:8px 0;border-bottom:1px solid var(--line)}
+  .dbcard:last-child{border-bottom:none}
+  .dbhead{display:flex;align-items:center;gap:10px}
+  .dbemo{font-size:18px;line-height:1;width:22px;text-align:center;flex-shrink:0}
+  .dbcount{font-size:12.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+  .dbtasks{list-style:none;margin:6px 0 0 32px;padding:0}
+  .dbtasks li{display:flex;align-items:flex-start;gap:7px;font-size:13.5px;padding:2px 0;color:var(--ink);word-break:break-word}
+  .dbtasks li .ic{flex-shrink:0;margin-top:2px}
+  .dbtasks li.ok .ic{color:var(--vert)}
+  .dbtasks li.ko{color:var(--muted)}
+  .dbtasks li.ko .ic{color:var(--rouge)}
   .sesslist{margin-top:10px;border-top:1px dashed var(--line);padding-top:6px}
   .sessrow{display:flex;align-items:center;gap:10px;padding:6px 0}
   .sessdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
@@ -743,12 +790,13 @@
 
 <!-- SESSION EN COURS (mode focus plein écran : pas d'accès aux autres pages) -->
 <div id="focus" class="focusov hidden"></div>
+<div id="planScreen" class="focusov hidden"></div>
 
 <!-- (Réglages et Stats sont désormais des pages, plus des overlays) -->
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261017-124357';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261017-131316';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -808,6 +856,39 @@ const THEMES = {
                                 '--muted':'#A1A1AA','--line':'#3F3F46','--primary':'#38BDF8',
                                 '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.4)','--ring':'rgba(56,189,248,.20)'}},
+  lavande:{label:"Lavande", vars:{'--bg':'#EEEBF7','--bg2':'#DDD7EE','--card':'#FFFFFF','--ink':'#1E1B2E',
+                                '--muted':'#5E5873','--line':'#DDD7EE','--primary':'#6D4FC2',
+                                '--shadow':'0 1px 3px rgba(30,27,46,.09)','--ring':'rgba(109,79,194,.18)'}},
+  peche: {label:"Pêche",  vars:{'--bg':'#F8EEE6','--bg2':'#EEDCCD','--card':'#FFFCFA','--ink':'#2B1E16',
+                                '--muted':'#6E5C50','--line':'#EEDCCD','--primary':'#C2562B',
+                                '--shadow':'0 1px 3px rgba(43,30,22,.09)','--ring':'rgba(194,86,43,.18)'}},
+  rose:  {label:"Rose",   vars:{'--bg':'#F8ECF0','--bg2':'#EDD8E0','--card':'#FFFBFC','--ink':'#2A1820',
+                                '--muted':'#6F5762','--line':'#EDD8E0','--primary':'#B8326A',
+                                '--shadow':'0 1px 3px rgba(42,24,32,.09)','--ring':'rgba(184,50,106,.18)'}},
+  nuit:  {label:"Nuit",   vars:{'--bg':'#0B1120','--bg2':'#1E293B','--card':'#111A2E','--ink':'#F1F5F9',
+                                '--muted':'#94A3B8','--line':'#334155','--primary':'#818CF8',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(129,140,248,.22)'}},
+  foret: {label:"Forêt",  vars:{'--bg':'#0C1410','--bg2':'#1E2B24','--card':'#131D18','--ink':'#ECF3EE',
+                                '--muted':'#9AAFA2','--line':'#2E3F35','--primary':'#22A55A',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(34,165,90,.22)'}},
+  aubergine:{label:"Aubergine", vars:{'--bg':'#120B1A','--bg2':'#2A1F36','--card':'#1A1224','--ink':'#F3EEF8',
+                                '--muted':'#AE9FBF','--line':'#3B2D4A','--primary':'#9B6BE0',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(155,107,224,.22)'}},
+  ocean:{label:"Océan", vars:{'--bg':'#071417','--bg2':'#18303A','--card':'#0D1E23','--ink':'#E9F6F8',
+                                '--muted':'#93B4BC','--line':'#24414B','--primary':'#14A3B8',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(20,163,184,.22)'}},
+  braise:{label:"Braise", vars:{'--bg':'#16100B','--bg2':'#2F241B','--card':'#1E1711','--ink':'#F8F0E8',
+                                '--muted':'#BBA796','--line':'#3F3125','--primary':'#E07A2E',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,122,46,.22)'}},
+  cerise:{label:"Cerise", vars:{'--bg':'#170B10','--bg2':'#331C25','--card':'#201117','--ink':'#F9EEF2',
+                                '--muted':'#BF9DAA','--line':'#452A35','--primary':'#E0457B',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,69,123,.22)'}},
 };
 // Base claire complète : permet de revenir proprement après le mode sombre (couleurs maîtrise incluses).
 const LIGHT_DEFAULTS = {
@@ -825,7 +906,9 @@ function applyTheme(name){
   localStorage.setItem(THEME_KEY, name);
   document.querySelectorAll('.topt').forEach(s=>s.classList.toggle('on', s.dataset.t===name));
 }
-const THEME_OPTS = [['slate','Clair'],['sauge','Sauge'],['sombre','Sombre']];
+const THEME_OPTS = [['slate','Clair'],['sauge','Sauge'],['lavande','Lavande'],['peche','Pêche'],['rose','Rose'],
+                    ['sombre','Sombre'],['nuit','Nuit'],['foret','Forêt'],
+                    ['aubergine','Aubergine'],['ocean','Océan'],['braise','Braise'],['cerise','Cerise']];
 function buildThemeOpts(active){
   const box = document.getElementById('themeOpts');
   if(!box) return;
@@ -888,6 +971,8 @@ let armed = null;         // id de la matière sélectionnée avant de lancer un
 let goalMin = null;       // objectif (minutes) de la prochaine session — jamais présélectionné, à choisir à chaque fois
 let sessMode = 'libre';   // 'libre' (chrono qui monte) | 'pomo' (blocs de travail + pauses de 5 min)
 let pomoMin = 25;         // durée du prochain bloc Pomodoro (minutes)
+let sessPlan = [];        // tâches prévues pour la prochaine session (« Au programme »), textes libres
+let planDraft = '';       // saisie en cours dans le champ « Au programme » (survit aux redessins du lanceur)
 let pomoCount = null;     // Pomodoro : nombre de blocs visés (objectif = pomoCount × pomoMin) — jamais présélectionné
 // Objectif choisi pour le mode courant ? (chrono libre : une durée ; Pomodoro : un nombre de blocs)
 function goalReady(){ return sessMode==='pomo' ? !!pomoCount : !!goalMin; }
@@ -927,6 +1012,9 @@ function prepare(d){
   // Brique « Temps » : chaque matière reçoit un id stable + une couleur d'identité (rétro-compatible).
   if(!Array.isArray(d.sessions)) d.sessions=[];
   if(!('active' in d)) d.active=null;
+  if(!Array.isArray(d.debriefs)) d.debriefs=[];
+  d.debriefs=d.debriefs.filter(x=>x && typeof x==='object' && typeof x.start==='string');   // garde-fou import/cloud
+  d.debriefs.forEach(x=>{ x.plan=(Array.isArray(x.plan)?x.plan:[]).filter(p=>p && typeof p==='object').map(p=>({txt:String(p.txt??''), done:!!p.done})); });   // bilans de fin de session : {mat,start,end,mood:'ko'|'mid'|'ok',recorded,plan:[{txt,done}]} (recorded=false : session < 10 min, pas dans les stats)
   if(!Array.isArray(d.todos)) d.todos=[];   // agenda (onglet Session) : {id,txt,mat,date,done,doneAt,created}
   d.todos.forEach(t=>{                       // migration de l'ancien modèle {when:'demain'|'semaine'} → date réelle + matière
     if(!t.date){ const b=new Date(); b.setHours(0,0,0,0); b.setDate(b.getDate()+(t.when==='demain'?1:0)); t.date=dateKey(b.getTime()); }
@@ -1065,6 +1153,7 @@ async function logout(){
   // suivante ne doit jamais hériter/mélanger les données de ce compte avec le sien.
   localStorage.removeItem(SYNC_KEY);
   data=prepare(clone(DEFAULT)); current=null;
+  sessPlan=[]; planDraft=''; debrief=null; armed=null; goalMin=null; pomoCount=null;   // rien du compte précédent dans le lanceur
   render();
   showAuthGate('login');
 }
@@ -1098,7 +1187,7 @@ async function pullFromCloud(){
 // Mesure grossière de la "richesse" d'un jeu de données, pour repérer un remplacement qui ferait perdre du contenu.
 function richness(d){ return (d.matieres||[]).length
   + (d.matieres||[]).reduce((s,m)=>s+(m.chapitres||[]).length,0)
-  + (d.sessions||[]).length + (d.todos||[]).length; }
+  + (d.sessions||[]).length + (d.todos||[]).length + (d.debriefs||[]).length; }
 async function reconcileOnLogin(){
   if(!supaConfigured() || !authSession) return;
   try{
@@ -1454,7 +1543,8 @@ function recapToday(){
     if(localDay(Date.parse(last.t))===today && last.p!==prev.p) changed.push({nom:c.nom, from:prev.p, to:last.p, color:m.color});
   }));
   const done=(data.todos||[]).filter(t=>t.done && t.doneAt && localDay(Date.parse(t.doneAt))===today);
-  return {work, perMat, changed, done};
+  const debs=(data.debriefs||[]).filter(d=>localDay(Date.parse(d.start))===today);
+  return {work, perMat, changed, done, debs};
 }
 
 // ---------- Agenda (onglet Session) ----------
@@ -1750,7 +1840,7 @@ function renderAccueil(){
 
   // — Recap du jour —
   const rc=recapToday();
-  const hasRecap=rc.work>0 || rc.changed.length || rc.done.length;
+  const hasRecap=rc.work>0 || rc.changed.length || rc.done.length || rc.debs.length;
   let recap=`<div class="seclabel"><span class="t">Aujourd'hui</span></div><div class="panel recap">`;
   if(!hasRecap){
     recap+=`<p class="rcempty">Rien encore aujourd'hui — lance une session pour remplir ton bilan.</p>`;
@@ -1764,7 +1854,12 @@ function renderAccueil(){
     rc.changed.slice(0,4).forEach(c=>{ const up=c.to>=c.from;
       recap+=`<div class="rcline"><span class="cdot" style="background:${c.color}"></span><span>${escapeH(c.nom)} : ${c.from}% → <b style="color:${couleur(c.to)}">${c.to}%</b> ${up?'↗':'↘'}</span></div>`; });
     if(rc.changed.length>4) recap+=`<div class="rcline"><span style="width:9px"></span><span class="rcmore">+ ${rc.changed.length-4} autre${rc.changed.length-4>1?'s':''} chapitre${rc.changed.length-4>1?'s':''}</span></div>`;
-    if(rc.done.length) recap+=`<div class="rcline">${ic('check',16)}<span><b>${rc.done.length}</b> tâche${rc.done.length>1?'s':''} faite${rc.done.length>1?'s':''}</span></div>`;
+    if(rc.debs.length){
+      const tasks=rc.debs.reduce((n,d)=>n+(d.plan||[]).length,0), ok=rc.debs.reduce((n,d)=>n+(d.plan||[]).filter(p=>p.done).length,0);
+      recap+=`<button class="rcline rcdeb" onclick="goStatsToday()"><span class="rcemos">${rc.debs.map(d=>moodOf(d.mood).e).join(' ')}</span>
+        <span>${rc.debs.length} bilan${rc.debs.length>1?'s':''}${tasks?` · <b>${ok}/${tasks}</b> tâche${tasks>1?'s':''} prévue${tasks>1?'s':''} faite${tasks>1?'s':''}`:''}</span>${ic('chevron',16)}</button>`;
+    }
+    if(rc.done.length) recap+=`<div class="rcline">${ic('check',16)}<span><b>${rc.done.length}</b> tâche${rc.done.length>1?'s':''} de l'agenda faite${rc.done.length>1?'s':''}</span></div>`;
   }
   recap+=`</div>`;
 
@@ -2240,12 +2335,14 @@ function submitGoalCustom(){
 // {mat,mode:'pomo',goal,block,phase:'work'|'break'|'ready'|'done',start (= début de la phase),workDone,blocks} —
 // chaque bloc de travail terminé est enregistré comme une session normale ; les pauses ne comptent pas.
 function startSession(){
-  if(!armed || !matById(armed) || !goalReady()) return;
+  if(data.active || !armed || !matById(armed) || !goalReady()) return;   // jamais par-dessus une session (autre onglet)
   const now=new Date().toISOString(), goal=(sessMode==='pomo' ? pomoCount*pomoMin : goalMin)*60000;
   data.active = sessMode==='pomo'
     ? {mat:armed, mode:'pomo', goal, block:pomoMin, phase:'work', start:now, workDone:0, blocks:0}
     : {mat:armed, mode:'libre', start:now, goal};
-  armed=null; goalMin=null; pomoCount=null; ownSession=true;
+  data.active.began=now;   // début réel (en Pomodoro, start = début de la phase en cours)
+  data.active.plan=sessPlan.map(txt=>({txt, done:false}));
+  armed=null; goalMin=null; pomoCount=null; sessPlan=[]; planDraft=''; ownSession=true;
   primeSessBell();                // pendant le clic : sinon la cloche de fin de bloc resterait muette (autoplay)
   save(); render();               // render() affiche le mode focus plein écran
 }
@@ -2265,7 +2362,7 @@ function advanceSession(){
         const len=curBlockMs(a); if(now-st<len) break;
         const end=new Date(st+len).toISOString();
         data.sessions.push({mat:a.mat, start:a.start, end});   // bloc complet : toujours noté, même court (dernier bloc)
-        a.workDone+=len; a.blocks++; a.start=end;
+        a.workDone+=len; a.blocks++; a.start=end; a.lastEnd=end;
         a.phase=(a.goal && a.workDone>=a.goal) ? 'done' : 'break'; changed=true;
       } else if(a.phase==='break'){
         if(now-st<POMO_BREAK_MS) break;
@@ -2300,16 +2397,17 @@ function stopSession(){
   const s=data.active;
   if(s.mode==='pomo'){
     advanceSession();   // un bloc fini entre deux ticks est enregistré entier, pas tronqué
+    let end=s.lastEnd||s.start, rec=s.blocks>0;   // hors bloc (pause/prêt/terminé) : fin = fin du dernier bloc, pas l'attente
     if(s.phase==='work'){   // bloc interrompu : même règle qu'un chrono libre (≥ 10 min pour compter)
-      const end=new Date().toISOString();
-      if(Date.parse(end)-Date.parse(s.start)>=MIN_SESSION_MS) data.sessions.push({mat:s.mat, start:s.start, end});
+      end=new Date().toISOString();
+      if(Date.parse(end)-Date.parse(s.start)>=MIN_SESSION_MS){ data.sessions.push({mat:s.mat, start:s.start, end}); rec=true; }
     }
-    data.active=null; save(); render(); return;   // pause / prêt / terminé : les blocs sont déjà notés
+    finishActive(end, rec); return;   // pause / prêt / terminé : les blocs sont déjà notés
   }
   const end=new Date().toISOString(), ms=Date.parse(end)-Date.parse(s.start);
   if(ms>MAX_SESSION_MS){ pendingLongSession={s,end}; openLongSessionModal(ms); return; }
   if(ms>=MIN_SESSION_MS) data.sessions.push({mat:s.mat, start:s.start, end});
-  data.active=null; save(); render();   // render() masque le mode focus
+  finishActive(end, ms>=MIN_SESSION_MS);   // masque le mode focus + bilan
 }
 function openLongSessionModal(ms){
   const mat=matById(pendingLongSession.s.mat);
@@ -2354,14 +2452,94 @@ function resolveLongSession(action, ms){
   if(!pendingLongSession) return;
   const {s,end}=pendingLongSession;
   const m=document.getElementById('modal'); m.classList.add('hidden'); m.innerHTML='';
-  if(action==='discard'){ data.active=null; }
-  else{
+  let realEnd=end, rec=false;
+  if(action!=='discard'){
     const dur = action==='set' ? ms : (Date.parse(end)-Date.parse(s.start));
-    const realEnd = action==='set' ? new Date(Date.parse(s.start)+dur).toISOString() : end;
-    if(dur>=MIN_SESSION_MS) data.sessions.push({mat:s.mat, start:s.start, end:realEnd});
-    data.active=null;
+    realEnd = action==='set' ? new Date(Date.parse(s.start)+dur).toISOString() : end;
+    if(dur>=MIN_SESSION_MS){ data.sessions.push({mat:s.mat, start:s.start, end:realEnd}); rec=true; }
   }
-  pendingLongSession=null; save(); render();
+  pendingLongSession=null; finishActive(realEnd, action==='discard'?'discard':rec);
+}
+// ---- Bilan de fin de session : ressenti (❌ / 〰️ / ✅) + ce qui a été fait parmi les tâches prévues ----
+let debrief=null;   // {mat,start,end,mood,plan} en attente de validation
+// Bilan à chaque « Terminer » (sauf « Ne pas enregistrer ») ; recorded = la session compte dans les stats (≥ 10 min).
+function finishActive(end, recorded){
+  const a=data.active;
+  data.active=null; save(); render();   // render() masque le mode focus
+  if(a && recorded!=='discard') openDebrief({mat:a.mat, start:a.began||a.start, end:end||new Date().toISOString(), mood:null, recorded:!!recorded,
+    plan:(a.plan||[]).map(p=>({txt:p.txt, done:!!p.done}))});
+}
+// Vague « moyen » dessinée en SVG (l'emoji 〰️ s'affichait comme un trait fin gris) : carré orange façon ✅.
+const WAVE_ICON='<span class="wavebadge"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 13.5c1.9-3.6 5.6-3.6 7.5 0s5.6 3.6 7.5 0"/></svg></span>';
+const MOODS=[['ko','❌','Pas top'],['mid',WAVE_ICON,'Bof'],['ok','✅','Réussie']];
+function openDebrief(d){ debrief=d; paintDebrief(); }
+function paintDebrief(){
+  const d=debrief, m=document.getElementById('modal'); if(!d) return;
+  const mat=matById(d.mat);
+  const moods=MOODS.map(([k,e,l])=>`<button class="moodbtn${d.mood===k?' on':''}" onclick="setMood('${k}')" aria-label="${l}"><span class="moodemo">${e}</span><span>${l}</span></button>`).join('');
+  const plan = d.plan.length ? `<p class="mdmsg">Qu'est-ce que tu as fait ?</p><div class="dbplan">${d.plan.map((p,i)=>`
+      <button class="dbrow" onclick="toggleDebrief(${i})"><span class="todochk ${p.done?'on':''}">${ic('check',14)}</span>
+      <span class="todotxt${p.done?' done':''}">${escapeH(p.txt)}</span></button>`).join('')}</div>` : '';
+  m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
+    <div class="phead"><span>Bilan de la session</span>
+      <button class="iconbtn" aria-label="Fermer" onclick="skipDebrief()">${ic('x')}</button></div>
+    <p class="mdmsg">Comment s'est passée ta session${mat?` en <b>${escapeH(mat.nom)}</b>`:''} ?</p>
+    <div class="moods">${moods}</div>
+    ${plan}
+    <div class="mdactions">
+      <button class="mdbtn" onclick="skipDebrief()">Passer</button>
+      <button class="mdbtn primary" ${d.mood?'':'disabled'} onclick="submitDebrief()">Valider</button>
+    </div></div>`;
+  modalResolve=null; m.classList.remove('hidden');
+}
+function setMood(k){ if(debrief){ debrief.mood=k; paintDebrief(); } }
+function toggleDebrief(i){ if(debrief&&debrief.plan[i]){ debrief.plan[i].done=!debrief.plan[i].done; paintDebrief(); } }
+function skipDebrief(){ debrief=null; closeModal(null); }
+function submitDebrief(){
+  if(!debrief || !debrief.mood) return;
+  data.debriefs.push(debrief); debrief=null; closeModal(null); save();
+}
+// « Ma liste » : page plein écran ouverte par « Travailler » / « Respirer puis travailler », avant le chrono.
+let planNext=null;   // 'work' | 'breathe' : ce qu'on lance une fois la liste faite
+function openPlan(next){
+  if(!armed || !matById(armed) || !goalReady()) return;
+  planNext=next; const m=matById(armed), el=document.getElementById('planScreen');
+  el.innerHTML=`<div class="focuswrap planwrap" style="--c:${m.color}">
+    <div class="runtop"><span class="rdot"></span><span class="rname">${escapeH(m.nom)}</span></div>
+    <h2 class="plantitle">Qu'est-ce que tu vas faire ?</h2>
+    <p class="rsum">Écris ce que tu comptes faire pendant cette session. À la fin, tu cocheras ce que tu as fait.</p>
+    <div class="todoadd planadd">
+      <input id="planInput" type="text" maxlength="120" enterkeyhint="done" placeholder="Ajoute une tâche…" value="${escapeH(planDraft)}"
+        oninput="setPlanDraft(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();addPlan()}">
+      <button class="addbtn" onclick="addPlan()" aria-label="Ajouter à la liste">${ic('plus',20)}</button>
+    </div>
+    <div id="planList"></div>
+    <button class="bigbtn bigwork" id="planGo" onclick="planGo()">${ic('play',20)}<span>${next==='breathe'?'Respirer puis travailler':"C'est parti"}</span></button>
+    <button class="bigbtn bigsec" onclick="closePlan()">${ic('back',18)}<span>Retour</span></button>
+  </div>`;
+  el.classList.remove('hidden'); paintPlanList();
+  const i=document.getElementById('planInput'); if(i) i.focus();
+}
+function paintPlanList(){
+  const l=document.getElementById('planList'), go=document.getElementById('planGo'); if(!l) return;
+  l.innerHTML = sessPlan.length ? `<div class="planlist">${sessPlan.map((t,i)=>`<div class="planrow"><span class="todotxt">${escapeH(t)}</span>
+      <button class="iconbtn" onclick="delPlan(${i})" aria-label="Retirer">${ic('x',16)}</button></div>`).join('')}</div>` : '';
+  if(go) go.disabled=!sessPlan.length && !planDraft.trim();   // au moins une tâche (celle en cours de saisie compte)
+}
+function setPlanDraft(v){ planDraft=v; paintPlanList(); }
+function addPlan(){
+  const t=planDraft.trim(); if(!t) return;
+  sessPlan.push(t.slice(0,120)); planDraft='';
+  const i=document.getElementById('planInput'); if(i){ i.value=''; i.focus(); }
+  paintPlanList();
+}
+function delPlan(i){ sessPlan.splice(i,1); paintPlanList(); }
+function closePlan(){ const el=document.getElementById('planScreen'); el.classList.add('hidden'); el.innerHTML=''; planNext=null; }
+function planGo(){
+  if(planDraft.trim()) addPlan();   // une tâche tapée mais pas ajoutée compte quand même
+  if(!sessPlan.length) return;
+  const next=planNext; closePlan();
+  if(next==='breathe') openBreathe(5); else startSession();   // dans le clic : la cloche reste débloquée
 }
 
 // ---- Affichage du chrono (cosmétique : la durée réelle reste fin − début) ----
@@ -2527,7 +2705,7 @@ function renderStats(){
   s.classList.remove('hidden'); s.classList.remove('fade'); void s.offsetWidth; s.classList.add('fade');
   const title=`<div class="ptitle"><div><h1>Temps de travail</h1></div></div>`;
   s.innerHTML = title + (data.matieres.length
-    ? graphCard()
+    ? graphCard() + debriefHistoryHTML()
     : `<div class="empty" style="margin:30px auto 0"><span class="bookic">${ic('bars',38)}</span>
         <h2>Rien à afficher</h2>
         <p>Ajoute une matière puis lance une session pour suivre ton temps de travail.</p>
@@ -2566,7 +2744,7 @@ function pickerCard(noAnim){
        <div class="optchips">${counts}</div>
        <div class="sesslbl">Durée d'un pomodoro</div>
        <div class="optchips">${POMO_OPTS.map(b=>`<button class="optchip${pomoMin===b?' on':''}" onclick="setPomoMin(${b})">${b} min</button>`).join('')}</div>
-       <p class="sesshint">${pomoCount?`${pomoCount} × ${pomoMin} min = ${fmtDur(pomoCount*pomoMin*60000)} de travail, `:''}pause de 5 min entre chaque.</p>`
+       <p class="sesshint">${pomoCount?`${fmtDur((pomoCount*pomoMin+(pomoCount-1)*5)*60000)}, pauses comprises`:'Pause de 5 min entre chaque.'}</p>`
     : `<div class="sesslbl">Combien de temps veux-tu bosser ?</div>
        <div class="optchips">${goals}</div>`;
   const ready = armed && goalReady();
@@ -2578,8 +2756,8 @@ function pickerCard(noAnim){
     <div class="matchips">${chips}</div>
     <div class="sessseg"><div class="seg">${modes}</div></div>
     ${goalBlock}
-    <button class="bigbtn bigwork" ${ready?'':'disabled'} onclick="startSession()">${ic('play',20)}<span>${lbl}</span></button>
-    <button class="bigbtn bigbreathe" onclick="openBreathe(5)">${ic('breath',20)}<span>${ready?'Respirer puis travailler':'Respirer 5 min'}</span></button>
+    <button class="bigbtn bigwork" ${ready?'':'disabled'} onclick="openPlan('work')">${ic('play',20)}<span>${lbl}</span></button>
+    <button class="bigbtn bigbreathe" onclick="${ready?"openPlan('breathe')":'openBreathe(5)'}">${ic('breath',20)}<span>${ready?'Respirer puis travailler':'Respirer 5 min'}</span></button>
   </div></div>`;
 }
 // Redessine juste la carte de lancement (pas l'agenda en dessous : garde la saisie en cours, pas d'animation).
@@ -2597,6 +2775,7 @@ function focusCard(){
   const stop=`<button class="bigbtn bigstop" onclick="stopSession()">${ic('stop',20)}<span>Terminer</span></button>`;
   const prog = a.goal ? `<div class="rgoal"><div class="rgbar"><i id="rgfill"></i></div><span class="rglab" id="rglab"></span></div>` : '';
   const more=`<button class="bigbtn bigsec" onclick="continueSession()">${ic('play',18)}<span>Continuer</span></button>`;
+  const plan = (a.plan&&a.plan.length) ? `<ul class="focusplan">${a.plan.map(p=>`<li>${escapeH(p.txt)}</li>`).join('')}</ul>` : '';   // juste un rappel : on coche au bilan
   if(!ownSession){   // session pilotée par un autre onglet : affichage seul, aucun bouton qui écrirait une 2e copie
     const idle = a.mode==='pomo' && (a.phase==='ready'||a.phase==='done');
     const ph = a.mode==='pomo' ? `<p class="rphase" id="rphase">${a.phase==='ready'?'Pause finie':a.phase==='done'?'Objectif atteint':''}</p>` : '';
@@ -2606,26 +2785,27 @@ function focusCard(){
   if(a.mode==='pomo'){
     if(a.phase==='done') return wrap(`<span class="brdone">${ic('bell',36)}</span>
       <p class="brready">Objectif atteint</p>
-      <p class="rsum">${fmtDur(a.workDone)} de travail en ${a.blocks} bloc${a.blocks>1?'s':''}</p>${stop}${more}`);
+      <p class="rsum">${fmtDur(a.workDone)} de travail en ${a.blocks} bloc${a.blocks>1?'s':''}</p>${plan}${stop}${more}`);
     if(a.phase==='ready') return wrap(`<p class="rphase brk">Pause finie</p>
       <p class="rsum">Durée du prochain bloc :</p>
       <div class="optchips">${POMO_OPTS.map(b=>`<button class="optchip${a.block===b?' on':''}" onclick="setNextBlock(${b})">${b} min</button>`).join('')}</div>
-      ${prog}
+      ${prog}${plan}
       <button class="bigbtn bigwork" onclick="pomoGo()">${ic('play',20)}<span>C'est reparti</span></button>
       <button class="bigbtn bigsec" onclick="stopSession()">${ic('stop',18)}<span>Terminer</span></button>`);
     return wrap(`<p class="rphase${a.phase==='break'?' brk':''}" id="rphase"></p>
-      <div class="rtimer" id="rtimer">00:00</div>${prog}${stop}`);
+      <div class="rtimer" id="rtimer">00:00</div>${prog}${plan}${stop}`);
   }
   const reached = a.reached ? `<p class="rreached">${ic('bell',18)}<span>Objectif atteint</span></p>` : '';
   return wrap(`<div class="rtimer" id="rtimer">00:00</div>${reached}${prog}
     <div class="rwarn" id="rwarn" style="display:none">${ic('clock',14)}<span>En session depuis plus de ${MAX_SESSION_H} h — pense à terminer.</span></div>
-    ${stop}${a.reached?more:''}`);
+    ${plan}${stop}${a.reached?more:''}`);
 }
 // Affiche/masque le mode focus selon qu'une session est active. Idempotent (ne reconstruit qu'aux transitions).
 let focusShown=false;
 function renderFocus(){
   const f=document.getElementById('focus');
   if(data.active && !focusShown){
+    closePlan();   // une session lancée ailleurs (autre onglet) ne doit pas rester cachée sous la page « liste »
     f.innerHTML=focusCard(); f.classList.remove('hidden'); focusShown=true;
     f.onpointerdown=primeSessBell;   // débloque l'audio au 1er toucher si la session a été reprise sans clic (rechargement)
     if(tick) clearInterval(tick); updateTimer(); tick=setInterval(updateTimer,1000);
@@ -2673,6 +2853,7 @@ function graphCard(){
     ${sub?`<div class="stsub">${sub}</div>`:''}
     ${barsHtml}
     ${daySessionsHTML()}
+    ${dayDebriefsHTML()}
     ${legend}
   </div>`;
 }
@@ -2695,6 +2876,47 @@ function daySessionsHTML(){
   }).join('');
   return `<div class="sesslist">${rows}</div>`;
 }
+// ---- Bilans de fin de session : affichés en vue Jour (Stats), en résumé sur l'Accueil et dans l'historique ----
+function moodOf(k){ const m=MOODS.find(x=>x[0]===k); return m?{e:m[1],l:m[2]}:{e:'',l:''}; }
+function debriefCardHTML(d, withDate){
+  const hm=x=>new Date(x).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const mat=matById(d.mat), md=moodOf(d.mood), plan=d.plan||[], done=plan.filter(p=>p.done).length;
+  const when=(withDate?fmtDayShort(Date.parse(d.start))+' · ':'')+hm(d.start)+'–'+hm(d.end);
+  return `<div class="dbcard">
+    <div class="dbhead"><span class="dbemo" title="${md.l}" aria-label="${md.l}">${md.e}</span>
+      <span class="sessdot" style="background:${mat?mat.color:'var(--muted)'}"></span>
+      <span class="sessname">${escapeH(mat?mat.nom:'—')}</span>
+      <span class="sesstime">${when}</span>
+      ${plan.length?`<span class="dbcount">${done}/${plan.length}</span>`:''}</div>
+    ${plan.length?`<ul class="dbtasks">${plan.map(p=>`<li class="${p.done?'ok':'ko'}">${ic(p.done?'check':'x',14)}<span>${escapeH(p.txt)}</span></li>`).join('')}</ul>`:''}
+  </div>`;
+}
+function fmtDayShort(ms){ const d=new Date(ms), k=dateKey(ms);
+  if(k===todayKey()) return "Aujourd'hui"; if(k===dateKey(Date.now()-86400000)) return 'Hier';
+  return d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}); }
+function dayDebriefsHTML(){
+  if(period!=='jour') return '';
+  const {start,end}=periodWindow();
+  const list=(data.debriefs||[]).filter(d=>{ const t=Date.parse(d.start); return t>=start && t<end; })
+    .sort((a,b)=>Date.parse(a.start)-Date.parse(b.start));
+  if(!list.length) return '';
+  return `<div class="dblist"><p class="dbtitle">Bilans</p>${list.map(d=>debriefCardHTML(d,false)).join('')}</div>`;
+}
+// Historique complet (page Stats), du plus récent au plus ancien, par paquets de 10.
+let dbHistLimit=10;
+function debriefHistoryHTML(){
+  const all=(data.debriefs||[]).slice().sort((a,b)=>Date.parse(b.start)-Date.parse(a.start));
+  if(!all.length) return '';
+  const tally={ok:0,mid:0,ko:0}; all.forEach(d=>{ if(d.mood in tally) tally[d.mood]++; });
+  const shown=all.slice(0,dbHistLimit);
+  return `<div class="card dbhist">
+    <div class="dbhisthead"><h3>Historique des bilans</h3>
+      <span class="dbtally">✅ ${tally.ok} · ${WAVE_ICON} ${tally.mid} · ❌ ${tally.ko}</span></div>
+    ${shown.map(d=>debriefCardHTML(d,true)).join('')}
+    ${all.length>shown.length?`<button class="bigbtn bigsec dbmore" onclick="dbHistLimit+=10;renderStats()">Voir plus (${all.length-shown.length})</button>`:''}
+  </div>`;
+}
+function goStatsToday(){ period='jour'; periodOffset=0; goPage('stats'); }
 async function delSession(idx){
   const s=data.sessions[idx]; if(!s) return;
   const mat=matById(s.mat), dur=fmtDur(Date.parse(s.end)-Date.parse(s.start));
@@ -2780,6 +3002,7 @@ function openColorPick(id, anchor){ const m=matById(id); if(!m) return;
 // ---- Modale maison : remplace prompt()/confirm() natifs (rendu cohérent avec l'app) ----
 let modalResolve=null;
 function closeModal(val){
+  debrief=null;   // Échap / clic dehors sur le bilan = Passer
   const m=document.getElementById('modal');
   m.classList.add('hidden'); m.innerHTML='';
   const r=modalResolve; modalResolve=null; if(r) r(val);
@@ -2857,7 +3080,8 @@ document.querySelectorAll('#tabbar .tab').forEach(b=>{
 { const tci=document.getElementById('tbCtaIc'); if(tci) tci.innerHTML=ic('plus',18); }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
   const cp=document.getElementById('cpick'); if(cp && !cp.classList.contains('hidden')){ closeCPick(); return; }
-  const md=document.getElementById('modal'); if(md && !md.classList.contains('hidden')) closeModal(null); } });
+  const md=document.getElementById('modal'); if(md && !md.classList.contains('hidden')){ closeModal(null); return; }
+  const ps=document.getElementById('planScreen'); if(ps && !ps.classList.contains('hidden')) closePlan(); } });
 // Synchro entre onglets/fenêtres de la même origine (même localStorage) : sans ceci, un onglet
 // resté ouvert avec une copie périmée de `data` en mémoire écrase silencieusement le localStorage
 // avec ses vieilles données au premier save() qu'il déclenche — perte de données réelle, sans
@@ -2884,6 +3108,28 @@ let savedTheme = localStorage.getItem(THEME_KEY);
 if(!THEMES[savedTheme]) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…, ou l'ancien « auto ») → clair
 applyTheme(savedTheme);
 recoverStaleSession();
+// Démo locale des bilans (jamais sur le site en ligne) : ?demo=bilans ajoute des bilans d'exemple marqués demo:true
+// (sans toucher au reste), ?demo=off les retire. L'adresse est nettoyée juste après.
+(function demoBilans(){
+  const q=new URLSearchParams(location.search).get('demo'); if(!q || location.hostname==='simonnivoix.github.io') return;
+  data.debriefs=(data.debriefs||[]).filter(d=>!d.demo);
+  data.matieres=data.matieres.filter(m=>!m.demo || m.chapitres.length);   // une matière démo qu'on a remplie est gardée
+  if(q==='bilans'){
+    if(!data.matieres.length) [['Droit civil','#E0457B'],['Maths','#0EA5E9'],['Histoire du droit','#F59E0B']].forEach(([nom,color],i)=>
+      data.matieres.push({nom, color, id:'demo'+i, demo:true, chapitres:[]}));
+    const ids=data.matieres.map(m=>m.id), at=(ago,h,m)=>{ const d=new Date(Date.now()-ago*86400000); d.setHours(h,m,0,0); return d.toISOString(); };
+    [[0,0,9,0,10,40,'ok',[['Fiche arrêt Mercier',1],['Exos responsabilité contractuelle',1],['Relire chap. 4',1]]],
+     [1,0,14,0,15,0,'mid',[['Exos suites 1 à 10',1],['Exos limites',0]]],
+     [2,0,17,30,18,10,'ko',[['Lire le cours',0],['Faire la frise',0]]],
+     [1,1,10,0,11,30,'ok',[['Annale 2024',1]]],
+     [0,1,16,0,17,0,'mid',[['Fiche nullité',1],['Exos',0]]],
+     [2,2,9,30,11,0,'ok',[['Chap. 2 en entier',1],['Quiz',1]]],
+     [0,3,20,0,21,0,'ko',[['Révision TD 5',0]]]].forEach(([mi,ago,h1,m1,h2,m2,mood,plan])=>
+      data.debriefs.push({mat:ids[mi%ids.length], start:at(ago,h1,m1), end:at(ago,h2,m2), mood, recorded:true, demo:true,
+        plan:plan.map(([txt,done])=>({txt, done:!!done}))}));
+  }
+  save(); history.replaceState(null,'',location.pathname);
+})();
 ownSession = !!data.active;   // session reprise au chargement : cet onglet la pilote
 // Retour du lien "mot de passe oublié" : Supabase redirige ici avec #access_token=…&type=recovery.
 const recoveryFromLink = parseRecoveryHash();
