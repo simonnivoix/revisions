@@ -748,7 +748,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261002-223836';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261017-124357';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -888,6 +888,9 @@ let armed = null;         // id de la matière sélectionnée avant de lancer un
 let goalMin = null;       // objectif (minutes) de la prochaine session — jamais présélectionné, à choisir à chaque fois
 let sessMode = 'libre';   // 'libre' (chrono qui monte) | 'pomo' (blocs de travail + pauses de 5 min)
 let pomoMin = 25;         // durée du prochain bloc Pomodoro (minutes)
+let pomoCount = null;     // Pomodoro : nombre de blocs visés (objectif = pomoCount × pomoMin) — jamais présélectionné
+// Objectif choisi pour le mode courant ? (chrono libre : une durée ; Pomodoro : un nombre de blocs)
+function goalReady(){ return sessMode==='pomo' ? !!pomoCount : !!goalMin; }
 // Onglet « pilote » de la session en cours (celui qui l'a lancée, ou qui l'a rechargée). Les autres onglets
 // ouverts la reçoivent via l'événement `storage` et l'affichent en LECTURE SEULE : sinon chaque onglet faisait
 // avancer sa propre copie (blocs Pomodoro comptés en double, session terminée qui « revient », Terminer
@@ -2130,7 +2133,7 @@ function breatheDoneHTML(){
 function updateBreathe(){ const el=document.getElementById('brTime'); if(el) el.textContent=brClock(Math.max(0,brLeft)); }
 function setBreatheDur(mins){ brTotal=mins*60; brLeft=brTotal; document.querySelectorAll('#breathe .brdur').forEach(b=>b.classList.toggle('on', +b.dataset.m===mins)); updateBreathe(); }
 function openBreathe(mins){
-  brArmed = (armed && goalMin) ? armed : null;   // matière + objectif choisis → on enchaîne la session à la fin
+  brArmed = (armed && goalReady()) ? armed : null;   // matière + objectif choisis → on enchaîne la session à la fin
   brTotal=(mins||5)*60; brLeft=brTotal;
   primeBell();                           // crée/débloque l'AudioContext PENDANT le geste (clic) qui ouvre la méditation
   const ov=document.getElementById('breathe'); ov.classList.remove('hidden'); ov.innerHTML=breatheHTML();
@@ -2205,6 +2208,7 @@ function armMat(id){ armed=(armed===id?null:id); refreshPicker(); }
 function setGoal(min){ goalMin=(goalMin===min?null:min); refreshPicker(); }
 function setSessMode(mode){ sessMode=mode; refreshPicker(); }
 function setPomoMin(min){ pomoMin=min; refreshPicker(); }
+function setPomoCount(n){ pomoCount=(pomoCount===n?null:n); refreshPicker(); }
 // Objectif « Autre » : heures + minutes libres (même saisie que « Corriger la durée »).
 function openGoalCustom(){
   const m=document.getElementById('modal');
@@ -2236,12 +2240,12 @@ function submitGoalCustom(){
 // {mat,mode:'pomo',goal,block,phase:'work'|'break'|'ready'|'done',start (= début de la phase),workDone,blocks} —
 // chaque bloc de travail terminé est enregistré comme une session normale ; les pauses ne comptent pas.
 function startSession(){
-  if(!armed || !matById(armed) || !goalMin) return;
-  const now=new Date().toISOString(), goal=goalMin*60000;
+  if(!armed || !matById(armed) || !goalReady()) return;
+  const now=new Date().toISOString(), goal=(sessMode==='pomo' ? pomoCount*pomoMin : goalMin)*60000;
   data.active = sessMode==='pomo'
     ? {mat:armed, mode:'pomo', goal, block:pomoMin, phase:'work', start:now, workDone:0, blocks:0}
     : {mat:armed, mode:'libre', start:now, goal};
-  armed=null; goalMin=null; ownSession=true;
+  armed=null; goalMin=null; pomoCount=null; ownSession=true;
   primeSessBell();                // pendant le clic : sinon la cloche de fin de bloc resterait muette (autoplay)
   save(); render();               // render() affiche le mode focus plein écran
 }
@@ -2546,6 +2550,7 @@ function recoverStaleSession(){
 }
 const GOAL_OPTS = [30,60,90,120,180];   // objectifs proposés (minutes) ; « Autre » pour le reste
 const POMO_OPTS = [20,25,30,45];        // durées de bloc Pomodoro (minutes)
+const POMO_COUNTS = [2,3,4,5,6];        // nombres de pomodoros proposés
 function pickerCard(noAnim){
   const chips=data.matieres.map(m=>`<button class="matchip${armed===m.id?' on':''}" style="--c:${m.color}" onclick="armMat('${m.id}')">
       <span class="dot"></span>${escapeH(m.nom)}</button>`).join('');
@@ -2554,21 +2559,25 @@ function pickerCard(noAnim){
     + `<button class="optchip${custom?' on':''}" onclick="openGoalCustom()">${custom?fmtDur(goalMin*60000):'Autre'}</button>`;
   const modes=[['libre','Chrono libre'],['pomo','Pomodoro']].map(([k,l])=>
     `<button class="segb${sessMode===k?' on':''}" onclick="setSessMode('${k}')">${l}</button>`).join('');
-  const pomo = sessMode==='pomo'
-    ? `<div class="optchips">${POMO_OPTS.map(b=>`<button class="optchip${pomoMin===b?' on':''}" onclick="setPomoMin(${b})">${b} min</button>`).join('')}</div>
-       <p class="sesshint">Blocs de ${pomoMin} min, pause de 5 min entre chaque.</p>`
-    : '';
-  const ready = armed && goalMin;
-  const lbl = !armed ? 'Choisis une matière' : !goalMin ? 'Choisis un objectif' : 'Travailler';
+  const counts=POMO_COUNTS.map(n=>`<button class="optchip${pomoCount===n?' on':''}" onclick="setPomoCount(${n})">${n}</button>`).join('');
+  // Pomodoro : on choisit un nombre de pomodoros (+ leur durée) ; chrono libre : une durée d'objectif.
+  const goalBlock = sessMode==='pomo'
+    ? `<div class="sesslbl">Combien de pomodoros ?</div>
+       <div class="optchips">${counts}</div>
+       <div class="sesslbl">Durée d'un pomodoro</div>
+       <div class="optchips">${POMO_OPTS.map(b=>`<button class="optchip${pomoMin===b?' on':''}" onclick="setPomoMin(${b})">${b} min</button>`).join('')}</div>
+       <p class="sesshint">${pomoCount?`${pomoCount} × ${pomoMin} min = ${fmtDur(pomoCount*pomoMin*60000)} de travail, `:''}pause de 5 min entre chaque.</p>`
+    : `<div class="sesslbl">Combien de temps veux-tu bosser ?</div>
+       <div class="optchips">${goals}</div>`;
+  const ready = armed && goalReady();
+  const lbl = !armed ? 'Choisis une matière' : !goalReady() ? (sessMode==='pomo'?'Choisis le nombre de pomodoros':'Choisis un objectif') : 'Travailler';
   return `<div class="sessionwrap withag"><div class="card sessioncard${noAnim?' noanim':''}">
     <div class="sesshead">${ic('clock',30)}
       <h2>Prêt·e à bosser ?</h2>
       <p>Choisis une matière et ton objectif, puis lance le chrono.</p></div>
     <div class="matchips">${chips}</div>
-    <div class="sesslbl">Combien de temps veux-tu bosser ?</div>
-    <div class="optchips">${goals}</div>
     <div class="sessseg"><div class="seg">${modes}</div></div>
-    ${pomo}
+    ${goalBlock}
     <button class="bigbtn bigwork" ${ready?'':'disabled'} onclick="startSession()">${ic('play',20)}<span>${lbl}</span></button>
     <button class="bigbtn bigbreathe" onclick="openBreathe(5)">${ic('breath',20)}<span>${ready?'Respirer puis travailler':'Respirer 5 min'}</span></button>
   </div></div>`;
