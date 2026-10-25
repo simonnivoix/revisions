@@ -796,7 +796,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261025-201140';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261025-201950';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1178,7 +1178,7 @@ function markSynced(){ syncedJSON=JSON.stringify(data); syncPending=false; clear
 function flushSync(){ clearTimeout(syncTimer); if(syncPending) pushToCloud(); }
 async function pushToCloud(){
   if(!authSession) return;
-  syncPending=false;
+  syncPending=false; pushing++;
   const now=new Date().toISOString();
   try{
     const snap=JSON.stringify(data); syncedJSON=snap;   // optimiste : un save() identique pendant l'envoi ne relance rien
@@ -1190,6 +1190,7 @@ async function pushToCloud(){
     else if(r.status===401){ authState='offline'; syncPending=true; syncedJSON=null; refreshSession(); }
     else { authState='offline'; syncPending=true; syncedJSON=null; }
   }catch(e){ authState='offline'; syncPending=true; syncedJSON=null; }
+  finally{ pushing--; }
 }
 async function pullFromCloud(){
   const r=await fetch(SUPA_REST+'/rest/v1/user_data?user_id=eq.'+encodeURIComponent(authSession.user.id)+'&select=data,updated_at', {headers:authHeaders()});
@@ -1215,7 +1216,7 @@ async function reconcileOnLogin(){
         if(ok) await pushToCloud();
       }
       meta.migrated=true; saveSyncMeta(meta);
-    } else if((!meta.lastLocalChangeAt || cloud.updated_at > meta.lastLocalChangeAt) && !data.active){
+    } else if((!meta.lastLocalChangeAt || newerThan(cloud.updated_at, meta.lastLocalChangeAt)) && !data.active){
       // !data.active : on ne remplace jamais les données pendant une session en cours sur CET appareil
       // (sinon le focus plein écran se ferme et la session en cours disparaît sans être enregistrée).
       const incoming = cloud.data && Object.keys(cloud.data).length ? cloud.data : clone(DEFAULT);
@@ -1247,21 +1248,31 @@ async function reconcileOnLogin(){
 // On relit donc le cloud au retour sur la page et toutes les 20 s tant qu'elle est visible, en silence
 // (le garde-fou « données plus riches » reste réservé à reconcileOnLogin(), au démarrage).
 const PULL_EVERY_MS = 20000;
-let pulling = false;
+let pulling = false, pushing = 0, lastTypeAt = 0;
+document.addEventListener('input', ()=>{ lastTypeAt=Date.now(); }, true);
+// Texte stable d'un objet (clés triées) : la base renvoie les clés dans un autre ordre que le nôtre.
+function canon(o){ return JSON.stringify(o, (k,v)=> v && typeof v==='object' && !Array.isArray(v) ? Object.keys(v).sort().reduce((r,x)=>(r[x]=v[x],r),{}) : v); }
 function uiBusy(){   // ne jamais redessiner sous les doigts : saisie en cours, modale, page « Qu'est-ce que tu vas faire ? »…
   const el=document.activeElement, open=id=>{ const n=document.getElementById(id); return n && !n.classList.contains('hidden'); };
-  return (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) || open('modal') || open('planScreen') || open('cpick') || open('breathe') || open('authgate');
+  // un champ vide resté sélectionné (ou caché sous le plein écran lecture seule) ne bloque pas la mise à jour
+  const typing = el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) && !(focusShown && !ownSession)
+    && (el.type==='range' || (el.value||'')!=='' || Date.now()-lastTypeAt<15000);
+  return typing || open('modal') || open('planScreen') || open('cpick') || open('breathe') || open('authgate');
 }
 async function pullIfNewer(){
   if(!supaConfigured() || !authSession || pulling || document.hidden) return;
   if(syncPending){ flushSync(); return; }   // nos changements d'abord, on relira au prochain coup
+  if(pushing) return;
   if(!loadSyncMeta().migrated || uiBusy()) return;
   pulling=true;
   try{
     const cloud=await pullFromCloud(), meta=loadSyncMeta();
-    if(!cloud || (meta.lastLocalChangeAt && cloud.updated_at <= meta.lastLocalChangeAt) || syncPending || uiBusy()) return;
+    // On compare le CONTENU, pas les heures : l'horloge du tel et celle de l'ordi peuvent être décalées.
+    // Rien en attente d'envoi ici (ni en cours d'envoi) → le cloud est la vérité.
+    if(!cloud || syncPending || pushing || uiBusy()) return;
     const incoming=backfillDaily(prepare(cloud.data && Object.keys(cloud.data).length ? cloud.data : clone(DEFAULT)));
     if(data.active && ownSession) incoming.active=data.active;   // la session est pilotée ICI : sa version fait foi
+    if(canon(incoming)===canon(data)) return;
     const curId = current!=null && data.matieres[current] ? data.matieres[current].id : null;
     data=incoming;
     try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}   // écrit direct : pas de re-push de ce qu'on vient de tirer
@@ -1272,7 +1283,12 @@ async function pullIfNewer(){
   }catch(e){ authState='offline'; }
   finally{ pulling=false; }
 }
-setInterval(pullIfNewer, PULL_EVERY_MS);
+// Dates comparées en vrai temps : Supabase renvoie « …+00:00 », nous « …Z » — comparer les textes peut se tromper.
+function newerThan(a,b){ return Date.parse(a) > Date.parse(b); }
+// Toutes les 20 s, et toutes les 5 s quand on regarde ici une session lancée sur un autre appareil (on attend qu'elle s'arrête).
+let lastPullAt=0;
+setInterval(()=>{ const every = data.active && !ownSession ? 5000 : PULL_EVERY_MS;
+  if(Date.now()-lastPullAt >= every){ lastPullAt=Date.now(); pullIfNewer(); } }, 5000);
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden) flushSync(); else pullIfNewer(); });
 window.addEventListener('pagehide', flushSync);   // on quitte l'appli (tel verrouillé…) : on envoie tout de suite, sans attendre les 3 s
 window.addEventListener('focus', pullIfNewer);
@@ -2858,6 +2874,7 @@ let focusShown=false;
 function renderFocus(){
   const f=document.getElementById('focus');
   if(data.active && !focusShown){
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();   // rien ne reste « en saisie » sous le plein écran
     closePlan();   // une session lancée ailleurs (autre onglet) ne doit pas rester cachée sous la page « liste »
     f.innerHTML=focusCard(); f.classList.remove('hidden'); focusShown=true;
     f.onpointerdown=primeSessBell;   // débloque l'audio au 1er toucher si la session a été reprise sans clic (rechargement)
