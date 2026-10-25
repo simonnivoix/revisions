@@ -796,7 +796,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261017-131316';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261025-201140';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -965,6 +965,10 @@ function pickColor(used){
 }
 
 let data = load();
+// Dernière version connue identique au cloud : render() appelle save() à chaque affichage, il ne faut
+// envoyer au cloud que les VRAIS changements (sinon un appareil resté ouvert renvoie sa vieille copie
+// par-dessus celle, plus récente, d'un autre appareil). `dirty` (SYNC_KEY) : changements jamais envoyés.
+let syncedJSON = (()=>{ try{ return JSON.parse(localStorage.getItem(SYNC_KEY)||'{}').dirty ? null : JSON.stringify(data); }catch(e){ return null; } })();
 let current = null;       // index matière ouverte, ou null = grille des matières
 let page = 'accueil';     // 'accueil' | 'matieres' | 'session' | 'stats' | 'reglages'
 let armed = null;         // id de la matière sélectionnée avant de lancer une session
@@ -981,6 +985,11 @@ function goalReady(){ return sessMode==='pomo' ? !!pomoCount : !!goalMin; }
 // avancer sa propre copie (blocs Pomodoro comptés en double, session terminée qui « revient », Terminer
 // enregistré deux fois) — vu en revue QA du 02/10, Eric ouvre souvent plusieurs fenêtres (incident du 06/09).
 let ownSession = false;
+// Identifiant de CET appareil (pas exporté, pas synchronisé) : une session lancée sur le tel ne doit
+// jamais être « reprise » par l'ordi au rechargement — sinon les deux la piloteraient (blocs comptés en double).
+const DEVICE_ID = (()=>{ try{ let v=localStorage.getItem('suivi-revisions-bac-device');
+  if(!v){ v=Math.random().toString(36).slice(2,10); localStorage.setItem('suivi-revisions-bac-device', v); } return v; }catch(e){ return 'x'; } })();
+function otherDevice(a){ return !!(a && a.dev && a.dev!==DEVICE_ID); }
 let period = 'jour';      // période du graphe temps : 'jour' | 'semaine'
 let periodOffset = 0;     // décalage de fenêtre : 0 = courante, -1 = précédente, …
 let tick = null;          // intervalle d'affichage du chrono en cours
@@ -991,7 +1000,7 @@ let chartReal = [0,0];    // vraie plage [min,max] des points, avant rembourrage
 function load(){ try{const r=localStorage.getItem(STORE_KEY); if(r) return backfillDaily(prepare(JSON.parse(r)));}catch(e){} return prepare(clone(DEFAULT)); }
 let saveError=false;
 function save(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); saveError=false; scheduleSync(); }
+  try{ const j=JSON.stringify(data); localStorage.setItem(STORE_KEY, j); saveError=false; if(j!==syncedJSON) scheduleSync(); }
   catch(e){ if(!saveError){ saveError=true;
     alert("Impossible d'enregistrer : mémoire pleine ou navigation privée. Va dans Réglages → Sauvegarder pour exporter tes données."); } }
 }
@@ -1161,21 +1170,26 @@ async function logout(){
 // -- Synchro des données : save() appelle scheduleSync(), qui débounce le push réseau. --
 function scheduleSync(){
   if(authState==='anon' || !supaConfigured()) return;
+  if(!syncPending){ const m=loadSyncMeta(); if(!m.dirty){ m.dirty=true; saveSyncMeta(m); } }
   syncPending=true; clearTimeout(syncTimer); syncTimer=setTimeout(flushSync, SYNC_DEBOUNCE_MS);
 }
+// Ce qu'on vient de tirer du cloud devient la référence : rien à renvoyer.
+function markSynced(){ syncedJSON=JSON.stringify(data); syncPending=false; clearTimeout(syncTimer); }
 function flushSync(){ clearTimeout(syncTimer); if(syncPending) pushToCloud(); }
 async function pushToCloud(){
   if(!authSession) return;
   syncPending=false;
   const now=new Date().toISOString();
   try{
-    const r=await fetch(SUPA_REST+'/rest/v1/user_data', {method:'POST',
+    const snap=JSON.stringify(data); syncedJSON=snap;   // optimiste : un save() identique pendant l'envoi ne relance rien
+    const body='[{"user_id":'+JSON.stringify(authSession.user.id)+',"data":'+snap+',"updated_at":"'+now+'"}]';
+    const r=await fetch(SUPA_REST+'/rest/v1/user_data', {method:'POST', keepalive: body.length<60000,   // keepalive : survit à l'appli mise en arrière-plan
       headers:Object.assign({'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'}, authHeaders()),
-      body:JSON.stringify([{user_id:authSession.user.id, data:data, updated_at:now}])});
-    if(r.ok){ authState='online'; const m=loadSyncMeta(); m.lastLocalChangeAt=now; saveSyncMeta(m); }
-    else if(r.status===401){ authState='offline'; syncPending=true; refreshSession(); }
-    else { authState='offline'; syncPending=true; }
-  }catch(e){ authState='offline'; syncPending=true; }
+      body});
+    if(r.ok){ authState='online'; const m=loadSyncMeta(); m.lastLocalChangeAt=now; m.dirty=syncPending; saveSyncMeta(m); }
+    else if(r.status===401){ authState='offline'; syncPending=true; syncedJSON=null; refreshSession(); }
+    else { authState='offline'; syncPending=true; syncedJSON=null; }
+  }catch(e){ authState='offline'; syncPending=true; syncedJSON=null; }
 }
 async function pullFromCloud(){
   const r=await fetch(SUPA_REST+'/rest/v1/user_data?user_id=eq.'+encodeURIComponent(authSession.user.id)+'&select=data,updated_at', {headers:authHeaders()});
@@ -1216,8 +1230,9 @@ async function reconcileOnLogin(){
       }
       data = backfillDaily(prepare(incoming));
       try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}   // écrit direct : évite de re-pousser ce qu'on vient de tirer
+      markSynced();
       current=null;   // la vue détail pouvait pointer sur un index qui n'existe plus dans la copie cloud
-      meta.migrated=true; meta.lastLocalChangeAt=cloud.updated_at; saveSyncMeta(meta);
+      meta.migrated=true; meta.lastLocalChangeAt=cloud.updated_at; meta.dirty=false; saveSyncMeta(meta);
       render();
     } else if(!data.active){
       meta.migrated=true; saveSyncMeta(meta);
@@ -1226,6 +1241,41 @@ async function reconcileOnLogin(){
     authState='online';
   }catch(e){ authState='offline'; }
 }
+
+// Synchro entre appareils (téléphone ↔ ordi) : sans ceci, un appareil ne relisait le cloud qu'à
+// l'ouverture de la page — une session lancée sur le tel n'apparaissait jamais sur l'ordi resté ouvert.
+// On relit donc le cloud au retour sur la page et toutes les 20 s tant qu'elle est visible, en silence
+// (le garde-fou « données plus riches » reste réservé à reconcileOnLogin(), au démarrage).
+const PULL_EVERY_MS = 20000;
+let pulling = false;
+function uiBusy(){   // ne jamais redessiner sous les doigts : saisie en cours, modale, page « Qu'est-ce que tu vas faire ? »…
+  const el=document.activeElement, open=id=>{ const n=document.getElementById(id); return n && !n.classList.contains('hidden'); };
+  return (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) || open('modal') || open('planScreen') || open('cpick') || open('breathe') || open('authgate');
+}
+async function pullIfNewer(){
+  if(!supaConfigured() || !authSession || pulling || document.hidden) return;
+  if(syncPending){ flushSync(); return; }   // nos changements d'abord, on relira au prochain coup
+  if(!loadSyncMeta().migrated || uiBusy()) return;
+  pulling=true;
+  try{
+    const cloud=await pullFromCloud(), meta=loadSyncMeta();
+    if(!cloud || (meta.lastLocalChangeAt && cloud.updated_at <= meta.lastLocalChangeAt) || syncPending || uiBusy()) return;
+    const incoming=backfillDaily(prepare(cloud.data && Object.keys(cloud.data).length ? cloud.data : clone(DEFAULT)));
+    if(data.active && ownSession) incoming.active=data.active;   // la session est pilotée ICI : sa version fait foi
+    const curId = current!=null && data.matieres[current] ? data.matieres[current].id : null;
+    data=incoming;
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}   // écrit direct : pas de re-push de ce qu'on vient de tirer
+    markSynced(); meta.lastLocalChangeAt=cloud.updated_at; meta.dirty=false; saveSyncMeta(meta);
+    const ci = curId ? data.matieres.findIndex(m=>m.id===curId) : -1; current = ci>=0 ? ci : null;
+    if(data.active && !focusShown) ownSession=false;   // session lancée sur un autre appareil : affichée ici en lecture seule
+    authState='online'; render(); refreshFocus();
+  }catch(e){ authState='offline'; }
+  finally{ pulling=false; }
+}
+setInterval(pullIfNewer, PULL_EVERY_MS);
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) flushSync(); else pullIfNewer(); });
+window.addEventListener('pagehide', flushSync);   // on quitte l'appli (tel verrouillé…) : on envoie tout de suite, sans attendre les 3 s
+window.addEventListener('focus', pullIfNewer);
 
 // -- Écran de connexion (page pleine, pas une modale transitoire — pas d'annulation possible) --
 function showAuthGate(mode){ document.getElementById('authgate').classList.remove('hidden'); renderAuthGate(mode||'login'); }
@@ -2340,11 +2390,12 @@ function startSession(){
   data.active = sessMode==='pomo'
     ? {mat:armed, mode:'pomo', goal, block:pomoMin, phase:'work', start:now, workDone:0, blocks:0}
     : {mat:armed, mode:'libre', start:now, goal};
+  data.active.dev=DEVICE_ID;   // appareil qui pilote la session (voir otherDevice)
   data.active.began=now;   // début réel (en Pomodoro, start = début de la phase en cours)
   data.active.plan=sessPlan.map(txt=>({txt, done:false}));
   armed=null; goalMin=null; pomoCount=null; sessPlan=[]; planDraft=''; ownSession=true;
   primeSessBell();                // pendant le clic : sinon la cloche de fin de bloc resterait muette (autoplay)
-  save(); render();               // render() affiche le mode focus plein écran
+  save(); flushSync(); render();  // render() affiche le mode focus plein écran ; flushSync : visible tout de suite sur les autres appareils
 }
 const POMO_BREAK_MS = 5*60000;
 // Bloc en cours, raccourci si besoin pour tomber pile sur l'objectif (2 h en blocs de 25 = 25+25+25+25+20).
@@ -2465,7 +2516,7 @@ let debrief=null;   // {mat,start,end,mood,plan} en attente de validation
 // Bilan à chaque « Terminer » (sauf « Ne pas enregistrer ») ; recorded = la session compte dans les stats (≥ 10 min).
 function finishActive(end, recorded){
   const a=data.active;
-  data.active=null; save(); render();   // render() masque le mode focus
+  data.active=null; save(); flushSync(); render();   // render() masque le mode focus
   if(a && recorded!=='discard') openDebrief({mat:a.mat, start:a.began||a.start, end:end||new Date().toISOString(), mood:null, recorded:!!recorded,
     plan:(a.plan||[]).map(p=>({txt:p.txt, done:!!p.done}))});
 }
@@ -2716,6 +2767,7 @@ function renderTempsStats(){ if(page==='stats') renderStats(); }
 // Au chargement : une session laissée ouverte depuis > MAX_SESSION_H est présumée oubliée → on l'annule (non comptée).
 function recoverStaleSession(){
   const a=data.active;
+  if(otherDevice(a)) return;   // pilotée par un autre appareil : c'est lui qui la fait avancer ou la clôt
   if(a && a.mode==='pomo'){
     advanceSession();   // blocs finis pendant l'absence : enregistrés à leur vraie heure de fin
     // en attente d'un clic depuis des heures (pause finie / objectif atteint) : rien à perdre, on clôt sans bruit
@@ -2780,7 +2832,8 @@ function focusCard(){
     const idle = a.mode==='pomo' && (a.phase==='ready'||a.phase==='done');
     const ph = a.mode==='pomo' ? `<p class="rphase" id="rphase">${a.phase==='ready'?'Pause finie':a.phase==='done'?'Objectif atteint':''}</p>` : '';
     return wrap(`${ph}<div class="rtimer" id="rtimer">${idle?'—':'00:00'}</div>${prog}
-      <p class="rsum">Session en cours dans une autre fenêtre.<br>Tu l'as fermée ? Recharge cette page pour la reprendre ici.</p>`);
+      <p class="rsum">${otherDevice(a) ? 'Session en cours sur un autre appareil.<br>Termine-la là-bas : ça se mettra à jour ici tout seul.'
+        : "Session en cours dans une autre fenêtre.<br>Tu l'as fermée ? Recharge cette page pour la reprendre ici."}</p>`);
   }
   if(a.mode==='pomo'){
     if(a.phase==='done') return wrap(`<span class="brdone">${ic('bell',36)}</span>
@@ -3089,7 +3142,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
 // avec le même compte : un onglet périmé a écrasé les données fraîches d'un autre onglet).
 window.addEventListener('storage', e=>{
   if(e.key!==STORE_KEY || e.newValue==null || (data.active && ownSession)) return;   // session pilotée par CET onglet : ne rien toucher
-  try{ data = backfillDaily(prepare(JSON.parse(e.newValue))); current=null; render(); refreshFocus(); }catch(err){}
+  try{ data = backfillDaily(prepare(JSON.parse(e.newValue))); markSynced(); current=null; render(); refreshFocus(); }catch(err){}   // l'autre onglet s'occupe de l'envoi
 });
 // Interactions du sélecteur de couleur maison (carré S/V + teinte + hex), câblées une fois.
 (function(){ const sv=document.getElementById('cpSV'); if(!sv) return; let drag=false;
@@ -3130,7 +3183,7 @@ recoverStaleSession();
   }
   save(); history.replaceState(null,'',location.pathname);
 })();
-ownSession = !!data.active;   // session reprise au chargement : cet onglet la pilote
+ownSession = !!data.active && !otherDevice(data.active);   // session reprise au chargement : cet onglet la pilote (sauf si lancée sur un autre appareil)
 // Retour du lien "mot de passe oublié" : Supabase redirige ici avec #access_token=…&type=recovery.
 const recoveryFromLink = parseRecoveryHash();
 if(recoveryFromLink){ recoverySession = recoveryFromLink; history.replaceState(null, '', location.pathname + location.search); }
