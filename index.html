@@ -796,7 +796,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261025-201950';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261025-233812';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1519,7 +1519,7 @@ function globalMoyenne(){
 }
 // Temps de travail cumulé aujourd'hui (sessions dont le début est aujourd'hui).
 function todayWorkMs(){
-  const d=new Date(); d.setHours(0,0,0,0); const start=d.getTime(), end=start+86400000;
+  const d=new Date(); d.setHours(0,0,0,0); const start=d.getTime(), end=addDays(start,1);
   return (data.sessions||[]).reduce((s,x)=>{ const t=Date.parse(x.start);
     return (x.end && t>=start && t<end) ? s+Math.max(0,Date.parse(x.end)-t) : s; },0);
 }
@@ -1527,16 +1527,19 @@ function todayWorkMs(){
 // ---------- Page Accueil (tableau de bord) ----------
 // Jour local (minuit) en ms — sert aux comparaisons « aujourd'hui ».
 function localDay(ms){ const d=new Date(ms); d.setHours(0,0,0,0); return d.getTime(); }
+// Avance de n jours de calendrier (jamais « + n × 24 h » : le jour du changement d'heure dure 23 ou 25 h,
+// et minuit + 24 h retombait sur le même jour — vu le 25/10, dimanche affiché deux fois dans l'agenda).
+function addDays(ms,n){ const d=new Date(ms); d.setDate(d.getDate()+n); return d.getTime(); }
 // Ensemble des jours (minuit local) ayant au moins une session terminée.
 function sessionDaySet(){ const s=new Set(); (data.sessions||[]).forEach(x=>{ if(x.end) s.add(localDay(Date.parse(x.start))); }); return s; }
 // Série : jours consécutifs avec ≥1 session, terminant aujourd'hui (ou hier, pour ne pas
 // casser la série en début de journée avant la 1re session).
 function streakDays(){
   const set=sessionDaySet(); if(!set.size) return 0;
-  const DAY=86400000, today=localDay(Date.now());
-  let cur = set.has(today) ? today : (set.has(today-DAY) ? today-DAY : null);
+  const today=localDay(Date.now()), yest=addDays(today,-1);
+  let cur = set.has(today) ? today : (set.has(yest) ? yest : null);
   if(cur===null) return 0;
-  let n=0; while(set.has(cur)){ n++; cur-=DAY; }
+  let n=0; while(set.has(cur)){ n++; cur=addDays(cur,-1); }
   return n;
 }
 // « À bosser » : chapitres les plus faibles (≤40) + matières délaissées (aucune session depuis 4 j).
@@ -1628,7 +1631,7 @@ function dateKey(ms){ const d=new Date(ms); return `${d.getFullYear()}-${String(
 function todayKey(){ return dateKey(Date.now()); }
 // Début (00:00 local) de la fenêtre de 7 jours décalée de `offset` blocs de 7 jours à partir d'aujourd'hui.
 function windowStart(offset){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+offset*7); return d.getTime(); }
-function windowDays(offset){ const start=windowStart(offset),out=[]; for(let i=0;i<7;i++){ const ms=start+i*86400000,d=new Date(ms); out.push({ms, iso:dateKey(ms), let:DOW_LET[(d.getDay()+6)%7], num:d.getDate(), mon:MONTHS_AB[d.getMonth()]}); } return out; }
+function windowDays(offset){ const start=windowStart(offset),out=[]; for(let i=0;i<7;i++){ const ms=addDays(start,i),d=new Date(ms); out.push({ms, iso:dateKey(ms), let:DOW_LET[(d.getDay()+6)%7], num:d.getDate(), mon:MONTHS_AB[d.getMonth()]}); } return out; }
 // ⚠️ nommé agWindowLabel (pas windowLabel) : un `windowLabel()` sans argument existe déjà plus bas pour le libellé
 // de période des Stats (Screen Time) — un même nom de fonction déclarée deux fois au top-level se serait écrasé.
 function agWindowLabel(offset){ const d=windowDays(offset); if(offset===0) return `Aujourd'hui – ${d[6].num} ${d[6].mon}`; return `${d[0].num} ${d[0].mon} – ${d[6].num} ${d[6].mon}`; }
@@ -1652,7 +1655,7 @@ function reschedulePick(id){
   const t=(data.todos||[]).find(x=>x.id===id); if(!t) return;
   const base=new Date(); base.setHours(0,0,0,0);
   let chips='';
-  for(let i=0;i<14;i++){ const ms=base.getTime()+i*86400000, d=new Date(ms), iso=dateKey(ms);
+  for(let i=0;i<14;i++){ const ms=addDays(base.getTime(),i), d=new Date(ms), iso=dateKey(ms);
     const lbl = i===0?'Auj.' : i===1?'Dem.' : DOW_LET[(d.getDay()+6)%7];
     chips+=`<button class="rbchip${iso===t.date?' on':''}" onclick="doReschedule('${id}','${iso}')"><span>${lbl}</span><b>${d.getDate()}</b></button>`;
   }
@@ -2652,10 +2655,10 @@ function fmtDur(ms){
 // semaine = lundi→dimanche. periodOffset recule (−1 = précédente) ; jamais dans le futur.
 function periodWindow(){
   const d=new Date(); d.setHours(0,0,0,0);
-  if(period==='jour'){ d.setDate(d.getDate()+periodOffset); const start=d.getTime(); return {start, end:start+86400000}; }
+  if(period==='jour'){ d.setDate(d.getDate()+periodOffset); const start=d.getTime(); return {start, end:addDays(start,1)}; }
   const wd=(d.getDay()+6)%7;                 // 0 = lundi
   d.setDate(d.getDate()-wd + periodOffset*7); // lundi de la semaine cible
-  const start=d.getTime(); return {start, end:start+7*86400000};
+  const start=d.getTime(); return {start, end:addDays(start,7)};
 }
 function sessionsInPeriod(){ const {start,end}=periodWindow();
   return (data.sessions||[]).filter(s=>{ const t=Date.parse(s.start); return s.end && t>=start && t<end; }); }
@@ -2674,7 +2677,7 @@ function windowLabel(){
   }
   if(periodOffset===0) return "Cette semaine";
   if(periodOffset===-1) return "Semaine dernière";
-  const a=new Date(start), b=new Date(start+6*86400000);
+  const a=new Date(start), b=new Date(addDays(start,6));
   return `${a.getDate()} – ${b.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}`;
 }
 // Comme « temps d'écran » : tranches (24 heures pour le jour, 7 jours lundi→dimanche pour la semaine),
@@ -2691,7 +2694,7 @@ function timeBuckets(){
     n=7; const WD=['L','M','M','J','V','S','D'];   // start = lundi
     idxOf=t=>{ const d=new Date(t); d.setHours(0,0,0,0); return Math.round((d-start)/86400000); };
     labelOf=i=> WD[i];
-    tipOf=i=> new Date(start+i*86400000).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'});
+    tipOf=i=> new Date(addDays(start,i)).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'});
   }
   const buckets=Array.from({length:n},()=>({total:0,byMat:{}}));
   sessionsInPeriod().forEach(s=>{ const k=idxOf(Date.parse(s.start)); if(k<0||k>=n) return;
@@ -2728,7 +2731,7 @@ function barChartSVG(avgMin){
   // Vue semaine : chaque tranche = 1 jour cliquable (sauf le futur).
   const week=period==='semaine', {start:winStart}=periodWindow();
   const todayMid=(()=>{ const d=new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
-  const dayClickable=i=> week && (winStart+i*86400000)<=todayMid;
+  const dayClickable=i=> week && addDays(winStart,i)<=todayMid;
   const n=buckets.length, slot=plotW/n, bw=Math.min(slot*0.62, period==='semaine'?30:slot*0.72);
   let bars='', hits='';
   buckets.forEach((b,i)=>{
@@ -3005,7 +3008,7 @@ function setPeriod(p){
   if(p==='semaine'){
     periodOffset=Math.round((monOf(start)-monOf(today.getTime()))/(7*86400000));
   }else{
-    const target=Math.min(start+6*86400000, today.getTime());  // aujourd'hui si semaine courante, sinon dimanche
+    const target=Math.min(addDays(start,6), today.getTime());  // aujourd'hui si semaine courante, sinon dimanche
     periodOffset=Math.round((target-today.getTime())/86400000);
   }
   period=p; renderTempsStats();
@@ -3015,7 +3018,7 @@ function shiftPeriod(d){ if(periodOffset+d>0) return; periodOffset+=d; renderTem
 function drillDay(i){
   const {start}=periodWindow();                 // lundi de la semaine affichée
   const today=new Date(); today.setHours(0,0,0,0);
-  const off=Math.round((start+i*86400000-today.getTime())/86400000);
+  const off=Math.round((addDays(start,i)-today.getTime())/86400000);
   if(off>0) return;
   period='jour'; periodOffset=off; renderTempsStats();
 }
