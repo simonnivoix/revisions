@@ -77,14 +77,14 @@
   .bookic{color:var(--muted);display:inline-flex}
   .empty h2{font-size:18px;font-weight:600;margin:10px 0 8px}
   .empty p{font-size:14px;line-height:1.5;color:var(--muted);margin:0 0 22px}
-  .cta{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;
+  .cta{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:var(--onp,#fff);border:none;
        font-size:16px;font-weight:600;padding:12px 22px;border-radius:12px;cursor:pointer;font-family:inherit;transition:.15s}
   .cta:hover{filter:brightness(1.07)}
   .cta:active{transform:scale(.97)}
 
   /* ---------- Vue détail matière ---------- */
   .back{background:none;border:none;color:var(--primary);font-size:14px;font-weight:600;cursor:pointer;
-        padding:6px 0;margin-bottom:14px;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+        padding:13px 0;margin:-7px 0 7px;min-height:44px;display:inline-flex;align-items:center;gap:6px;transition:.15s}
   .back:hover{opacity:.78}
   .back:active{transform:scale(.97)}
   .dhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
@@ -198,14 +198,14 @@
   .authcard{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:20px;
             padding:36px 28px 28px;box-shadow:0 20px 60px rgba(15,23,42,.14);animation:rise .3s cubic-bezier(.22,.61,.36,1)}
   .authbrand{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:28px;text-align:center}
-  .authbrand .logo{width:56px;height:56px;border-radius:16px;background:var(--primary);color:#fff;
+  .authbrand .logo{width:56px;height:56px;border-radius:16px;background:var(--primary);color:var(--onp,#fff);
                     display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(3,105,161,.25);flex-shrink:0}
   .authbrand h1{font-size:20px;font-weight:800;letter-spacing:-.01em;margin:0;color:var(--ink)}
   .authbrand p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.4}
   .authinput{width:100%;border:1px solid var(--line);background:var(--bg2);color:var(--ink);border-radius:12px;
              padding:14px 16px;font-family:inherit;font-size:16px;outline:none;margin-bottom:12px;transition:.15s}
   .authinput:focus{border-color:var(--primary);background:var(--card)}
-  .authcta{width:100%;background:var(--primary);color:#fff;border:none;font-size:15.5px;font-weight:700;
+  .authcta{width:100%;background:var(--primary);color:var(--onp,#fff);border:none;font-size:15.5px;font-weight:700;
            padding:14px;border-radius:12px;cursor:pointer;font-family:inherit;transition:.15s;margin-top:4px}
   .authcta:hover{filter:brightness(1.07)}
   .authcta:active{transform:scale(.98)}
@@ -240,7 +240,7 @@
   .bigbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:none;border-radius:14px;
           font-family:inherit;font-size:17px;font-weight:700;color:#fff;padding:16px;cursor:pointer;min-height:56px;transition:.15s}
   .bigbtn:active{transform:scale(.985)}
-  .bigwork{background:var(--primary)}
+  .bigwork{background:var(--primary);color:var(--onp,#fff)}
   .bigwork:disabled,body[data-arena] .bigwork:disabled{opacity:1;cursor:default;background:var(--bg2)!important;color:var(--muted)!important;border:1.5px dashed var(--line)!important;box-shadow:none!important}
   .bigstop{background:var(--ink);color:var(--card)}
   .bigbreathe{background:var(--bg2);color:var(--ink);border:1px solid var(--line);margin-top:10px;font-size:15px;font-weight:600;padding:14px}
@@ -493,7 +493,7 @@
          font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;min-height:44px;transition:.15s}
   .mdbtn:hover{border-color:var(--primary)}
   .mdbtn:active{transform:scale(.97)}
-  .mdbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .mdbtn.primary{background:var(--primary);color:var(--onp,#fff);border-color:var(--primary)}
   .mdbtn.danger{background:var(--rouge);color:#fff;border-color:var(--rouge)}
 
   /* ---------- Tactile (iPad / iPhone) ---------- */
@@ -526,7 +526,7 @@
   .tbstat .v{font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--ink);
              display:inline-flex;align-items:center;gap:2px}
   .tbstat .tbflame{display:inline-flex;color:#F97316}   /* même orange que le bandeau série de l'accueil */
-  .tbcta{margin-left:auto;background:var(--primary);color:#fff;border:none;border-radius:12px;
+  .tbcta{margin-left:auto;background:var(--primary);color:var(--onp,#fff);border:none;border-radius:12px;
          font-family:inherit;font-size:14.5px;font-weight:600;padding:12px 20px;cursor:pointer;
          display:inline-flex;align-items:center;gap:9px;transition:.15s;box-shadow:var(--shadow)}
   .tbcta:hover{filter:brightness(1.06)}
@@ -545,7 +545,7 @@
   /* En-tête de marque en haut de la sidebar */
   .sbbrand{display:flex;align-items:center;gap:10px;padding:6px 8px 16px;font-weight:700;
            font-size:17px;letter-spacing:-.01em;color:var(--ink)}
-  .sbbrand .logo{width:30px;height:30px;border-radius:9px;background:var(--primary);color:#fff;
+  .sbbrand .logo{width:30px;height:30px;border-radius:9px;background:var(--primary);color:var(--onp,#fff);
                  display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .sbsect{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
           color:var(--muted);padding:10px 10px 4px;opacity:.7}
@@ -589,7 +589,7 @@
   .ptitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 18px}
   .ptitle h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em}
   .ptitle .sub{color:var(--muted);font-size:14px;margin-top:3px}
-  .addbtn{background:var(--primary);color:#fff;border:none;cursor:pointer;display:inline-flex;align-items:center;
+  .addbtn{background:var(--primary);color:var(--onp,#fff);border:none;cursor:pointer;display:inline-flex;align-items:center;
           justify-content:center;width:44px;height:44px;border-radius:12px;flex-shrink:0;transition:.15s}
   .addbtn:hover{filter:brightness(1.07)}
   .addbtn:active{transform:scale(.94)}
@@ -701,7 +701,7 @@
   .countdown .cdchip .cdj{color:var(--muted);font-weight:700}
   /* chip « date d'épreuve » sur la page détail */
   .examchip{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);
-            border-radius:999px;padding:8px 14px;min-height:40px;box-sizing:border-box;font-size:13px;font-weight:600;
+            border-radius:999px;padding:8px 14px;min-height:44px;box-sizing:border-box;font-size:13px;font-weight:600;
             color:var(--ink);cursor:pointer;box-shadow:var(--shadow);margin:2px 0 4px}
   .examchip:active{transform:scale(.97)} .examchip .exic{color:var(--primary);display:flex}
   .examchip.none{color:var(--muted);font-weight:500} .examchip .exj{color:var(--muted);font-weight:700}
@@ -724,6 +724,8 @@
   .todoglabel{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:6px 0 2px}
   .todorow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid var(--line)}
   .todogroup .todorow:last-child{border-bottom:none}
+  button.todochk{position:relative}
+  button.todochk::after{content:'';position:absolute;inset:-10px}   /* zone de toucher 44 px, case visible 24 px */
   .todochk{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);background:var(--card);
            display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;color:#fff;transition:.15s}
   .todochk .ic{opacity:0;transition:opacity .15s}
@@ -735,12 +737,12 @@
   .todoseg{display:flex;gap:8px;margin:14px 0 8px}
   .tseg{flex:1;background:var(--bg2);border:1.5px solid transparent;border-radius:999px;padding:8px 10px;
         font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;min-height:40px;transition:.15s}
-  .tseg.on{background:var(--primary);color:#fff}
+  .tseg.on{background:var(--primary);color:var(--onp,#fff)}
   .todoadd{display:flex;gap:8px}
   .todoadd input{flex:1;border:1px solid var(--line);background:var(--bg2);color:var(--ink);border-radius:12px;
                  padding:11px 13px;font-family:inherit;font-size:16px;outline:none;min-width:0}
   .todoadd input:focus{border-color:var(--primary)}
-  .addbtn{background:var(--primary);color:#fff;border:none;border-radius:12px;width:46px;flex-shrink:0;
+  .addbtn{background:var(--primary);color:var(--onp,#fff);border:none;border-radius:12px;width:46px;flex-shrink:0;
           display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s}
   .addbtn:active{transform:scale(.95)}
 
@@ -764,7 +766,7 @@
           text-transform:uppercase;letter-spacing:.03em;margin:4px 0 4px}
   .aghead .agdow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;
                  background:var(--bg2);color:var(--ink);font-size:12px}
-  .agday.today .aghead .agdow{background:var(--primary);color:#fff}
+  .agday.today .aghead .agdow{background:var(--primary);color:var(--onp,#fff)}
   .agempty{font-size:13px;color:var(--muted);opacity:.75;padding:2px 0 2px 28px}
   .agtask{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;padding:5px 0}
   .agtxt{display:flex;align-items:center;gap:9px;min-width:0;background:var(--bg2);border:1px solid var(--line);
@@ -772,17 +774,27 @@
   .agtxt:active{transform:scale(.99)}
   .agtxt .cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
   .agtxt .agname{font-size:14.5px;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;word-break:break-word;flex:1}
-  .agtxt.done{opacity:.6}
+  .agtxt.done{opacity:.8}
   .agtxt.done .agname{text-decoration:line-through;color:var(--muted)}
   .agtxt .agplay{display:inline-flex;color:var(--primary);flex-shrink:0;margin-left:auto}
   .agbox{min-width:0;background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:2px 0 6px}
   .agbox .aghd{background:none;border:none;width:100%}
-  .agbox.done{opacity:.6}
+  .agbox.done{opacity:.8}
   .agname.agmat{font-weight:700}
   .agbox .agstep{width:100%;padding:4px 12px 4px 30px}
   .agnew{margin:0;min-height:52px;background:var(--bg2);color:var(--primary);border:1.5px dashed color-mix(in srgb,var(--primary) 45%,var(--line));font-size:15px;font-weight:700;padding:14px}
   .agpanel{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:14px;border-bottom:1px solid var(--line)}
   .agpanel .matchip.mini,.agpanel .agdaypick,.agpanel .optchip{background:var(--card)}
+  @media (max-width:520px){ .agadd.agtop.agpanel{margin:0 -10px 14px;padding:12px 6px} .agpanel .agdays{gap:2px} }   /* jours ≥ 44 px de large sur iPhone */
+  /* Mobile : bouton « + Nouvelle tâche » toujours à portée (l'agenda est sous le lanceur) */
+  .agfab{display:none}
+  @media (max-width:820px){
+    .agfab{display:flex;align-items:center;gap:6px;position:fixed;right:16px;z-index:39;bottom:calc(max(16px,env(safe-area-inset-bottom)) + 84px);
+           min-height:48px;padding:0 18px 0 14px;border:none;border-radius:999px;background:var(--primary);color:var(--onp,#fff);
+           font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.22);transition:opacity .2s,transform .2s}
+    .agfab:active{transform:scale(.95)}
+    .agfab.away{opacity:0;pointer-events:none;transform:translateY(8px)}
+  }
   .agpanel .agdaypick.on{background:var(--primary)}
   .agpanelhd{display:flex;align-items:center;justify-content:space-between;margin:-4px 0 8px}.agpanelhd b{font-size:16px}
   .aghint{font-size:13px;color:var(--muted);margin:-4px 0 10px}
@@ -816,10 +828,10 @@
   .agdaypick b{font-size:15px;font-weight:700}
   .agdaypick.td b{color:var(--primary)}
   .agdaypick.on{background:var(--primary);border-color:var(--primary)}
-  .agdaypick.on span,.agdaypick.on b{color:#fff}
+  .agdaypick.on span,.agdaypick.on b{color:var(--onp,#fff)}
   .agdaypick.past{opacity:.32;cursor:not-allowed}
   .agday.pastday .aghead{opacity:.5}
-  .agreb{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--orange);
+  .agreb{width:44px;height:44px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--orange);
          display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.15s}
   .agreb:active{transform:scale(.92)}
   .rbgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px}
@@ -828,7 +840,7 @@
   .rbchip span{font-size:12px;color:var(--muted)}
   .rbchip b{font-size:15px;font-weight:700}
   .rbchip.on{background:var(--primary);border-color:var(--primary)}
-  .rbchip.on span,.rbchip.on b{color:#fff}
+  .rbchip.on span,.rbchip.on b{color:var(--onp,#fff)}
   .rbchip:active{transform:scale(.94)}
   .aglate{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);border-radius:13px;padding:10px 12px;margin-bottom:14px}
   .aglatehd{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--orange);
@@ -836,7 +848,7 @@
   /* « À faire aujourd'hui » (Accueil) */
   .todaytasks{padding:12px 14px;display:flex;flex-direction:column;gap:2px;animation:rise .4s ease backwards}
   .latebanner{display:flex;align-items:center;gap:8px;width:100%;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);
-              border-radius:11px;padding:10px 12px;font-family:inherit;font-size:13px;font-weight:600;color:var(--orange);
+              border-radius:11px;padding:10px 12px;min-height:44px;font-family:inherit;font-size:13px;font-weight:600;color:var(--orange);
               cursor:pointer;margin-bottom:8px;text-align:left}
 
   /* ---------- Réglages : aperçu ---------- */
@@ -862,7 +874,7 @@
   .arfoot{font-size:13px;color:var(--muted)}
   .arfoot b{color:var(--ink)}
   .arbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px;min-height:46px;border-radius:12px;border:none;
-         background:var(--primary);color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+         background:var(--primary);color:var(--onp,#fff);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
   .arbtn.soft{background:var(--bg2);color:var(--ink)}
   .arbtn.portal{animation:arpulse 1.8s ease-in-out infinite}
   @keyframes arpulse{50%{box-shadow:0 0 0 6px var(--ring),0 0 26px var(--ring)}}
@@ -1093,7 +1105,7 @@
   .rrow{position:relative;height:84px}
   .rnode{position:absolute;left:50%;top:0;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;z-index:1;
          display:grid;place-items:center;font-weight:800;font-size:14px;color:var(--muted);background:var(--card);border:3px solid var(--bg2)}
-  .rrow.ok .rnode{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 0 0 5px var(--ring)}
+  .rrow.ok .rnode{background:var(--primary);border-color:var(--primary);color:var(--onp,#fff);box-shadow:0 0 0 5px var(--ring)}
   .rlab{position:absolute;top:-18px;width:calc(50% - 40px);font-size:14.5px;line-height:1.25}
   .rrow.l .rlab{right:calc(50% + 30px);text-align:right}
   .rrow.r .rlab{left:calc(50% + 30px)}
@@ -1102,7 +1114,7 @@
   .rrow:not(.ok) .rlab b{color:var(--muted);letter-spacing:.1em}
   .rme{position:absolute;left:50%;top:0;z-index:3;transform:translate(-50%,-50%);transition:top 1.6s cubic-bezier(.45,0,.2,1);pointer-events:none}
   .road.still .rme,.road.still .rfill{transition:none}
-  .rme .av{width:52px;height:52px;border-radius:50%;background:var(--primary);color:#fff;border:4px solid var(--card);display:grid;place-items:center;
+  .rme .av{width:52px;height:52px;border-radius:50%;background:var(--primary);color:var(--onp,#fff);border:4px solid var(--card);display:grid;place-items:center;
            box-shadow:0 0 0 6px var(--ring),0 8px 22px rgba(0,0,0,.28);animation:mePulse 2.2s ease-in-out infinite}
   @keyframes mePulse{50%{box-shadow:0 0 0 12px var(--ring),0 8px 22px rgba(0,0,0,.28)}}
   .rme .tag{position:absolute;right:62px;top:50%;transform:translateY(-50%);white-space:nowrap;background:var(--ink);color:var(--bg);
@@ -1432,7 +1444,7 @@
 <div id="arenes" class="roadov hidden" role="dialog" aria-modal="true" aria-label="Route des arènes"></div>
 
 <!-- MODALE MAISON (renommer / ajouter / supprimer) -->
-<div id="modal" class="overlay hidden" onclick="if(event.target===this)closeModal(null)"></div>
+<div id="modal" class="overlay hidden" onclick="if(event.target===this&&!debrief)closeModal(null)"></div>
 
 <!-- COMPTE (connexion / inscription) — plein écran brandé, pas une modale ; pas de clic-dehors -->
 <div id="authgate" class="authov hidden"></div>
@@ -1448,7 +1460,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261108-012500';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261108-142003';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1509,7 +1521,7 @@ const THEMES = {
   sombre:{label:"Sombre", vars:{'--bg':'#09090B','--bg2':'#27272A','--card':'#18181B','--ink':'#FAFAFA',
                                 '--muted':'#A1A1AA','--line':'#3F3F46','--primary':'#38BDF8',
                                 '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.4)','--ring':'rgba(56,189,248,.20)'}},
+                                '--shadow':'0 1px 3px rgba(0,0,0,.4)','--ring':'rgba(56,189,248,.20)','--onp':'#0B0F14'}},
   lavande:{label:"Lavande", vars:{'--bg':'#EEEBF7','--bg2':'#DDD7EE','--card':'#FFFFFF','--ink':'#1E1B2E',
                                 '--muted':'#5E5873','--line':'#DDD7EE','--primary':'#6D4FC2',
                                 '--shadow':'0 1px 3px rgba(30,27,46,.09)','--ring':'rgba(109,79,194,.18)'}},
@@ -1522,33 +1534,33 @@ const THEMES = {
   nuit:  {label:"Nuit",   vars:{'--bg':'#0B1120','--bg2':'#1E293B','--card':'#111A2E','--ink':'#F1F5F9',
                                 '--muted':'#94A3B8','--line':'#334155','--primary':'#818CF8',
                                 '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(129,140,248,.22)'}},
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(129,140,248,.22)','--onp':'#0B0F14'}},
   foret: {label:"Forêt",  vars:{'--bg':'#0C1410','--bg2':'#1E2B24','--card':'#131D18','--ink':'#ECF3EE',
                                 '--muted':'#9AAFA2','--line':'#2E3F35','--primary':'#22A55A',
                                 '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(34,165,90,.22)'}},
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(34,165,90,.22)','--onp':'#0B0F14'}},
   aubergine:{label:"Aubergine", vars:{'--bg':'#120B1A','--bg2':'#2A1F36','--card':'#1A1224','--ink':'#F3EEF8',
                                 '--muted':'#AE9FBF','--line':'#3B2D4A','--primary':'#9B6BE0',
                                 '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(155,107,224,.22)'}},
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(155,107,224,.22)','--onp':'#0B0F14'}},
   ocean:{label:"Océan", vars:{'--bg':'#071417','--bg2':'#18303A','--card':'#0D1E23','--ink':'#E9F6F8',
                                 '--muted':'#93B4BC','--line':'#24414B','--primary':'#14A3B8',
                                 '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(20,163,184,.22)'}},
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(20,163,184,.22)','--onp':'#0B0F14'}},
   braise:{label:"Braise", vars:{'--bg':'#16100B','--bg2':'#2F241B','--card':'#1E1711','--ink':'#F8F0E8',
                                 '--muted':'#BBA796','--line':'#3F3125','--primary':'#E07A2E',
                                 '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,122,46,.22)'}},
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,122,46,.22)','--onp':'#0B0F14'}},
   cerise:{label:"Cerise", vars:{'--bg':'#170B10','--bg2':'#331C25','--card':'#201117','--ink':'#F9EEF2',
                                 '--muted':'#BF9DAA','--line':'#452A35','--primary':'#E0457B',
                                 '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,69,123,.22)'}},
+                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,69,123,.22)','--onp':'#0B0F14'}},
 };
 // Base claire complète : permet de revenir proprement après le mode sombre (couleurs maîtrise incluses).
 const LIGHT_DEFAULTS = {
   '--bg':'#EAF0F6','--bg2':'#D8E2EC','--card':'#FFFFFF','--ink':'#0F172A','--muted':'#4F5E6C','--line':'#D8E2EC',
   '--primary':'#0369A1','--rouge':'#DC2626','--orange':'#F97316','--jaune':'#CA8A04','--vert':'#16A34A',
-  '--shadow':'0 1px 3px rgba(15,23,42,.08)','--ring':'rgba(3,105,161,.16)'
+  '--shadow':'0 1px 3px rgba(15,23,42,.08)','--ring':'rgba(3,105,161,.16)','--onp':'#fff'
 };
 
 function applyTheme(name){
@@ -1658,8 +1670,8 @@ function arenaCard(){
   const into=Math.min((totalWorkH()-arenaStart(i))/A.d*10, 10);   // la barre suit les heures (un segment atteint mais pas encore révélé reste plein : il ne redescend plus)
   const seg=Array.from({length:10},(_,k)=>`<i><b style="width:${Math.max(0,Math.min(1,into-k))*100}%"></b></i>`).join('');
   const left=arenaStart(i)+(arenaStep(i)+1)*A.d/10-totalWorkH();
-  const foot = S<arenaStep(i) ? `<b>Nouvel élément à découvrir !</b>` : S>=10 ? (last?'<b>Arène complète !</b> Les prochaines arrivent bientôt.':`<b>Arène complète !</b> Le portail est ouvert.`)
-    : `<b>Étape ${S} / 10</b> · prochain élément dans ${fmtDur(left*3600000).replace(/ /g,'\u00a0')}`;
+  const foot = S<arenaStep(i) ? `<b>Nouvel élément à découvrir !</b>` : S>=10 ? (last?'<b>Arène complète !</b> La suivante arrive bientôt.':`<b>Arène complète !</b> Le portail est ouvert.`)
+    : `<b>Élément ${S} / 10</b> · prochain élément dans ${fmtDur(left*3600000).replace(/ /g,'\u00a0')}`;
   const look=arenaLook()===A.k;
   return `<button class="arhero" onclick="openRoad()" aria-label="${A.nom} : voir ma route">${arenaBanner(i,`
       <div class="ahrow"><div class="rbemb">${ARENA_EMBLEMS[A.k]||''}</div>
@@ -1700,7 +1712,7 @@ function renderArenes(){
   const S=arenaStep(cur), left=arenaStart(cur)+(S+1)*ARENAS[cur].d/10-H;
   const vis=arenaVisStep();
   let html=arenaBanner(-1,`<div class="rbtop"><small>Arène ${ARENAS.length+1}</small><span class="rbpill">${ic('lock',14)} bientôt</span></div>
-    <div class="rbname">???</div><div class="rbsub">Une nouvelle arène arrive.</div>`);
+    <div class="rbname">???</div><div class="rbsub">La suivante arrive bientôt.</div>`);
   for(let i=last;i>=0;i--){
     const A=ARENAS[i], st=arenaStart(i), known=i<=cur;
     for(let n=10;n>=1;n--){
@@ -1746,7 +1758,7 @@ function arenaWidgets(){
   const ring=`<div class="w"><div class="ring">
       <svg width="88" height="88" viewBox="0 0 88 88"><circle cx="44" cy="44" r="36" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="10"/>
       <circle cx="44" cy="44" r="36" fill="none" stroke="#FFD76A" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p)}" transform="rotate(-90 44 44)"/></svg>
-      <div><div class="lab">Aujourd'hui</div><b>${fmtDur(w)}</b><small>${Math.round(p*100)} % de 2 h</small></div></div></div>`;
+      <div><div class="lab">Aujourd'hui</div><b>${fmtDur(w)}</b><small>${Math.round(p*100)}% de 2 h</small></div></div></div>`;
   let bars='';
   {
     const t0=localDay(Date.now()), days=Array.from({length:7},(_,k)=>addDays(t0,k-6));
@@ -1973,7 +1985,7 @@ function enterNextArena(){
   const n=arenaIdx()+1, A=ARENAS[n], O=ARENAS[n-1]; if(!A || arenaStep(n-1)<10 || document.querySelector('.arwarp')) return;
   arAudio(); const calm=prefersReduced();
   const w=document.createElement('div'); w.className='arwarp'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true');
-  w.setAttribute('aria-label',`${O.nom} complétée`); w.style.setProperty('--c',O.wc); w.style.setProperty('--n',A.wc);
+  w.setAttribute('aria-label',`${O.nom} complète`); w.style.setProperty('--c',O.wc); w.style.setProperty('--n',A.wc);
   w.innerHTML=`<div class="stg"></div><div class="wcore"></div><div class="wflare"></div><div class="flash"></div>`;
   document.body.appendChild(w); requestAnimationFrame(()=>w.classList.add('show'));
   const fx=calm?{embers(){},retint(){},burst(){},warp(){},stop(){}}:arParticles(w);
@@ -1992,7 +2004,7 @@ function enterNextArena(){
   w.addEventListener('pointermove',e=>{ const p=$('.wptr'); if(!p) return;
     p.style.transform=`rotateX(${((e.clientY/innerHeight)-.5)*-14}deg) rotateY(${((e.clientX/innerWidth)-.5)*18}deg)`; });
   // ---- 1) Arène complétée ----
-  stg.innerHTML=`<div class="wkick">Arène complétée</div>
+  stg.innerHTML=`<div class="wkick">Arène complète</div>
     <div class="wenter"><div class="wptr"><div class="wtilt"><div class="wcard">${face(n-1,0)}</div></div></div></div>
     <div class="wstats"><div><b data-h>0 h</b><small>De travail</small></div><div><b data-e>0</b><small>Éléments</small></div>
       <div class="lk"><b><svg class="lksv" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="lksh" d="M8 11V8a4 4 0 018 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/><circle class="lkkey" cx="12" cy="16" r="1.2"/></svg></b><small>Arène ${n+1}</small></div></div>
@@ -2115,7 +2127,7 @@ function openStepReveal(i,n){
   const w=document.createElement('div'); w.className='arwarp arstep'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true');
   w.setAttribute('aria-label',`Nouvel élément : ${A.steps[n-1]}`); w.style.setProperty('--c',A.wc);
   const left=arenaStart(i)+(n+1)*A.d/10-H, more=S>n;
-  const sub = n>=10 ? (last?'Arène complète ! Une nouvelle arrive bientôt.':'Arène complète : <b>le portail est ouvert</b>')
+  const sub = n>=10 ? (last?'Arène complète ! La suivante arrive bientôt.':'Arène complète : <b>le portail est ouvert</b>')
     : more ? `Et ce n'est pas tout : <b>${S-n}</b> autre${S-n>1?'s':''} élément${S-n>1?'s':''} à découvrir`
     : `Prochain élément dans <b>${fmtDur(Math.max(0,left)*3600000)}</b>`;
   const look=arenaLook()===A.k;
@@ -2460,7 +2472,7 @@ async function logout(){
   localStorage.removeItem(SYNC_KEY);
   data=prepare(clone(DEFAULT)); current=null;
   sessPlan=[]; planDraft=''; agEst=null; agItems=[]; agDraft=''; agTitle=''; agOpen=false; agMat=null; agDayISO=null; pendingTask=null; taskGoal=null; debrief=null; armed=null; goalMin=null; pomoCount=null; sessMode='libre'; pomoMin=25;   // rien du compte précédent dans le lanceur
-  try{ localStorage.removeItem(LASTSESS_KEY); }catch(e){}
+  try{ localStorage.removeItem(LASTSESS_KEY); localStorage.removeItem(DEBRIEF_KEY); }catch(e){}
   render();
   try{ localStorage.removeItem(ARENA_SEEN_KEY); }catch(e){}   // après render() : sinon il réécrit {0,0} et la reconnexion rejouerait toutes les révélations
   showAuthGate('login');
@@ -2738,6 +2750,11 @@ async function submitAuth(kind){
   }
 }
 
+// Même couleur, mais lisible en TEXTE : sur fond clair, orange et jaune sont assombris (≈2,8:1 → ≥4,5:1). Barres inchangées.
+function couleurTxt(p){ const c=couleur(p); if(p<=20||p>60) return c;
+  const bg=getCSS('--card').replace('#',''); if(bg.length<6) return c;
+  const L=(parseInt(bg.slice(0,2),16)*299+parseInt(bg.slice(2,4),16)*587+parseInt(bg.slice(4,6),16)*114)/1000;
+  return L>150 ? `color-mix(in srgb, ${c} 66%, #000)` : c; }
 function couleur(p){ if(p<=20)return getCSS('--rouge'); if(p<=40)return getCSS('--orange'); if(p<=60)return getCSS('--jaune'); return getCSS('--vert'); }
 function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 function moyenne(ch){ return ch.length?Math.round(ch.reduce((s,c)=>s+(+c.pct||0),0)/ch.length):0; }
@@ -2946,6 +2963,12 @@ function setAgMat(id){ agMat=(agMat===id?null:id); refreshTemps(); if(agOpen && 
 function setAgDay(iso){ if(isPast(iso)) return; agDayISO=iso; refreshTemps(); }   // pas de planif dans le passé
 
 function openAgNew(){ agOpen=true; refreshTemps(); const i=document.getElementById('agInput'); if(i) i.focus(); }
+// Bouton flottant (mobile) : ouvre le panneau et le fait venir à l'écran.
+function openAgNewFab(){ agOpen=true; refreshTemps(); const p=document.querySelector('.agpanel'); if(p) p.scrollIntoView({behavior:'smooth',block:'start'}); }
+// Caché quand le vrai bouton « Nouvelle tâche » est déjà visible à l'écran (pas de doublon).
+function agFabSync(){ const f=document.querySelector('.agfab'), n=document.querySelector('.agnew'); if(!f) return;
+  const r=n&&n.getBoundingClientRect(); f.classList.toggle('away', !!r && r.top<innerHeight-150 && r.bottom>0); }
+window.addEventListener('scroll', ()=>{ if(page==='session') agFabSync(); }, {passive:true});
 function closeAgNew(){ agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null; refreshTemps(); }   // panneau rouvert = vierge (QA 08/11 : jour d'avant gardé → tâche créée le mauvais jour)
 function agAll(){ return agItems.concat(agDraft.trim()?[agDraft.trim().slice(0,120)]:[]); }   // une étape tapée mais pas encore ajoutée compte
 function agSync(){   // pendant la saisie : met à jour le bouton sans tout redessiner (garde le clavier ouvert)
@@ -3045,15 +3068,18 @@ function forgetTask(){ pendingTask=null; taskGoal=null; }
 //    Le scroll est donc différé : s'il n'y a pas de 2e clic dans la fenêtre, on scrolle ; sinon on l'annule.
 let lastTaskClick={id:null, t:0};
 let taskScrollTimer=null;
+let prevLaunch=null;   // état du lanceur avant le 1er clic (rétabli si c'est un double-clic pour renommer)
 function handleTaskClick(id){
   const now=Date.now();
   if(lastTaskClick.id===id && (now-lastTaskClick.t)<350){
     lastTaskClick={id:null, t:0};
     if(taskScrollTimer){ clearTimeout(taskScrollTimer); taskScrollTimer=null; }
+    if(prevLaunch){ ({armed, pendingTask, taskGoal, planDraft}=prevLaunch); sessPlan=prevLaunch.sessPlan; prevLaunch=null; renderTemps(); }   // le 1er clic avait choisi la matière : on remet le lanceur comme avant
     renameTask(id);
     return;
   }
   lastTaskClick={id, t:now};
+  prevLaunch={armed, pendingTask, taskGoal, planDraft, sessPlan:sessPlan.slice()};
   armFromTask(id);
   if(taskScrollTimer) clearTimeout(taskScrollTimer);
   taskScrollTimer=setTimeout(()=>{ taskScrollTimer=null; window.scrollTo({top:0,behavior:'smooth'}); }, 350);
@@ -3072,7 +3098,7 @@ function refreshTodos(){ if(page==='session') refreshTemps(); else render(); }
 function taskRow(t, late){
   const m=matById(t.mat), col=m?m.color:'var(--muted)', meta=taskMeta(t), steps=t.steps&&t.steps.length?t.steps:null;
   const play=(m&&!t.done&&!data.active)?`<span class="agplay">${ic('play',13)}</span>`:'';
-  const side=`<button class="agreb" onclick="reschedulePick('${t.id}')" title="Changer le jour" aria-label="Changer le jour">${ic('reset',15)}</button>
+  const side=`<button class="agreb" onclick="reschedulePick('${t.id}')" title="Changer le jour" aria-label="Changer le jour">${ic('calendar',16)}</button>
     <button class="iconbtn tododel" onclick="delTodo('${t.id}')" title="Supprimer" aria-label="Supprimer la tâche">${ic('x',16)}</button>`;
   const chk=`<button class="todochk ${t.done?'on':''}" onclick="toggleTodo('${t.id}')" aria-label="Cocher">${ic('check',14)}</button>`;
   if(!steps) return `<div class="agtask${late?' late':''}">${chk}
@@ -3238,7 +3264,7 @@ function renderAccueil(){
       <div class="lbl">Maîtrise globale</div>
       ${moy===null
         ? `<div class="mini" style="margin-top:10px">Pas encore de chapitre</div>`
-        : `<div class="big" style="color:${couleur(moy)}">${moy}<span class="u">%</span></div>`}
+        : `<div class="big" style="color:${couleurTxt(moy)}">${moy}<span class="u">%</span></div>`}
     </div>
     <div class="statcard">
       <div class="lbl">Travail aujourd'hui</div>
@@ -3276,13 +3302,13 @@ function renderAccueil(){
   let bosser='';
   const bos=aBosser();
   if(bos.length){
-    const rows=bos.map(b=>{ const col=couleur(b.pct);
+    const rows=bos.map(b=>{ const col=couleur(b.pct), tcol=couleurTxt(b.pct);
       return `<div class="prevrow bosser" style="--mc:${b.color}">
         <button class="bosswork" onclick="workSubject(${b.mi})" aria-label="Travailler ${escapeH(b.txt)}">
           <span class="pdot" style="background:${b.color}"></span>
           <span class="pmid"><span class="pnm">${escapeH(b.txt)}</span><span class="psub">${escapeH(b.sub)}</span><span class="pbar2"><span style="width:${b.pct}%;background:${col}"></span></span></span>
-          <span class="ppct" style="color:${col}">${b.pct}%</span></button>
-        <button class="bossgraph" onclick="openMatiere(${b.mi})" title="Voir le graphe" aria-label="Voir le graphe de ${escapeH(b.txt)}">${ic('bars',18)}</button>
+          <span class="ppct" style="color:${tcol}">${b.pct}%</span></button>
+        <button class="bossgraph" onclick="openMatiere(${b.mi})" title="Voir le graphe" aria-label="Voir le graphe : ${escapeH(b.txt)}">${ic('bars',18)}</button>
       </div>`;
     }).join('');
     bosser=`<div class="seclabel"><span class="t">À travailler</span></div><div class="prevlist">${rows}</div>`;
@@ -3305,7 +3331,7 @@ function renderAccueil(){
       if(chips) recap+=`<div class="rchips">${chips}</div>`;
     }
     rc.changed.slice(0,4).forEach(c=>{ const up=c.to>=c.from;
-      recap+=`<div class="rcline"><span class="cdot" style="background:${c.color}"></span><span>${escapeH(c.nom)} : ${c.from}% → <b style="color:${couleur(c.to)}">${c.to}%</b> ${up?'↗':'↘'}</span></div>`; });
+      recap+=`<div class="rcline"><span class="cdot" style="background:${c.color}"></span><span>${escapeH(c.nom)} : ${c.from}% → <b style="color:${couleurTxt(c.to)}">${c.to}%</b> ${up?'↗':'↘'}</span></div>`; });
     if(rc.changed.length>4) recap+=`<div class="rcline"><span style="width:9px"></span><span class="rcmore">+ ${rc.changed.length-4} autre${rc.changed.length-4>1?'s':''} chapitre${rc.changed.length-4>1?'s':''}</span></div>`;
     if(rc.debs.length){
       const tasks=rc.debs.reduce((n,d)=>n+(d.plan||[]).length,0), ok=rc.debs.reduce((n,d)=>n+(d.plan||[]).filter(p=>p.done).length,0);
@@ -3353,20 +3379,20 @@ function renderHome(){
     <button class="addbtn" title="Ajouter une matière" aria-label="Ajouter une matière" onclick="addMatiere()">${ic('plus',22)}</button></div>`;
   if(!data.matieres.length){ home.innerHTML = title + emptyState(); return; }
   home.innerHTML = title + `<div class="grid">` + data.matieres.map((m,i)=>{
-    const moy = moyenne(m.chapitres);
-    const col = couleur(moy);
-    const done = moy>=100;
+    const moy = moyenne(m.chapitres), none=!m.chapitres.length;
+    const col = none ? 'var(--muted)' : couleurTxt(moy);
+    const done = !none && moy>=100;
     return `<button class="mcard${done?' done':''}" style="--mc:${m.color};animation-delay:${Math.min(i,8)*45}ms" onclick="open_(${i})">
       <div class="top">
         <div class="name"><span class="mdot" style="background:${m.color}"></span><span class="nm">${escapeH(m.nom)}</span></div>
         <div class="meta">${m.chapitres.length} chapitre${m.chapitres.length>1?'s':''}</div>
       </div>
-      <div class="pct" style="color:${col}"><span class="num" data-to="${moy}">${moy}</span><span class="u">%</span></div>
+      <div class="pct" style="color:${col}">${none?'<span class="num">—</span>':`<span class="num" data-to="${moy}">${moy}</span><span class="u">%</span>`}</div>
       <span class="go">${done?ic('check',20):ic('chevron',20)}</span>
-      <div class="pbar"><span style="width:${moy}%;background:${col}"></span></div>
+      <div class="pbar"><span style="width:${moy}%;background:${none?'transparent':couleur(moy)}"></span></div>
     </button>`;
   }).join('') + `</div>`;
-  home.querySelectorAll('.mcard .num').forEach(countUp);   // grand % qui s'incrémente de 0
+  home.querySelectorAll('.mcard .num[data-to]').forEach(countUp);   // grand % qui s'incrémente de 0
 }
 function emptyState(){
   return `<div class="empty">
@@ -3406,7 +3432,7 @@ function renderDetail(){
     <button class="back" onclick="goHome()">${ic('back',18)}<span>Toutes les matières</span></button>
     <div class="dhead">
       <h2 ondblclick="renameMat()" title="Double-clic pour renommer"><button class="dotbtn" onclick="event.stopPropagation();openColorPick('${m.id}',this)" title="Changer la couleur" aria-label="Changer la couleur"><span class="mdot" style="background:${m.color}"></span></button>${escapeH(m.nom)}</h2>
-      <span class="badge" style="background:${couleur(moy)}">${moy}%</span>
+      <span class="badge"${list.length?` style="background:${couleur(moy)}"`:' style="background:var(--bg2);color:var(--muted)"'}>${list.length?moy+'%':'—'}</span>
       <button class="delc dtrash" title="Supprimer la matière" aria-label="Supprimer la matière" onclick="delMatiere(${current})">${ic('trash',20)}</button>
     </div>
     <p class="dsub" id="dsub">${subText(m)}</p>
@@ -3429,11 +3455,11 @@ function chapCard(ci,c,pos){
     <div class="top">
       <span class="cname" ondblclick="renameChap(${ci})" title="Double-clic pour renommer">${escapeH(c.nom)}</span>
       ${done?`<span class="cdone">${ic('check',16)}</span>`:''}
-      <span class="cpct" style="color:${col}">${c.pct}%</span>
+      <span class="cpct" style="color:${couleurTxt(c.pct)}">${c.pct}%</span>
     </div>
     <div class="bar"><span style="width:${c.pct}%;background:${col}"></span></div>
     <div class="ctrl">
-      <input type="range" min="0" max="100" step="5" value="${c.pct}" aria-label="Niveau de maîtrise de ${escapeH(c.nom)}"
+      <input type="range" min="0" max="100" step="5" value="${c.pct}" aria-label="Niveau de maîtrise : ${escapeH(c.nom)}"
              oninput="setPct(${ci},this.value)" onchange="commitPct(${ci},this.value)">
       <button class="seegraph" onclick="toggleChap(${ci})">${ic('chart',18)}<span>Graphe</span></button>
       <button class="delc" title="Supprimer" aria-label="Supprimer le chapitre" onclick="delChapitre(${ci})">${ic('x',18)}</button>
@@ -3471,7 +3497,7 @@ function setPct(ci,v){
   const col=couleur(v);
   const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
   if(card){
-    const p=card.querySelector('.cpct'); p.textContent=v+'%'; p.style.color=col;
+    const p=card.querySelector('.cpct'); p.textContent=v+'%'; p.style.color=couleurTxt(v);
     const bar=card.querySelector('.bar>span'); bar.style.width=v+'%'; bar.style.background=col;
   }
   recordToday(c,v);
@@ -3568,7 +3594,7 @@ function lineChart(points, color, o){
         segs+=`<path d="M${x0.toFixed(1)} ${Y(p0).toFixed(1)} L${x1.toFixed(1)} ${Y(p1).toFixed(1)}" fill="none" stroke="${couleur((p0+p1)/2)}" stroke-width="${sw}" stroke-linecap="round"/>`;
       }
     }
-    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${couleur(q.p)}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p} %</title></circle>`).join('');
+    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${couleur(q.p)}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p}%</title></circle>`).join('');
     const last=xy[xy.length-1];
     const lastDot=`<circle cx="${last.x.toFixed(1)}" cy="${Y(last.p).toFixed(1)}" r="${labels?4:3}" fill="${couleur(last.p)}" stroke="var(--card)" stroke-width="2"/>`;
     path=segs+dots+lastDot;
@@ -3583,7 +3609,7 @@ function renderChartAvg(){ const el=document.getElementById('chart'); if(el) el.
 function refreshBadge(){
   const m=data.matieres[current];
   const badge=document.querySelector('#detail .badge');
-  if(badge){ const moy=moyenne(m.chapitres); badge.textContent=moy+'%'; badge.style.background=couleur(moy); }
+  if(badge && m.chapitres.length){ const moy=moyenne(m.chapitres); badge.textContent=moy+'%'; badge.style.background=couleur(moy); badge.style.color=''; }
 }
 function submitAddChapitre(){ const i=document.getElementById('addChapInput'); if(!i) return; addChapitre(i.value); i.value=''; i.focus(); }
 function addChapitre(nom){ nom=nom.trim(); if(!nom)return;
@@ -3969,20 +3995,20 @@ function openGauge(r){
     <div class="gcard"><div class="gq">?</div><small data-cn></small></div>
     <div class="gmain"><div class="gcount"><b>+0 min</b><small>de travail</small></div>
       <div class="gtube"><div class="gfill" style="--v:0"><div class="gwave b">${wave}</div><div class="gwave">${wave}</div><i class="glite"></i>${bubbles}</div></div>
-      <div class="gside"><b data-pct>0 %</b><span data-side>vers le prochain élément</span></div></div>
+      <div class="gside"><b data-pct>0%</b><span data-side>vers le prochain élément</span></div></div>
     <div class="gsegs">${Array.from({length:10},(_,k)=>`<i class="${k<S0?'got':''}"></i>`).join('')}</div>
     <div class="gmsg"></div><div class="gbtns"></div>`;
   document.body.appendChild(w); requestAnimationFrame(()=>w.classList.add('show'));
   const calm=prefersReduced(), fx=calm?{burst(){},embers(){},stop(){}}:arParticles(w);
   try{ arAudio(); }catch(e){}
   const $=q=>w.querySelector(q), fill=$('.gfill'), tube=$('.gtube'), card=$('.gcard'), cnt=$('.gcount b');
-  const setV=v=>{ fill.style.setProperty('--v',v); w.style.setProperty('--p',v); card.classList.toggle('near',v>.8&&v<1&&!calm); $('[data-pct]').textContent=Math.floor(v*100)+' %'; };
+  const setV=v=>{ fill.style.setProperty('--v',v); w.style.setProperty('--p',v); card.classList.toggle('near',v>.8&&v<1&&!calm); $('[data-pct]').textContent=Math.floor(v*100)+'%'; };
   const setCard=n=>{ $('[data-cn]').textContent = n>10 ? (last?'Arène finie':'Portail') : `Élément ${n}`; };
   const legs=[]; for(let n=S0;n<=Math.min(S1,9);n++){ const a=n===S0?r.from-S0:0, z=n<S1?1:r.to-n; legs.push({n,a,z}); }
   let done=false, closed=false, raf, timers=[], li=0, shown=0, lastSec=-1;
   const sessions=Math.ceil(leftMs/Math.max(gMs,1)-1e-9);
   const msg = crossed>0 ? `<b>${crossed>1?crossed+' nouveaux éléments':'Nouvel élément'} débloqué${crossed>1?'s':''} !</b><small>Il t'attend juste après.</small>`
-    : S1>=10 ? (last?'<b>Arène complète !</b>':'<b>Arène complète !</b><small>Le portail est ouvert.</small>')
+    : S1>=10 ? (last?'<b>Arène complète !</b><small>La suivante arrive bientôt.</small>':'<b>Arène complète !</b><small>Le portail est ouvert.</small>')
     : sessions<=1 ? `<b>Plus que ${fmtDur(leftMs)} !</b><small>Encore une session comme celle-là et c'est débloqué.</small>`
     : `<b>Plus que ${fmtDur(leftMs)}</b><small>Encore ${sessions} sessions comme celle-là.</small>`;
   const matId=r.mat;
@@ -4022,8 +4048,19 @@ function openGauge(r){
   w.addEventListener('click',e=>{ if(!done) return finish(); if(e.target.closest('[data-again]')) return close(true); if(e.target.closest('[data-close]')||!e.target.closest('.gbtns')) close(false); });
   document.addEventListener('keydown',onKey);
 }
+// Brouillon du bilan sur l'appareil : fermer l'appli pendant le bilan ne le perd plus (rouvert au prochain lancement, 24 h max).
+const DEBRIEF_KEY="suivi-revisions-bac-debrief";
+function saveDebriefDraft(){ try{ const {_ar, ...rec}=debrief; localStorage.setItem(DEBRIEF_KEY, JSON.stringify(rec)); }catch(e){} }
+function dropDebriefDraft(){ try{ localStorage.removeItem(DEBRIEF_KEY); }catch(e){} }
+function restoreDebrief(){
+  try{ const d=JSON.parse(localStorage.getItem(DEBRIEF_KEY)||'null');
+    if(!d || typeof d!=='object' || !d.start || !Array.isArray(d.plan) || Date.now()-Date.parse(d.end||d.start)>86400000 || data.active){ dropDebriefDraft(); return false; }
+    openDebrief(d); return true;
+  }catch(e){ dropDebriefDraft(); return false; }
+}
 function paintDebrief(){
   const d=debrief, m=document.getElementById('modal'); if(!d) return;
+  saveDebriefDraft();
   const mat=matById(d.mat);
   const moods=MOODS.map(([k,e,l])=>`<button class="moodbtn${d.mood===k?' on':''}" onclick="setMood('${k}')" aria-label="${l}"><span class="moodemo">${e}</span><span>${l}</span></button>`).join('');
   const plan = d.plan.length ? `<p class="mdmsg">Qu'est-ce que tu as fait ?</p><div class="dbplan">${d.plan.map((p,i)=>`
@@ -4255,7 +4292,9 @@ function renderTemps(){
         <button class="nclose" onclick="this.closest('.note').remove()" title="Fermer" aria-label="Fermer">${ic('x',16)}</button></div>`
     : '';
   staleRecovered=false;
-  t.innerHTML = note + pickerCard() + agendaCard();   // la session active s'affiche en plein écran (#focus), pas ici
+  t.innerHTML = note + pickerCard() + agendaCard()   // la session active s'affiche en plein écran (#focus), pas ici
+    + (agOpen?'':`<button class="agfab" onclick="openAgNewFab()" aria-label="Nouvelle tâche">${ic('plus',20)}<span>Tâche</span></button>`);
+  agFabSync();
 }
 // ---------- Page Stats (« Temps de travail », façon temps d'écran) ----------
 function renderStats(){
@@ -4415,7 +4454,7 @@ function graphCard(){
   const barsHtml = barChartSVG(avgMs/60000);   // SVG : barres empilées + grille + axe + ligne de moyenne
   // Légende = gestion des couleurs : toutes les matières, pastille éditable + total sur la période.
   const legend=`<div class="legend">`+data.matieres.map(m=>`<div class="legrow">
-      <button class="legdot" style="--c:${m.color}" title="Changer la couleur" aria-label="Changer la couleur de ${escapeH(m.nom)}" onclick="openColorPick('${m.id}',this)"></button>
+      <button class="legdot" style="--c:${m.color}" title="Changer la couleur" aria-label="Changer la couleur : ${escapeH(m.nom)}" onclick="openColorPick('${m.id}',this)"></button>
       <span class="legname">${escapeH(m.nom)}</span>
       <span class="legtime">${fmtDur(tot[m.id]||0)}</span></div>`).join('')+`</div>`;
   return `<div class="card">
@@ -4574,6 +4613,7 @@ function openColorPick(id, anchor){ const m=matById(id); if(!m) return;
 // ---- Modale maison : remplace prompt()/confirm() natifs (rendu cohérent avec l'app) ----
 let modalResolve=null;
 function closeModal(val){
+  if(debrief) dropDebriefDraft();
   const gr=debrief&&debrief._ar; debrief=null;   // Échap / clic dehors sur le bilan = Passer (la jauge s'affiche quand même)
   if(gr) setTimeout(()=>openGauge(gr),0);
   const m=document.getElementById('modal');
@@ -4654,7 +4694,7 @@ document.querySelectorAll('#tabbar .tab').forEach(b=>{
 { const tci=document.getElementById('tbCtaIc'); if(tci) tci.innerHTML=ic('plus',18); }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
   const cp=document.getElementById('cpick'); if(cp && !cp.classList.contains('hidden')){ closeCPick(); return; }
-  const md=document.getElementById('modal'); if(md && !md.classList.contains('hidden')){ closeModal(null); return; }
+  const md=document.getElementById('modal'); if(md && !md.classList.contains('hidden')){ if(!debrief) closeModal(null); return; }   // bilan : seulement « Passer » ou « Valider » (Échap faisait perdre les coches)
   if(roadOpen()){ closeRoad(); return; }
   const ps=document.getElementById('planScreen'); if(ps && !ps.classList.contains('hidden')){ closePlan(); return; }
   const br=document.getElementById('breathe'); if(br && !br.classList.contains('hidden')){ cancelBreatheDone(); return; }
@@ -4711,7 +4751,7 @@ catch(e){
 }
 // Notif "chapitres à réévaluer" (bonus desktop, no-op ailleurs) : seulement si l'écran de connexion
 // n'est pas affiché, pour ne pas interrompre une saisie avec une demande de permission navigateur.
-{ const ag=document.getElementById('authgate'); if(!ag || ag.classList.contains('hidden')){ maybeNotifyReeval(); maybeShowReevalPopup(); } }
+{ const ag=document.getElementById('authgate'); if(!ag || ag.classList.contains('hidden')){ maybeNotifyReeval(); if(!restoreDebrief()) maybeShowReevalPopup(); } }
 
 // --- Mise à jour automatique ---
 // À l'ouverture, si EN LIGNE, on vérifie discrètement une version plus récente et on la
