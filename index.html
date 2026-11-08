@@ -638,31 +638,32 @@
   @media (min-width:821px){
     .accgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 40px;align-items:start}
     .acol{display:block}
-    #accueil .hello{margin:4px 0 18px}
-    #accueil .hello h1{font-size:40px;line-height:1.05}
+    #accueil .hello{margin:0 0 14px}
+    #accueil .hello h1{font-size:36px;line-height:1.05}
     #accueil .hello p{font-size:15px;margin-top:6px}
-    #accueil .arbtns{flex-direction:row;flex-wrap:wrap;margin-bottom:16px}
+    #accueil .arbtns{flex-direction:row;flex-wrap:wrap;margin-bottom:12px}
     #accueil .arbtns .arbtn{width:auto;flex:1 1 0;min-height:42px;white-space:nowrap;font-size:13.5px}
     #accueil .arhero{margin-bottom:8px}
-    #accueil .accgrid .statgrid{grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+    #accueil .accgrid .statgrid{grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px}
     #accueil .accgrid .statgrid .statcard:last-child{display:block}
     #accueil .accgrid .statcard{border-radius:20px;padding:18px 18px 16px}
     #accueil .accgrid .statcard .big{font-size:40px}
-    #accueil .accgrid .acccta{display:flex;min-height:64px;font-size:17px;border-radius:18px}
+    #accueil .accgrid .acccta{display:flex;min-height:56px;font-size:17px;border-radius:18px}
     #accueil .accgrid .countdown{margin-bottom:16px}
     .acol.right>.seclabel:first-child{margin-top:6px}
-    .acol.right .seclabel{margin:24px 0 10px}
+    .acol.right .seclabel{margin:18px 0 8px}
     .acol.right .seclabel .t{font-size:18px;font-weight:700;text-transform:none;letter-spacing:-.01em;color:var(--ink)}
     .acol.right .panel,.acol.right .prevrow{border-radius:18px}
     .acol.right .todaytasks{padding:8px 12px}
     .acol.right .prevlist{gap:10px}
     .acol.right .prevlist .prevrow:nth-child(n+4){display:none}   /* 3 suffisent, comme la maquette */
-    .recapw .seclabel{margin:22px 0 10px}.recapw .seclabel .t{font-size:18px;font-weight:700;text-transform:none;letter-spacing:-.01em;color:var(--ink)}
+    .recapw .seclabel{margin:18px 0 8px}.recapw .seclabel .t{font-size:18px;font-weight:700;text-transform:none;letter-spacing:-.01em;color:var(--ink)}
     .recapw .recap{border-radius:18px}
     .recapw .recap.isempty,.recapw .seclabel.recapl.isempty{display:none}
     .acol.right .apercu{display:none}
   }
   .prevrow .pmid .pbar2{display:block;margin-top:7px}
+  #accueil .seclabel .lk{min-height:44px;padding:0 6px;margin:-14px -6px;display:inline-flex;align-items:center}   /* « Agenda » : cible tactile 44 px sans décaler la mise en page */
   /* moins de « boîtes dans la boîte » : dans le thème normal, les tâches du jour sont de simples lignes */
   body:not([data-arena]) #accueil .todaytasks .agtxt{background:transparent;border-color:transparent;box-shadow:none}
   body:not([data-arena]) #accueil .todaytasks .agtask+.agtask{border-top:1px solid var(--line)}
@@ -1286,6 +1287,7 @@
   /* Arène 1 · Les couleurs : chaque carte prend la couleur de SA matière (Réglages : rien) */
   body[data-arena=brutal].as6 :is(.grid .mcard,.prevrow.bosser,.agbox,.agtxt:not(.aghd),#detail .chap,#detail .chartbox)[style*="--mc"],
   body[data-arena=brutal].as6 #detail[style*="--mc"] :is(.chap,.chartbox){background:color-mix(in srgb,var(--mc) 30%,#fff)}
+  body[data-arena=brutal].as6 :is(.grid .mcard .pct,.prevrow.bosser .ppct,#detail .chap .cpct){filter:brightness(.72)}   /* % lisibles sur fond teinté (≥ 4,5:1) */
   /* Arène 1 · Les barres : grosses barres cerclées avec relief, partout (cartes, bannière, graphe, session) */
   body[data-arena=brutal].as9 :is(.mcard .pbar,.chap .bar,.prevrow .pbar2,.rgbar){height:26px;border:3px solid #000;border-radius:10px;background:#fff;box-shadow:3px 3px 0 #000}
   body[data-arena=brutal].as9 :is(.mcard .pbar,.chap .bar,.prevrow .pbar2,.rgbar)>:is(span,i){border-radius:0;border-right:3px solid #000;box-shadow:inset 0 5px 0 rgba(255,255,255,.45),inset 0 -5px 0 rgba(0,0,0,.18)}
@@ -1446,7 +1448,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261108-010144';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261108-012500';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1696,12 +1698,13 @@ function renderArenes(){
   const cur=arenaIdx(), H=totalWorkH(), last=ARENAS.length-1;
   const capH=Math.max(arenaStart(cur), Math.min(H, arenaStart(cur)+ARENAS[cur].d));   // on ne dépasse pas le portail tant qu'on ne l'a pas passé
   const S=arenaStep(cur), left=arenaStart(cur)+(S+1)*ARENAS[cur].d/10-H;
+  const vis=arenaVisStep();
   let html=arenaBanner(-1,`<div class="rbtop"><small>Arène ${ARENAS.length+1}</small><span class="rbpill">${ic('lock',14)} bientôt</span></div>
     <div class="rbname">???</div><div class="rbsub">Une nouvelle arène arrive.</div>`);
   for(let i=last;i>=0;i--){
     const A=ARENAS[i], st=arenaStart(i), known=i<=cur;
     for(let n=10;n>=1;n--){
-      const lo=st+(n-1)*A.d/10, hi=st+n*A.d/10, ok=known && capH>=hi-1e-9;
+      const lo=st+(n-1)*A.d/10, hi=st+n*A.d/10, ok=known && capH>=hi-1e-9 && (i<cur || n<=vis);   // pas révélé = pas de nom (surprise gardée)
       html+=`<div class="rrow ${n%2?'l':'r'}${ok?' ok':''}" data-i="${i}" data-n="${n}" data-lo="${lo}" data-hi="${hi}">
         <span class="rnode">${ok?ic('check',16):n}</span>
         <span class="rlab"><b>${ok?escapeH(A.steps[n-1]):'???'}</b><small>${fmtH(hi)}</small></span></div>`;
@@ -2939,11 +2942,11 @@ function windowDays(offset){ const start=windowStart(offset),out=[]; for(let i=0
 function agWindowLabel(offset){ const d=windowDays(offset); if(offset===0) return `Aujourd'hui – ${d[6].num} ${d[6].mon}`; return `${d[0].num} ${d[0].mon} – ${d[6].num} ${d[6].mon}`; }
 function isPast(iso){ return iso < todayKey(); }   // jour révolu (comparaison de chaînes YYYY-MM-DD = ok)
 function shiftAgenda(n){ agendaOffset+=n; agDayISO=null; refreshTemps(); }
-function setAgMat(id){ agMat=(agMat===id?null:id); refreshTemps(); }
+function setAgMat(id){ agMat=(agMat===id?null:id); refreshTemps(); if(agOpen && matchMedia('(hover:hover)').matches){ const i=document.getElementById('agInput'); if(i) i.focus(); } }   // ordi : on peut taper tout de suite
 function setAgDay(iso){ if(isPast(iso)) return; agDayISO=iso; refreshTemps(); }   // pas de planif dans le passé
 
 function openAgNew(){ agOpen=true; refreshTemps(); const i=document.getElementById('agInput'); if(i) i.focus(); }
-function closeAgNew(){ agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; refreshTemps(); }
+function closeAgNew(){ agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null; refreshTemps(); }   // panneau rouvert = vierge (QA 08/11 : jour d'avant gardé → tâche créée le mauvais jour)
 function agAll(){ return agItems.concat(agDraft.trim()?[agDraft.trim().slice(0,120)]:[]); }   // une étape tapée mais pas encore ajoutée compte
 function agSync(){   // pendant la saisie : met à jour le bouton sans tout redessiner (garde le clavier ouvert)
   const b=document.getElementById('agSave'); if(!b) return; if(agMat&&!matById(agMat)) agMat=null; const ok=agMat&&agAll().length&&agDayISO;
@@ -2963,7 +2966,7 @@ function addTask(){
   if(items.length>1){ t.steps=items.map(txt=>({txt, done:false})); if(title) t.named=true; }
   if(agEst) t.est=agEst;
   data.todos.push(t);
-  agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null;
+  agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null;   // prochaine tâche : panneau vierge (jour = aujourd'hui)
   save(); refreshTemps();
 }
 function setAgEst(m){ agEst=(agEst===m?null:m); refreshTemps(); }
@@ -3275,7 +3278,7 @@ function renderAccueil(){
   if(bos.length){
     const rows=bos.map(b=>{ const col=couleur(b.pct);
       return `<div class="prevrow bosser" style="--mc:${b.color}">
-        <button class="bosswork" onclick="workSubject(${b.mi})" aria-label="Bosser ${escapeH(b.txt)}">
+        <button class="bosswork" onclick="workSubject(${b.mi})" aria-label="Travailler ${escapeH(b.txt)}">
           <span class="pdot" style="background:${b.color}"></span>
           <span class="pmid"><span class="pnm">${escapeH(b.txt)}</span><span class="psub">${escapeH(b.sub)}</span><span class="pbar2"><span style="width:${b.pct}%;background:${col}"></span></span></span>
           <span class="ppct" style="color:${col}">${b.pct}%</span></button>
@@ -3335,7 +3338,7 @@ function renderAccueil(){
 
   // Ordi : tableau de bord en colonnes qui tient sur un écran ; mobile : même ordre qu'avant (une colonne).
   const left = hello + (arenasOn()?arenaCard():'') + countdownBanner() + streak + stats + arenaWidgets() + cta;
-  a.innerHTML = !data.matieres.length ? left + today + subjects
+  a.innerHTML = !data.matieres.length ? left + (tdayTasks.length||overdue.length?today:'') + subjects
     : `<div class="accgrid"><div class="acol left">${left}<div class="recapw">${recap}</div></div><div class="acol right">${today}${bosser}${apercu}</div></div>`;
 }
 // Ouvre une matière depuis l'accueil (bascule sur l'onglet Matières en vue détail).
