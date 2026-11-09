@@ -1386,6 +1386,62 @@
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:.001ms!important;animation-delay:0!important;transition-duration:.001ms!important}
   }
+
+  /* Mes priorités */
+  .agqueue{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:12px 12px 6px;margin:0 0 16px}
+  .agqueue.empty{padding-bottom:10px}
+  .qhd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+  .qhd b{font-size:17px}.qhd span{font-size:13px;color:var(--muted)}
+  .qlbl{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 2px}
+  .qrow{display:flex;align-items:center;gap:6px}.qrow>.agtask{flex:1;min-width:0}
+  .qnum{flex-shrink:0;width:24px;height:24px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--muted);background:var(--card);border:1px solid var(--line)}
+  .qrow.next .qnum{background:var(--primary);border-color:var(--primary);color:var(--onp)}
+  .qhome .agtask{align-items:center}.qhome .qnum{background:var(--primary);border-color:var(--primary);color:var(--onp)}
+  .agtxt .agest.qage{background:none;border-color:transparent;padding-left:0;font-weight:600}
+  .agtxt .agest.qold{color:var(--orange);border-color:rgba(249,115,22,.35);background:rgba(249,115,22,.08)}
+  .qmore{display:block;width:100%;min-height:44px;margin:4px 0;background:none;border:1px dashed var(--line);border-radius:11px;color:var(--primary);font:inherit;font-weight:700;cursor:pointer}
+  .agdaypick.agnone{padding:0 8px;min-width:56px}.agdaypick.agnone span{font-size:11px}.agdaypick.agnone b{font-size:13px}
+  .rbnone{width:100%;margin-top:10px}.rbnone.on{border-color:var(--primary);color:var(--primary)}
+  .agmeta{flex-wrap:wrap}
+  .agtxt .agest.qday{display:inline-flex;align-items:center;gap:4px;color:var(--primary);border-color:color-mix(in srgb,var(--primary) 35%,var(--line))}
+  .agtxt .agest.qday.late{color:var(--orange);border-color:rgba(249,115,22,.35)}
+  .qentry{display:flex;align-items:center;gap:14px;width:100%;padding:16px 18px;margin:0 0 16px;font:inherit;color:var(--ink);text-align:left;cursor:pointer;border:1px solid var(--line)}
+  .qentry:hover{border-color:var(--primary)}
+  .qeic{display:inline-flex;width:44px;height:44px;border-radius:12px;align-items:center;justify-content:center;background:color-mix(in srgb,var(--primary) 12%,var(--card));color:var(--primary);flex-shrink:0}
+  .qetx{display:flex;flex-direction:column;flex:1;min-width:0}.qetx b{font-size:17px}.qetx span{font-size:13px;color:var(--muted)}.qetx em{font-style:normal;color:var(--rouge);font-weight:700}
+  .qepills{display:flex;gap:4px}.qechev{color:var(--muted);display:inline-flex}
+  @media (max-width:520px){ .qepills{display:none} }
+  .qwrap{margin-bottom:6px}.qwrap .agadd{margin:0 0 12px}
+  #temps .agqueue{background:none;border:none;padding:0}
+  .qgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+  @media (max-width:820px){ .qgrid{grid-template-columns:1fr} }
+  .qcell{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--qc);border-radius:12px;padding:10px 10px 4px;min-width:0}
+  .q0{--qc:var(--rouge)} .q1{--qc:var(--primary)} .q2{--qc:var(--orange)} .q3{--qc:var(--muted)}
+  .qchd{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+  .qct{display:flex;flex-direction:column;flex:1;min-width:0}.qct b{font-size:15px}.qct span{font-size:12px;color:var(--muted)}
+  .qcount{font-size:13px;font-weight:800;color:var(--muted)}
+  .qtag{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:7px;background:var(--qc);color:#fff;font-size:12px;font-weight:800;flex-shrink:0}
+  .q0.qtag,.q1.qtag{color:var(--onp,#fff)} .q2.qtag{color:#1C1917}
+  .q3.qtag,.qtag.q3{background:var(--card);color:var(--ink);border:1.5px solid var(--muted)}
+  .qcell .qe{padding-left:4px}
+  .qedit{padding:0}
+  .qnum.q0,.qnum.q1,.qnum.q2{background:var(--qc);border-color:var(--qc);color:var(--onp,#fff)} .qnum.q2{color:#1C1917}
+  .qhome .qnum.q3{background:var(--bg2);border-color:var(--line);color:var(--ink)}
+  .qstep{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin:16px 0 8px}
+  .qpanel .agpanelhd+.qstep{margin-top:4px}
+  .qsn{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--primary);color:var(--onp);align-items:center;justify-content:center;font-size:13px}
+  .qtog{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .qtb{display:flex;align-items:center;gap:10px;min-height:56px;padding:8px 12px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+  .qtb>span:last-child{display:flex;flex-direction:column}.qtb i{font-style:normal;font-size:12px;color:var(--muted)}
+  .qbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:inline-flex;align-items:center;justify-content:center;color:transparent;flex-shrink:0}
+  .qtb.on{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 10%,var(--card))}
+  .qtb.on .qbox{background:var(--primary);border-color:var(--primary);color:var(--onp)}
+  .qpanel .aghint{margin:6px 0 4px}
+  .qwhere{display:flex;align-items:center;gap:9px;margin:10px 0 0;font-size:14px;color:var(--muted)}.qwhere b{color:var(--ink)}
+  .qmoreopt{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin:16px 0 0;padding:0 4px;background:none;border:none;border-top:1px solid var(--line);color:var(--primary);font:inherit;font-weight:700;cursor:pointer;text-align:left}
+  .qmoreopt i{font-style:normal;font-weight:500;color:var(--muted);margin-left:4px}
+  .qopts{margin-top:8px;border-top:1px solid var(--line);padding-top:4px}
+  .qopts .agpicklbl span{font-weight:500;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -1460,7 +1516,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261108-142003';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261109-163959';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -2332,7 +2388,7 @@ function prepare(d){
   if(d.arena!==undefined && !(Number.isInteger(d.arena) && d.arena>=0)) delete d.arena;   // arène dans laquelle on est entré (absent = 0)
   if(!Array.isArray(d.todos)) d.todos=[];   // agenda (onglet Session) : {id,txt,mat,date,done,doneAt,created}
   d.todos.forEach(t=>{                       // migration de l'ancien modèle {when:'demain'|'semaine'} → date réelle + matière
-    if(!t.date){ const b=new Date(); b.setHours(0,0,0,0); b.setDate(b.getDate()+(t.when==='demain'?1:0)); t.date=dateKey(b.getTime()); }
+    if(!t.date && !t.queue){ const b=new Date(); b.setHours(0,0,0,0); b.setDate(b.getDate()+(t.when==='demain'?1:0)); t.date=dateKey(b.getTime()); }
     if(!('mat' in t)) t.mat=null;
     delete t.when;
     if(!(Number.isInteger(t.est) && t.est>0)) delete t.est;   // durée estimée (minutes), facultative
@@ -2471,7 +2527,7 @@ async function logout(){
   // suivante ne doit jamais hériter/mélanger les données de ce compte avec le sien.
   localStorage.removeItem(SYNC_KEY);
   data=prepare(clone(DEFAULT)); current=null;
-  sessPlan=[]; planDraft=''; agEst=null; agItems=[]; agDraft=''; agTitle=''; agOpen=false; agMat=null; agDayISO=null; pendingTask=null; taskGoal=null; debrief=null; armed=null; goalMin=null; pomoCount=null; sessMode='libre'; pomoMin=25;   // rien du compte précédent dans le lanceur
+  sessPlan=[]; planDraft=''; agEst=null; agItems=[]; agDraft=''; agTitle=''; agOpen=false; agMat=null; agDayISO=null; tachesOpen=false; agUrg=agImp=agMore=false; qOpen={}; pendingTask=null; taskGoal=null; debrief=null; armed=null; goalMin=null; pomoCount=null; sessMode='libre'; pomoMin=25;   // rien du compte précédent dans le lanceur
   try{ localStorage.removeItem(LASTSESS_KEY); localStorage.removeItem(DEBRIEF_KEY); }catch(e){}
   render();
   try{ localStorage.removeItem(ARENA_SEEN_KEY); }catch(e){}   // après render() : sinon il réécrit {0,0} et la reconnexion rejouerait toutes les révélations
@@ -2945,7 +3001,9 @@ let agDayISO=null;    // jour (YYYY-MM-DD) sélectionné pour la nouvelle tâche
 let agEst=null;       // durée estimée (minutes) de la nouvelle tâche — facultative
 let agOpen=false;     // panneau « Nouvelle tâche » ouvert
 let agItems=[], agDraft='', agTitle='';   // ce qu'il y a à faire : 1 élément = tâche simple, plusieurs = étapes (toutes au même niveau)
-const EST_OPTS=[10,20,30,45,60];   // durées estimées proposées (minutes) ; « Autre » pour le reste
+const EST_OPTS=[10,20,30,45,60];
+var QZ=[{n:'Maintenant',s:'Urgent et important',l:'1'},{n:'À caler',s:'Important, pas urgent',l:'2'},{n:'Vite fait',s:'Urgent, pas important',l:'3'},{n:'Plus tard',s:'Ni urgent ni important',l:'4'}];
+var tachesOpen=false, qOpen={}, agUrg=false, agImp=false, agMore=false, qShowAll=false;   // durées estimées proposées (minutes) ; « Autre » pour le reste
 
 const DOW_LET=['L','M','M','J','V','S','D'];
 const MONTHS_AB=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
@@ -2960,14 +3018,15 @@ function agWindowLabel(offset){ const d=windowDays(offset); if(offset===0) retur
 function isPast(iso){ return iso < todayKey(); }   // jour révolu (comparaison de chaînes YYYY-MM-DD = ok)
 function shiftAgenda(n){ agendaOffset+=n; agDayISO=null; refreshTemps(); }
 function setAgMat(id){ agMat=(agMat===id?null:id); refreshTemps(); if(agOpen && matchMedia('(hover:hover)').matches){ const i=document.getElementById('agInput'); if(i) i.focus(); } }   // ordi : on peut taper tout de suite
-function setAgDay(iso){ if(isPast(iso)) return; agDayISO=iso; refreshTemps(); }   // pas de planif dans le passé
+function setAgDay(iso){ if(iso!=='none' && isPast(iso)) return; agDayISO=iso; refreshTemps(); }   // pas de planif dans le passé
 
 function openAgNew(){ agOpen=true; refreshTemps(); const i=document.getElementById('agInput'); if(i) i.focus(); }
 // Bouton flottant (mobile) : ouvre le panneau et le fait venir à l'écran.
 function openAgNewFab(){ agOpen=true; refreshTemps(); const p=document.querySelector('.agpanel'); if(p) p.scrollIntoView({behavior:'smooth',block:'start'}); }
 // Caché quand le vrai bouton « Nouvelle tâche » est déjà visible à l'écran (pas de doublon).
-function agFabSync(){ const f=document.querySelector('.agfab'), n=document.querySelector('.agnew'); if(!f) return;
-  const r=n&&n.getBoundingClientRect(); f.classList.toggle('away', !!r && r.top<innerHeight-150 && r.bottom>0); }
+function agFabSync(){ const f=document.querySelector('.agfab'); if(!f) return;
+  const vis=el=>{ const r=el&&el.getBoundingClientRect(); return !!r && r.top<innerHeight-150 && r.bottom>0; };
+  f.classList.toggle('away', vis(document.querySelector('.agnew')) || vis(document.querySelector('.qentry'))); }   // pas par-dessus la carte « Mes priorités »
 window.addEventListener('scroll', ()=>{ if(page==='session') agFabSync(); }, {passive:true});
 function closeAgNew(){ agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null; refreshTemps(); }   // panneau rouvert = vierge (QA 08/11 : jour d'avant gardé → tâche créée le mauvais jour)
 function agAll(){ return agItems.concat(agDraft.trim()?[agDraft.trim().slice(0,120)]:[]); }   // une étape tapée mais pas encore ajoutée compte
@@ -2983,11 +3042,12 @@ function addAgItem(){
 function delAgItem(k){ agItems.splice(k,1); refreshTemps(); }
 function addTask(){
   const items=agAll(); if(!items.length || !agMat || !matById(agMat)) return;   // une matière est obligatoire
-  if(!agDayISO || isPast(agDayISO)) return;   // sécurité : jamais sur un jour passé
+  if(!agDayISO || (agDayISO!=='none' && isPast(agDayISO))) return;   // sécurité : jamais sur un jour passé
   const title=agTitle.trim().slice(0,120);
-  const t={id:'t'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36), txt:items.length>1?(title||items.join(', ')):items[0], mat:agMat, date:agDayISO, done:false, doneAt:null, created:new Date().toISOString()};
+  const t={id:'t'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36), txt:items.length>1?(title||items.join(', ')):items[0], mat:agMat, date:agDayISO==='none'?null:agDayISO, done:false, doneAt:null, created:new Date().toISOString()};
   if(items.length>1){ t.steps=items.map(txt=>({txt, done:false})); if(title) t.named=true; }
   if(agEst) t.est=agEst;
+  if(agDayISO==='none') t.queue=true;
   data.todos.push(t);
   agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null;   // prochaine tâche : panneau vierge (jour = aujourd'hui)
   save(); refreshTemps();
@@ -3027,15 +3087,18 @@ function reschedulePick(id){
   }
   const m=document.getElementById('modal');
   m.innerHTML=`<div class="panel" role="dialog" aria-modal="true">
-    <div class="phead"><span>Reporter à…</span>
+    <div class="phead"><span>${t.queue?'Caler un jour':'Reporter à…'}</span>
       <button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">${ic('x')}</button></div>
     <p class="mdmsg">${escapeH(t.txt)}</p>
-    <div class="rbgrid">${chips}</div></div>`;
+    <div class="rbgrid">${chips}</div>
+    ${t.queue?(t.date?`<button class="mdbtn rbnone" onclick="doReschedule('${id}','none')">Retirer le jour</button>`:''):`<button class="mdbtn rbnone" onclick="doReschedule('${id}','none')">Pas de jour · mettre dans « Mes priorités »</button>`}</div>`;
   modalResolve=null; m.classList.remove('hidden');
 }
 function doReschedule(id,iso){
   const t=(data.todos||[]).find(x=>x.id===id); if(!t) return;
-  t.date=iso; t.done=false; t.doneAt=null; save();
+  if(iso==='none'){ t.date=null; if(!t.queue){ t.queue=true; t.created=new Date().toISOString(); } }   // agenda → arrive au bout de « Mes priorités »
+  else t.date=iso;   // une tâche de « Mes priorités » y reste, avec son jour
+  t.done=false; t.doneAt=null; save();
   const m=document.getElementById('modal'); m.classList.add('hidden'); m.innerHTML='';
   refreshTodos();
 }
@@ -3090,7 +3153,7 @@ function goWorkTask(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) ret
 function refreshTemps(){ renderTemps(); agSync(); }   // la saisie du panneau « Nouvelle tâche » est gardée dans agDraft/agTitle
 // Petites infos d'une tâche : durée estimée + étapes faites.
 function taskMeta(t){ const n=(t.steps||[]).length, d=(t.steps||[]).filter(x=>x.done).length;
-  return (t.est?`<span class="agest">${fmtDur(t.est*60000)}</span>`:'')+(n?`<span class="agest">${d}/${n}</span>`:''); }
+  return (t.queue&&!t.done&&tachesOpen?qDay(t)+qAge(t):'')+(t.est?`<span class="agest">${t.spent&&t.spent<t.est?'reste '+fmtDur((t.est-t.spent)*60000):fmtDur(t.est*60000)}</span>`:'')+(n?`<span class="agest">${d}/${n}</span>`:''); }
 function refreshTodos(){ if(page==='session') refreshTemps(); else render(); }
 
 // Ligne de tâche réutilisable. Double-clic sur le texte → renommer. Le bouton « reprogrammer » est toujours visible
@@ -3098,7 +3161,7 @@ function refreshTodos(){ if(page==='session') refreshTemps(); else render(); }
 function taskRow(t, late){
   const m=matById(t.mat), col=m?m.color:'var(--muted)', meta=taskMeta(t), steps=t.steps&&t.steps.length?t.steps:null;
   const play=(m&&!t.done&&!data.active)?`<span class="agplay">${ic('play',13)}</span>`:'';
-  const side=`<button class="agreb" onclick="reschedulePick('${t.id}')" title="Changer le jour" aria-label="Changer le jour">${ic('calendar',16)}</button>
+  const side=`${t.queue&&tachesOpen?`<button class="agreb qedit" onclick="qEdit('${t.id}')" title="Urgent / important" aria-label="Changer urgent / important">${qTag(t)}</button>`:`<button class="agreb" onclick="reschedulePick('${t.id}')" title="Changer le jour" aria-label="Changer le jour">${ic('calendar',16)}</button>`}
     <button class="iconbtn tododel" onclick="delTodo('${t.id}')" title="Supprimer" aria-label="Supprimer la tâche">${ic('x',16)}</button>`;
   const chk=`<button class="todochk ${t.done?'on':''}" onclick="toggleTodo('${t.id}')" aria-label="Cocher">${ic('check',14)}</button>`;
   if(!steps) return `<div class="agtask${late?' late':''}">${chk}
@@ -3109,7 +3172,7 @@ function taskRow(t, late){
   return `<div class="agtask${late?' late':''}">${chk}
     <div class="agbox${t.done?' done':''}"${m?` style="--mc:${m.color}"`:''}>
       <button class="agtxt aghd" onclick="handleTaskClick('${t.id}')" data-tid="${t.id}" title="Double-clic pour renommer">
-        <span class="cdot" style="background:${col}"></span><span class="agmain"><span class="agname${t.named?'':' agmat'}">${escapeH(t.named?t.txt:(m?m.nom:'Tâche'))}</span>${meta?`<span class="agmeta">${meta}</span>`:''}</span>${play}
+        <span class="cdot" style="background:${col}"></span><span class="agmain"><span class="agname${t.named||t.queue?'':' agmat'}">${escapeH((t.named||t.queue)?t.txt:(m?m.nom:'Tâche'))}</span>${meta?`<span class="agmeta">${meta}</span>`:''}</span>${play}
       </button>
       ${steps.map((x,k)=>`<button class="agstep${x.done?' done':''}" onclick="toggleStep('${t.id}',${k})" aria-label="Cocher l'étape ${escapeH(x.txt)}">
         <span class="todochk ${x.done?'on':''}">${ic('check',12)}</span><span>${escapeH(x.txt)}</span></button>`).join('')}
@@ -3130,7 +3193,7 @@ function agendaCard(){
     <span class="aglabel">${agWindowLabel(agendaOffset)}</span>
     <button class="agarrow" onclick="shiftAgenda(1)" aria-label="7 jours suivants">${ic('chevron',18)}</button></div>`;
   // En retard (global, indépendant de la fenêtre affichée) : tâches passées non faites.
-  const overdue=(data.todos||[]).filter(t=>!t.done && isPast(t.date)).sort((a,b)=>a.date<b.date?-1:1);
+  const overdue=(data.todos||[]).filter(t=>!t.done && t.date && isPast(t.date)).sort((a,b)=>a.date<b.date?-1:1);
   const lateBlock = overdue.length
     ? `<div class="aglate"><div class="aglatehd">${ic('clock',15)}<span>En retard · ${overdue.length} à replanifier</span></div>
         ${overdue.map(t=>taskRow(t,true)).join('')}</div>`
@@ -3277,7 +3340,7 @@ function renderAccueil(){
   let today='';
   const tk=todayKey();
   const tdayTasks=(data.todos||[]).filter(t=>t.date===tk);
-  const overdue=(data.todos||[]).filter(t=>!t.done && t.date<tk);
+  const overdue=(data.todos||[]).filter(t=>!t.done && t.date && t.date<tk);
   {
     const late = overdue.length
       ? `<button class="latebanner" onclick="goPage('session')">${ic('clock',16)}<span>${overdue.length} tâche${overdue.length>1?'s':''} en retard — voir l'agenda</span></button>`
@@ -4279,6 +4342,7 @@ function barChartSVG(avgMin){
 // ---- Rendu de la page Temps ----
 function renderTemps(){
   const t=document.getElementById('temps');
+  if(tachesOpen && data.matieres.length){ renderTaches(t); return; }
   t.classList.remove('hidden'); t.classList.remove('fade'); void t.offsetWidth; t.classList.add('fade');
   if(!data.matieres.length){
     t.innerHTML=`<div class="empty"><span class="bookic">${ic('clock',40)}</span>
@@ -4292,7 +4356,7 @@ function renderTemps(){
         <button class="nclose" onclick="this.closest('.note').remove()" title="Fermer" aria-label="Fermer">${ic('x',16)}</button></div>`
     : '';
   staleRecovered=false;
-  t.innerHTML = note + pickerCard() + agendaCard()   // la session active s'affiche en plein écran (#focus), pas ici
+  t.innerHTML = note + pickerCard() + qEntryHTML() + agendaCard()   // la session active s'affiche en plein écran (#focus), pas ici
     + (agOpen?'':`<button class="agfab" onclick="openAgNewFab()" aria-label="Nouvelle tâche">${ic('plus',20)}<span>Tâche</span></button>`);
   agFabSync();
 }
@@ -4781,6 +4845,106 @@ document.addEventListener('touchstart',e=>{
   const x=b.left+th/2+k*(b.width-th), y=b.top+b.height/2;
   if(Math.abs(t.clientX-x)>30 || Math.abs(t.clientY-y)>16) e.preventDefault();
 },{passive:false});
+
+// ===================== MES PRIORITÉS (09/11) =====================
+// Boîte à tâches sans jour, en 4 cases façon Eisenhower (urgent / important), la plus ancienne d'abord dans chaque case.
+// Ouverte depuis Travail (carte « Mes priorités » → vue dédiée). Champs : todo.queue=true, urg, imp ; date facultative (calée plus tard).
+
+function qDays(t){ return Math.max(0, Math.round((localDay(Date.now())-localDay(Date.parse(t.created)||Date.now()))/86400000)); }
+function qDay(t){ if(!t.date) return ''; const d=new Date(t.date+'T12:00');
+  const l=t.date===todayKey()?"auj.":t.date===dateKey(addDays(localDay(Date.now()),1))?'demain':DOW_FULL[(d.getDay()+6)%7]+' '+d.getDate();
+  return '<span class="agest qday'+(isPast(t.date)?' late':'')+'">'+ic('calendar',12)+l+'</span>'; }
+var DOW_FULL=['lun.','mar.','mer.','jeu.','ven.','sam.','dim.'];
+function qAge(t){ const d=qDays(t);
+  return d>=7 ? '<span class="agest qold">ça traîne · '+d+' j</span>' : '<span class="agest qage">'+(d===0?"ajoutée auj.":d===1?'ajoutée hier':'il y a '+d+' j')+'</span>'; }
+function qOf(t){ return t.urg&&t.imp?0 : t.imp?1 : t.urg?2 : 3; }
+function qTag(t){ const q=qOf(t); return '<span class="qtag q'+q+'">'+QZ[q].l+'</span>'; }
+// par case (1 → 4), puis la plus ancienne d'abord dans chaque case
+function queueTasks(){ return (data.todos||[]).filter(t=>t.queue&&!t.done).sort((a,b)=>qOf(a)-qOf(b) || (Date.parse(a.created)||0)-(Date.parse(b.created)||0)); }
+
+function queueBlock(){
+  const q=queueTasks();
+  const cells=QZ.map((z,i)=>{ const ts=q.filter(t=>qOf(t)===i), vis=qOpen[i]?ts:ts.slice(0,3), more=ts.length-vis.length;
+    return '<div class="qcell q'+i+'"><div class="qchd"><span class="qtag q'+i+'">'+z.l+'</span><span class="qct"><b>'+z.n+'</b><span>'+z.s+'</span></span><span class="qcount">'+ts.length+'</span></div>'
+      +(ts.length?vis.map(t=>taskRow(t,false)).join(''):'<div class="agempty qe">—</div>')
+      +(more>0?'<button class="qmore" onclick="qOpen['+i+']=1;refreshTemps()">Voir les '+more+' autre'+(more>1?'s':'')+'</button>':'')+'</div>'; }).join('');
+  return '<div class="agqueue"><div class="qgrid">'+cells+'</div></div>';
+}
+// Panneau « Nouvelle tâche » simplifié : quoi → matière → urgent / important → (plus d'options)
+
+function agAddHTML(matChips, dayChips, all, estCustom){
+  if(!agOpen) return '<div class="agadd agtop"><button class="bigbtn agnew" onclick="openAgNew()">'+ic('plus',20)+'<span>Ajouter</span></button></div>';
+  agDayISO='none'; const z=QZ[qOf({urg:agUrg,imp:agImp})], dated=false;
+  const items=agItems.length?'<div class="planlist agitems">'+agItems.map((x,k)=>'<div class="planrow"><span class="todotxt"><b class="agn">'+(k+1)+'</b>'+escapeH(x)+'</span><button class="iconbtn" onclick="delAgItem('+k+')" aria-label="Retirer">'+ic('x',16)+'</button></div>').join('')+'</div>':'';
+  const more=!agMore ? '<button class="qmoreopt" onclick="agMore=true;refreshTemps()">'+ic('plus',16)+'<span>Plus d\'options <i>temps estimé'+(agItems.length>=2?', nom':'')+'</i></span></button>'
+    : '<div class="qopts">'
+      +(agItems.length>=2?'<div class="agpicklbl agsp">Nom de la tâche <span>(facultatif)</span></div><input id="agTitle" class="aginput" type="text" maxlength="120" placeholder="Ex : Exos chapitre 3" value="'+escapeH(agTitle)+'" oninput="agTitle=this.value">':'')
+      +'<div class="agpicklbl agsp">Temps estimé <span>(facultatif)</span></div><div class="optchips agests">'+EST_OPTS.map(e=>'<button class="optchip'+(agEst===e?' on':'')+'" onclick="setAgEst('+e+')">'+fmtDur(e*60000)+'</button>').join('')
+      +'<button class="optchip'+(estCustom?' on':'')+'" onclick="agEstCustom()">'+(estCustom?fmtDur(agEst*60000):'Autre')+'</button></div></div>';
+  const ok=agMat&&matById(agMat)&&all.length;
+  return '<div class="agadd agtop agpanel qpanel">'
+    +'<div class="agpanelhd"><b>Ajouter à mes priorités</b><button class="iconbtn" onclick="closeAgNew()" aria-label="Fermer">'+ic('x')+'</button></div>'
+    +'<div class="qstep"><span class="qsn">1</span>Qu\'est-ce que tu dois faire ?</div>'+items
+    +'<div class="todoadd"><input id="agInput" type="text" placeholder="'+(agItems.length?'Étape suivante (facultatif)…':'Ex : Exos TD 4')+'" maxlength="120" enterkeyhint="next" value="'+escapeH(agDraft)+'" oninput="agDraft=this.value;agSync()" onkeydown="if(event.key===\'Enter\'){event.preventDefault();addAgItem()}">'
+    +'<button class="addbtn" onclick="addAgItem()" aria-label="Ajouter une étape">'+ic('plus',18)+'</button></div>'
+    +'<p class="aghint">Plusieurs étapes ? Appuie sur Entrée après chacune.</p>'
+    +'<div class="qstep"><span class="qsn">2</span>Pour quelle matière ?</div><div class="matchips mini">'+(matChips||'<span class="aghint">Crée d\'abord une matière (onglet Matières).</span>')+'</div>'
+    +(dated?'':'<div class="qstep"><span class="qsn">3</span>C\'est comment ?</div><div class="qtog">'
+      +'<button class="qtb'+(agUrg?' on':'')+'" onclick="agUrg=!agUrg;refreshTemps()"><span class="qbox">'+ic('check',14)+'</span><span><b>Urgent</b><i>à faire vite</i></span></button>'
+      +'<button class="qtb'+(agImp?' on':'')+'" onclick="agImp=!agImp;refreshTemps()"><span class="qbox">'+ic('check',14)+'</span><span><b>Important</b><i>ça compte vraiment</i></span></button></div>'
+      +'<div class="qwhere">'+qTag({urg:agUrg,imp:agImp})+'<span>Ira dans <b>« '+z.n+' »</b></span></div>')
+    +(dated?'<div class="qwhere">'+ic('calendar',16)+'<span>Jour précis : elle ira dans ton agenda (onglet Travail), pas ici.</span></div>':'')
+    +more
+    +'<div class="agpanelbtns"><button class="mdbtn" onclick="closeAgNew()">Annuler</button><button class="mdbtn primary" id="agSave" onclick="addTask()" '+(ok?'':'disabled')+'><span>'+(!(agMat&&matById(agMat))?'Choisis une matière':!all.length?'Écris ce que tu dois faire':'Ajouter la tâche')+'</span></button></div></div>';
+}
+// ---- Vue « Mes priorités » (ouverte depuis Travail) ----
+function openTaches(){ tachesOpen=true; agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null; agUrg=agImp=agMore=false; if(page!=='session') page='session'; render(); window.scrollTo({top:0}); }
+function closeTaches(){ tachesOpen=false; agOpen=false; agMat=null; agDayISO=null; agUrg=agImp=agMore=false; render(); window.scrollTo({top:0}); }
+function qEntryHTML(){
+  const q=queueTasks(), c=[0,1,2,3].map(i=>q.filter(t=>qOf(t)===i).length);
+  return '<button class="card qentry" onclick="openTaches()"><span class="qeic">'+ic('target',22)+'</span><span class="qetx"><b>Mes priorités</b><span>'
+    +(q.length?q.length+' à faire'+(c[0]?' · <em>'+c[0]+' maintenant</em>':''):'Mets-y tout ce que tu as à faire')+'</span></span>'
+    +(q.length?'<span class="qepills">'+c.map((n,i)=>n?'<span class="qtag q'+i+'">'+n+'</span>':'').join('')+'</span>':'')+'<span class="qechev">'+ic('chevron',20)+'</span></button>';
+}
+function renderTaches(el){
+  el.classList.remove('hidden');
+  if(!agDayISO) agDayISO='none';
+  const days=windowDays(0), tk=todayKey();
+  const matChips=data.matieres.map(m=>'<button class="matchip mini'+(agMat===m.id?' on':'')+'" style="--c:'+m.color+'" onclick="setAgMat(\''+m.id+'\')"><span class="dot"></span>'+escapeH(m.nom)+'</button>').join('');
+  const dayChips='<button class="agdaypick agnone'+(agDayISO==='none'?' on':'')+'" onclick="setAgDay(\'none\')"><span>Pas de</span><b>jour</b></button>'
+    +days.map(d=>'<button class="agdaypick'+(agDayISO===d.iso?' on':'')+(d.iso===tk?' td':'')+'" onclick="setAgDay(\''+d.iso+'\')"><span>'+d.let+'</span><b>'+d.num+'</b></button>').join('');
+  const q=queueTasks();
+  el.innerHTML='<button class="back" onclick="closeTaches()">'+ic('back',18)+'<span>Travail</span></button>'
+    +'<div class="ptitle"><div><h1>Mes priorités</h1><div class="sub">Mets-y tout ce que tu as à faire. Cale-lui un jour si tu veux, ou fais-la direct.'+(q.length?' Dans chaque case, la plus ancienne d\'abord.':'')+'</div></div></div>'
+    +'<div class="qwrap">'+agAddHTML(matChips, dayChips, agAll(), agEst&&!EST_OPTS.includes(agEst))+'</div>'+queueBlock()
+    +(agOpen?'':'<button class="agfab away" onclick="openAgNewFab()" aria-label="Ajouter à mes priorités">'+ic('plus',20)+'<span>Ajouter</span></button>');
+  agFabSync();
+}
+// clic sur une tâche dans la vue : lancer (retour à Travail, lanceur pré-rempli) ; double-clic = renommer
+var qLast={}, qTimer=null;
+const _htcQ=handleTaskClick; handleTaskClick=function(id){ if(!tachesOpen) return _htcQ(id);
+  const now=Date.now(); if(qLast.id===id && now-qLast.t<350){ clearTimeout(qTimer); qLast={}; renameTask(id); return; }
+  qLast={id,t:now}; clearTimeout(qTimer); qTimer=setTimeout(()=>{ tachesOpen=false; agOpen=false; goWorkTask(id); window.scrollTo({top:0}); },350); };
+// quitter Travail ferme la vue
+// changer de page (onglet, « Nouvelle session »…) ferme la vue et oublie le brouillon — sinon il s'ouvrait dans le panneau de l'agenda et devenait une tâche datée
+function qLeave(){ if(!tachesOpen) return; tachesOpen=false; agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null; agUrg=agImp=agMore=false; }
+document.addEventListener('keydown',e=>{ if(e.key!=='Escape'||!tachesOpen||agOpen||data.active) return;
+  const m=document.getElementById('modal'); if(m&&!m.classList.contains('hidden')) return; closeTaches(); }, true);   // avant le gestionnaire général (qui ferme d'abord le panneau)
+const _gpQ=goPage; goPage=function(p){ qLeave(); _gpQ(p); };
+const _clQ=closeAgNew; closeAgNew=function(){ agUrg=agImp=agMore=false; _clQ(); };
+const _atQ=addTask; addTask=function(){ const n=data.todos.length, u=agUrg, i=agImp; _atQ();
+  if(data.todos.length>n){ const t=data.todos[data.todos.length-1]; if(t.queue){ if(u) t.urg=true; if(i) t.imp=true; } agUrg=agImp=agMore=false; save(); refreshTemps(); } };
+// Changer la case d'une tâche (ou lui donner un jour)
+function qEdit(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return;
+  const m=document.getElementById('modal');
+  m.innerHTML='<div class="panel" role="dialog" aria-modal="true"><div class="phead"><span>Cette tâche est…</span><button class="iconbtn" aria-label="Fermer" onclick="closeModal(null)">'+ic('x')+'</button></div>'
+    +'<p class="mdmsg">'+escapeH(t.txt)+'</p><div class="qtog">'
+    +'<button class="qtb'+(t.urg?' on':'')+'" onclick="qFlip(\''+id+'\',\'urg\')"><span class="qbox">'+ic('check',14)+'</span><span><b>Urgent</b><i>à faire vite</i></span></button>'
+    +'<button class="qtb'+(t.imp?' on':'')+'" onclick="qFlip(\''+id+'\',\'imp\')"><span class="qbox">'+ic('check',14)+'</span><span><b>Important</b><i>ça compte vraiment</i></span></button></div>'
+    +'<div class="qwhere">'+qTag(t)+'<span>Dans <b>« '+QZ[qOf(t)].n+' »</b></span></div>'
+    +'<div class="mdactions"><button class="mdbtn" onclick="closeModal(null);reschedulePick(\''+id+'\')">'+ic('calendar',16)+'<span>'+(t.date?'Changer le jour':'Caler un jour')+'</span></button><button class="mdbtn primary" onclick="closeModal(null)">OK</button></div></div>';
+  modalResolve=null; m.classList.remove('hidden'); }
+function qFlip(id,k){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return; if(t[k]) delete t[k]; else t[k]=true; save(); qEdit(id); refreshTodos(); }
 </script>
 </body>
 </html>
