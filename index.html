@@ -1424,6 +1424,18 @@
   .q0.qtag,.q1.qtag{color:var(--onp,#fff)} .q2.qtag{color:#1C1917}
   .q3.qtag,.qtag.q3{background:var(--card);color:var(--ink);border:1.5px solid var(--muted)}
   .qcell .qe{padding-left:4px}
+  .qtask{display:flex;align-items:center;gap:6px;padding:4px 0}
+  .qtask+.qtask{border-top:1px solid var(--line)}
+  .qmain{flex:1;min-width:0}
+  .qacts{display:flex;gap:2px;flex-shrink:0}
+  .qact{width:40px;height:44px;display:inline-flex;align-items:center;justify-content:center;background:none;border:none;border-radius:10px;color:var(--muted);cursor:pointer}
+  .qact:hover{background:var(--bg2);color:var(--ink)}
+  .qact.qdone:hover{color:var(--vert)}
+  .qact.on{color:var(--primary)}
+  .qact.qflag{color:var(--qc)}
+  .qact.qflag.q3{color:var(--muted)}
+  .qact.qdel:hover{color:var(--rouge)}
+  @media (max-width:520px){ .qtask{flex-wrap:wrap;gap:0} .qmain{flex-basis:100%} .qacts{width:100%;justify-content:flex-end} }
   .qedit{padding:0}
   .qnum.q0,.qnum.q1,.qnum.q2{background:var(--qc);border-color:var(--qc);color:var(--onp,#fff)} .qnum.q2{color:#1C1917}
   .qhome .qnum.q3{background:var(--bg2);border-color:var(--line);color:var(--ink)}
@@ -1516,7 +1528,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261109-170904';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261109-171411';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1554,6 +1566,7 @@ const ICONS = {
   'sun':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>',
   'list':'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
   'target':'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  'flag':'<path d="M5 21V4"/><path d="M5 4h12l-2.5 4.5L17 13H5"/>',
   'calendar':'<rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/>',
   'breath':'<path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h9a2.5 2.5 0 1 1-2.5 2.5"/>',
   'rain':'<path d="M7 15a4 4 0 01-.5-7.96A5 5 0 0116.5 8.5 3.5 3.5 0 0117.5 15"/><path d="M8 19l-1 2M12 19l-1 2M16 19l-1 2"/>',
@@ -4863,11 +4876,26 @@ function qTag(t){ const q=qOf(t); return '<span class="qtag q'+q+'">'+QZ[q].l+'<
 // par case (1 → 4), puis la plus ancienne d'abord dans chaque case
 function queueTasks(){ return (data.todos||[]).filter(t=>t.queue&&!t.done).sort((a,b)=>qOf(a)-qOf(b) || (Date.parse(a.created)||0)-(Date.parse(b.created)||0)); }
 
+// Ligne compacte d'une priorité : nom + infos, puis 4 actions à icône claire (fait / caler un jour / changer de case / supprimer).
+// Pas de case à cocher ni d'étapes cochables ici (Eric : « ça prend beaucoup trop de place »).
+function qRow(t){
+  const m=matById(t.mat), col=m?m.color:'var(--muted)', q=qOf(t);
+  const meta=qDay(t)+qAge(t)+(t.est?'<span class="agest">'+(t.spent&&t.spent<t.est?'reste '+fmtDur((t.est-t.spent)*60000):fmtDur(t.est*60000))+'</span>':'');
+  const play=(m&&!data.active)?'<span class="agplay">'+ic('play',13)+'</span>':'';
+  return '<div class="qtask"><button class="agtxt qmain" style="--mc:'+col+'" onclick="handleTaskClick(\''+t.id+'\')" data-tid="'+t.id+'" title="Lancer une session · double-clic pour renommer">'
+    +'<span class="cdot" style="background:'+col+'"></span><span class="agmain"><span class="agname">'+escapeH(t.txt)+'</span><span class="agmeta">'+meta+'</span></span>'+play+'</button>'
+    +'<div class="qacts">'
+    +'<button class="qact qdone" onclick="toggleTodo(\''+t.id+'\')" title="C\'est fait" aria-label="C\'est fait : '+escapeH(t.txt)+'">'+ic('check',18)+'</button>'
+    +'<button class="qact'+(t.date?' on':'')+'" onclick="reschedulePick(\''+t.id+'\')" title="'+(t.date?'Changer le jour':'Caler un jour dans l\'agenda')+'" aria-label="Caler un jour dans l\'agenda">'+ic('calendar',18)+'</button>'
+    +'<button class="qact qflag q'+q+'" onclick="qEdit(\''+t.id+'\')" title="Changer : urgent / important" aria-label="Changer urgent / important">'+ic('flag',18)+'</button>'
+    +'<button class="qact qdel" onclick="delTodo(\''+t.id+'\')" title="Supprimer" aria-label="Supprimer">'+ic('trash',18)+'</button>'
+    +'</div></div>';
+}
 function queueBlock(){
   const q=queueTasks();
   const cells=QZ.map((z,i)=>{ const ts=q.filter(t=>qOf(t)===i), vis=qOpen[i]?ts:ts.slice(0,3), more=ts.length-vis.length;
     return '<div class="qcell q'+i+'"><div class="qchd"><span class="qtag q'+i+'">'+z.l+'</span><span class="qct"><b>'+z.n+'</b><span>'+z.s+'</span></span><span class="qcount">'+ts.length+'</span></div>'
-      +(ts.length?vis.map(t=>taskRow(t,false)).join(''):'<div class="agempty qe">—</div>')
+      +(ts.length?vis.map(qRow).join(''):'<div class="agempty qe">—</div>')
       +(more>0?'<button class="qmore" onclick="qOpen['+i+']=1;refreshTemps()">Voir les '+more+' autre'+(more>1?'s':'')+'</button>':'')+'</div>'; }).join('');
   return '<div class="agqueue"><div class="qgrid">'+cells+'</div></div>';
 }
