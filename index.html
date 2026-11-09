@@ -1516,7 +1516,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261109-163959';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261109-170904';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -3031,7 +3031,8 @@ window.addEventListener('scroll', ()=>{ if(page==='session') agFabSync(); }, {pa
 function closeAgNew(){ agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null; refreshTemps(); }   // panneau rouvert = vierge (QA 08/11 : jour d'avant gardé → tâche créée le mauvais jour)
 function agAll(){ return agItems.concat(agDraft.trim()?[agDraft.trim().slice(0,120)]:[]); }   // une étape tapée mais pas encore ajoutée compte
 function agSync(){   // pendant la saisie : met à jour le bouton sans tout redessiner (garde le clavier ouvert)
-  const b=document.getElementById('agSave'); if(!b) return; if(agMat&&!matById(agMat)) agMat=null; const ok=agMat&&agAll().length&&agDayISO;
+  const b=document.getElementById('agSave'); if(!b) return; if(agMat&&!matById(agMat)) agMat=null; if(tachesOpen){ const ok=agMat&&agAll().length&&agEst; b.disabled=!ok; b.querySelector('span').textContent=!agAll().length?'Écris ce que tu dois faire':!agMat?'Choisis une matière':!agEst?'Choisis un temps':'Ajouter'; return; }   // Mes priorités : temps estimé obligatoire
+  const ok=agMat&&agAll().length&&agDayISO;
   b.disabled=!ok; b.querySelector('span').textContent=!agMat?'Choisis une matière':!agAll().length?'Écris ce que tu dois faire':'Ajouter la tâche';
 }
 function addAgItem(){
@@ -4876,26 +4877,23 @@ function agAddHTML(matChips, dayChips, all, estCustom){
   if(!agOpen) return '<div class="agadd agtop"><button class="bigbtn agnew" onclick="openAgNew()">'+ic('plus',20)+'<span>Ajouter</span></button></div>';
   agDayISO='none'; const z=QZ[qOf({urg:agUrg,imp:agImp})], dated=false;
   const items=agItems.length?'<div class="planlist agitems">'+agItems.map((x,k)=>'<div class="planrow"><span class="todotxt"><b class="agn">'+(k+1)+'</b>'+escapeH(x)+'</span><button class="iconbtn" onclick="delAgItem('+k+')" aria-label="Retirer">'+ic('x',16)+'</button></div>').join('')+'</div>':'';
-  const more=!agMore ? '<button class="qmoreopt" onclick="agMore=true;refreshTemps()">'+ic('plus',16)+'<span>Plus d\'options <i>temps estimé'+(agItems.length>=2?', nom':'')+'</i></span></button>'
-    : '<div class="qopts">'
-      +(agItems.length>=2?'<div class="agpicklbl agsp">Nom de la tâche <span>(facultatif)</span></div><input id="agTitle" class="aginput" type="text" maxlength="120" placeholder="Ex : Exos chapitre 3" value="'+escapeH(agTitle)+'" oninput="agTitle=this.value">':'')
-      +'<div class="agpicklbl agsp">Temps estimé <span>(facultatif)</span></div><div class="optchips agests">'+EST_OPTS.map(e=>'<button class="optchip'+(agEst===e?' on':'')+'" onclick="setAgEst('+e+')">'+fmtDur(e*60000)+'</button>').join('')
-      +'<button class="optchip'+(estCustom?' on':'')+'" onclick="agEstCustom()">'+(estCustom?fmtDur(agEst*60000):'Autre')+'</button></div></div>';
-  const ok=agMat&&matById(agMat)&&all.length;
+  const name=agItems.length>=2?'<div class="agpicklbl agsp">Nom de la tâche <span>(facultatif)</span></div><input id="agTitle" class="aginput" type="text" maxlength="120" placeholder="Ex : Exos chapitre 3" value="'+escapeH(agTitle)+'" oninput="agTitle=this.value">':'';
+  const est='<div class="qstep"><span class="qsn">4</span>Combien de temps ça va prendre ?</div><div class="optchips agests">'+EST_OPTS.map(e=>'<button class="optchip'+(agEst===e?' on':'')+'" onclick="setAgEst('+e+')">'+fmtDur(e*60000)+'</button>').join('')
+    +'<button class="optchip'+(estCustom?' on':'')+'" onclick="agEstCustom()">'+(estCustom?fmtDur(agEst*60000):'Autre')+'</button></div>';
+  const ok=agMat&&matById(agMat)&&all.length&&agEst;
   return '<div class="agadd agtop agpanel qpanel">'
     +'<div class="agpanelhd"><b>Ajouter à mes priorités</b><button class="iconbtn" onclick="closeAgNew()" aria-label="Fermer">'+ic('x')+'</button></div>'
     +'<div class="qstep"><span class="qsn">1</span>Qu\'est-ce que tu dois faire ?</div>'+items
     +'<div class="todoadd"><input id="agInput" type="text" placeholder="'+(agItems.length?'Étape suivante (facultatif)…':'Ex : Exos TD 4')+'" maxlength="120" enterkeyhint="next" value="'+escapeH(agDraft)+'" oninput="agDraft=this.value;agSync()" onkeydown="if(event.key===\'Enter\'){event.preventDefault();addAgItem()}">'
     +'<button class="addbtn" onclick="addAgItem()" aria-label="Ajouter une étape">'+ic('plus',18)+'</button></div>'
-    +'<p class="aghint">Plusieurs étapes ? Appuie sur Entrée après chacune.</p>'
+    +'<p class="aghint">Plusieurs étapes ? Appuie sur Entrée après chacune.</p>'+name
     +'<div class="qstep"><span class="qsn">2</span>Pour quelle matière ?</div><div class="matchips mini">'+(matChips||'<span class="aghint">Crée d\'abord une matière (onglet Matières).</span>')+'</div>'
     +(dated?'':'<div class="qstep"><span class="qsn">3</span>C\'est comment ?</div><div class="qtog">'
       +'<button class="qtb'+(agUrg?' on':'')+'" onclick="agUrg=!agUrg;refreshTemps()"><span class="qbox">'+ic('check',14)+'</span><span><b>Urgent</b><i>à faire vite</i></span></button>'
       +'<button class="qtb'+(agImp?' on':'')+'" onclick="agImp=!agImp;refreshTemps()"><span class="qbox">'+ic('check',14)+'</span><span><b>Important</b><i>ça compte vraiment</i></span></button></div>'
       +'<div class="qwhere">'+qTag({urg:agUrg,imp:agImp})+'<span>Ira dans <b>« '+z.n+' »</b></span></div>')
-    +(dated?'<div class="qwhere">'+ic('calendar',16)+'<span>Jour précis : elle ira dans ton agenda (onglet Travail), pas ici.</span></div>':'')
-    +more
-    +'<div class="agpanelbtns"><button class="mdbtn" onclick="closeAgNew()">Annuler</button><button class="mdbtn primary" id="agSave" onclick="addTask()" '+(ok?'':'disabled')+'><span>'+(!(agMat&&matById(agMat))?'Choisis une matière':!all.length?'Écris ce que tu dois faire':'Ajouter la tâche')+'</span></button></div></div>';
+    +est
+    +'<div class="agpanelbtns"><button class="mdbtn" onclick="closeAgNew()">Annuler</button><button class="mdbtn primary" id="agSave" onclick="addTask()" '+(ok?'':'disabled')+'><span>'+(!all.length?'Écris ce que tu dois faire':!(agMat&&matById(agMat))?'Choisis une matière':!agEst?'Choisis un temps':'Ajouter')+'</span></button></div></div>';
 }
 // ---- Vue « Mes priorités » (ouverte depuis Travail) ----
 function openTaches(){ tachesOpen=true; agOpen=false; agItems=[]; agDraft=''; agTitle=''; agEst=null; agMat=null; agDayISO=null; agUrg=agImp=agMore=false; if(page!=='session') page='session'; render(); window.scrollTo({top:0}); }
@@ -4932,7 +4930,7 @@ document.addEventListener('keydown',e=>{ if(e.key!=='Escape'||!tachesOpen||agOpe
   const m=document.getElementById('modal'); if(m&&!m.classList.contains('hidden')) return; closeTaches(); }, true);   // avant le gestionnaire général (qui ferme d'abord le panneau)
 const _gpQ=goPage; goPage=function(p){ qLeave(); _gpQ(p); };
 const _clQ=closeAgNew; closeAgNew=function(){ agUrg=agImp=agMore=false; _clQ(); };
-const _atQ=addTask; addTask=function(){ const n=data.todos.length, u=agUrg, i=agImp; _atQ();
+const _atQ=addTask; addTask=function(){ if(tachesOpen&&!agEst) return; const n=data.todos.length, u=agUrg, i=agImp; _atQ();
   if(data.todos.length>n){ const t=data.todos[data.todos.length-1]; if(t.queue){ if(u) t.urg=true; if(i) t.imp=true; } agUrg=agImp=agMore=false; save(); refreshTemps(); } };
 // Changer la case d'une tâche (ou lui donner un jour)
 function qEdit(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return;
