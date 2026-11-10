@@ -24,7 +24,7 @@
     --muted:#4F5E6C;       /* texte secondaire / labels (assombri pour le contraste AA) */
     --line:#D8E2EC;        /* bordures fines */
     --primary:#0369A1;     /* 10% accent : liens, focus, CTA */
-    --rouge:#DC2626; --orange:#F97316; --jaune:#EAB308; --vert:#15803D; --vertc:#84CC16;
+    --rouge:#E11D48; --orange:#F97316; --jaune:#EAB308; --vert:#1E7A52; --vertc:#52A97A;
     --shadow:0 1px 3px rgba(15,23,42,.08);
     --ring:rgba(3,105,161,.16);
   }
@@ -1528,7 +1528,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261110-124746';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261110-125637';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1589,7 +1589,7 @@ const THEMES = {
                                 '--shadow':'0 1px 3px rgba(32,39,28,.09)','--ring':'rgba(79,122,82,.18)'}},
   sombre:{label:"Sombre", vars:{'--bg':'#09090B','--bg2':'#27272A','--card':'#18181B','--ink':'#FAFAFA',
                                 '--muted':'#A1A1AA','--line':'#3F3F46','--primary':'#38BDF8',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
+                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.4)','--ring':'rgba(56,189,248,.20)','--onp':'#0B0F14'}},
   lavande:{label:"Lavande", vars:{'--bg':'#EEEBF7','--bg2':'#DDD7EE','--card':'#FFFFFF','--ink':'#1E1B2E',
                                 '--muted':'#5E5873','--line':'#DDD7EE','--primary':'#6D4FC2',
@@ -1602,33 +1602,33 @@ const THEMES = {
                                 '--shadow':'0 1px 3px rgba(42,24,32,.09)','--ring':'rgba(184,50,106,.18)'}},
   nuit:  {label:"Nuit",   vars:{'--bg':'#0B1120','--bg2':'#1E293B','--card':'#111A2E','--ink':'#F1F5F9',
                                 '--muted':'#94A3B8','--line':'#334155','--primary':'#818CF8',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
+                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(129,140,248,.22)','--onp':'#0B0F14'}},
   foret: {label:"Forêt",  vars:{'--bg':'#0C1410','--bg2':'#1E2B24','--card':'#131D18','--ink':'#ECF3EE',
                                 '--muted':'#9AAFA2','--line':'#2E3F35','--primary':'#22A55A',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
+                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(34,165,90,.22)','--onp':'#0B0F14'}},
   aubergine:{label:"Aubergine", vars:{'--bg':'#120B1A','--bg2':'#2A1F36','--card':'#1A1224','--ink':'#F3EEF8',
                                 '--muted':'#AE9FBF','--line':'#3B2D4A','--primary':'#9B6BE0',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
+                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(155,107,224,.22)','--onp':'#0B0F14'}},
   ocean:{label:"Océan", vars:{'--bg':'#071417','--bg2':'#18303A','--card':'#0D1E23','--ink':'#E9F6F8',
                                 '--muted':'#93B4BC','--line':'#24414B','--primary':'#14A3B8',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
+                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(20,163,184,.22)','--onp':'#0B0F14'}},
   braise:{label:"Braise", vars:{'--bg':'#16100B','--bg2':'#2F241B','--card':'#1E1711','--ink':'#F8F0E8',
                                 '--muted':'#BBA796','--line':'#3F3125','--primary':'#E07A2E',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
+                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,122,46,.22)','--onp':'#0B0F14'}},
   cerise:{label:"Cerise", vars:{'--bg':'#170B10','--bg2':'#331C25','--card':'#201117','--ink':'#F9EEF2',
                                 '--muted':'#BF9DAA','--line':'#452A35','--primary':'#E0457B',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
+                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,69,123,.22)','--onp':'#0B0F14'}},
 };
 // Base claire complète : permet de revenir proprement après le mode sombre (couleurs maîtrise incluses).
 const LIGHT_DEFAULTS = {
   '--bg':'#EAF0F6','--bg2':'#D8E2EC','--card':'#FFFFFF','--ink':'#0F172A','--muted':'#4F5E6C','--line':'#D8E2EC',
-  '--primary':'#0369A1','--rouge':'#DC2626','--orange':'#F97316','--jaune':'#EAB308','--vert':'#15803D','--vertc':'#84CC16',
+  '--primary':'#0369A1','--rouge':'#E11D48','--orange':'#F97316','--jaune':'#EAB308','--vert':'#1E7A52','--vertc':'#52A97A',
   '--shadow':'0 1px 3px rgba(15,23,42,.08)','--ring':'rgba(3,105,161,.16)','--onp':'#fff'
 };
 
@@ -1676,7 +1676,7 @@ const ARENAS=[
  {k:'brutal', nom:'Arène 1', d:20, desc:'Contours et couleurs vives.', wc:'#FFD43B', hl:'#FF4FA3', fx:['#FFD43B','#FF90E8','#7FB8FF','#7CF5A5','#000000'], swatch:'linear-gradient(135deg,#FFD43B 50%,#FF90E8 50%)',
   // Élément 0 : appli grise et vide. Chaque élément ajoute un gros morceau du style néo-brutal ; au 10ᵉ, il est complet.
   look:{vars:{'--bg':'#CFCFCF','--bg2':'#C2C2C2','--card':'#DCDCDC','--ink':'#2E2E2E','--muted':'#454545','--line':'#C4C4C4',
-    '--primary':'#4A4A4A','--shadow':'none','--ring':'rgba(0,0,0,.12)','--rouge':'#B91C1C','--orange':'#C2410C','--jaune':'#EAB308','--vert':'#15803D','--vertc':'#84CC16'}},
+    '--primary':'#4A4A4A','--shadow':'none','--ring':'rgba(0,0,0,.12)','--rouge':'#E11D48','--orange':'#F97316','--jaune':'#EAB308','--vert':'#1E7A52','--vertc':'#52A97A'}},
   lv:{1:{'--bg':'#FFFDF5','--bg2':'#F0EBDD','--card':'#FFFFFF','--ink':'#111111','--muted':'#4A4A4A','--line':'#D9D3C3','--primary':'#4A4A4A'},
       2:{'--ink':'#000000','--line':'#000000','--primary':'#000000','--ring':'rgba(255,212,59,.55)'}},
   intro:'Elle commence grise et vide. À chaque élément, un morceau du style arrive : le papier, les contours, les ombres… jusqu\'au relief complet.',
@@ -2824,8 +2824,25 @@ function couleurTxt(p){ const c=couleur(p); if(p<=20||p>80) return c;
   const bg=getCSS('--card').replace('#',''); if(bg.length<6) return c;
   const L=(parseInt(bg.slice(0,2),16)*299+parseInt(bg.slice(2,4),16)*587+parseInt(bg.slice(4,6),16)*114)/1000;
   if(L<=150) return c;                       // fond sombre : couleur vive telle quelle
-  return p<=40 ? '#C2410C' : p<=60 ? 'var(--ink)' : '#4D7C0F'; } // fond clair : jaune assombri = marron → texte neutre
+  return p<=40 ? '#C2410C' : p<=60 ? 'var(--ink)' : '#1E7A52'; } // fond clair : jaune assombri = marron → texte neutre
 function couleur(p){ if(p<=20)return getCSS('--rouge'); if(p<=40)return getCSS('--orange'); if(p<=60)return getCSS('--jaune'); if(p<=80)return getCSS('--vertc')||getCSS('--vert'); return getCSS('--vert'); }
+// Dégradé : couleur interpolée entre les centres des paliers (10, 30, 50, 70, 90 %).
+function masteryStops(){ return [[10,getCSS('--rouge')],[30,getCSS('--orange')],[50,getCSS('--jaune')],[70,getCSS('--vertc')||getCSS('--vert')],[90,getCSS('--vert')]]; }
+function hexRGB(h){ h=(h||'').replace('#',''); if(h.length===3) h=h.replace(/./g,'$&$&'); return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)||0); }
+// Interpolation en TEINTE (HSL) et pas en RVB : jaune → vert passe par du vert-jaune vif, pas par du kaki.
+function rgbHSL([r,g,b]){ r/=255; g/=255; b/=255; const mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2, d=mx-mn; let h=0, s=0;
+  if(d){ s=d/(1-Math.abs(2*l-1)); h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4; h*=60; if(h<0) h+=360; } return [h,s,l]; }
+function mixHSL(ca,cb,f){ const A=rgbHSL(hexRGB(ca)), B=rgbHSL(hexRGB(cb)); let dh=B[0]-A[0]; if(dh>180) dh-=360; if(dh<-180) dh+=360;
+  const h=(A[0]+dh*f+360)%360, sa=A[1]+(B[1]-A[1])*f, l=A[2]+(B[2]-A[2])*f;
+  return `hsl(${h.toFixed(1)},${(sa*100).toFixed(1)}%,${(l*100).toFixed(1)}%)`; }
+function couleurLisse(p){ const st=masteryStops(); p=Math.max(0,Math.min(100,+p||0));
+  if(p<=st[0][0]) return st[0][1]; if(p>=st[4][0]) return st[4][1];
+  for(let i=0;i<4;i++){ const [a,ca]=st[i],[b,cb]=st[i+1]; if(p<=b) return mixHSL(ca,cb,(p-a)/(b-a)); } return st[4][1]; }
+// Arrêts serrés (tous les 4 %) pour que les dégradés CSS/SVG suivent la même interpolation en teinte.
+function denseStops(){ const out=[]; for(let v=10; v<=90; v+=4) out.push([v,couleurLisse(v)]); return out; }
+// Barre : dégradé rouge → … calé sur toute la piste (0-100 %), coupé à la valeur atteinte.
+function barFill(p){ p=+p||0; if(p<=0) return 'transparent';
+  return 'linear-gradient(90deg,'+denseStops().map(([c,col])=>col+' '+(c/p*100).toFixed(1)+'%').join(',')+')'; }
 function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 function moyenne(ch){ return ch.length?Math.round(ch.reduce((s,c)=>s+(+c.pct||0),0)/ch.length):0; }
 function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):''; }
@@ -3384,7 +3401,7 @@ function renderAccueil(){
       return `<div class="prevrow bosser" style="--mc:${b.color}">
         <button class="bosswork" onclick="workSubject(${b.mi})" aria-label="Travailler ${escapeH(b.txt)}">
           <span class="pdot" style="background:${b.color}"></span>
-          <span class="pmid"><span class="pnm">${escapeH(b.txt)}</span><span class="psub">${escapeH(b.sub)}</span><span class="pbar2"><span style="width:${b.pct}%;background:${col}"></span></span></span>
+          <span class="pmid"><span class="pnm">${escapeH(b.txt)}</span><span class="psub">${escapeH(b.sub)}</span><span class="pbar2"><span style="width:${b.pct}%;background:${barFill(b.pct)}"></span></span></span>
           <span class="ppct" style="color:${tcol}">${b.pct}%</span></button>
         <button class="bossgraph" onclick="openMatiere(${b.mi})" title="Voir le graphe" aria-label="Voir le graphe : ${escapeH(b.txt)}">${ic('bars',18)}</button>
       </div>`;
@@ -3467,7 +3484,7 @@ function renderHome(){
       </div>
       <div class="pct" style="color:${col}">${none?'<span class="num">—</span>':`<span class="num" data-to="${moy}">${moy}</span><span class="u">%</span>`}</div>
       <span class="go">${done?ic('check',20):ic('chevron',20)}</span>
-      <div class="pbar"><span style="width:${moy}%;background:${none?'transparent':couleur(moy)}"></span></div>
+      <div class="pbar"><span style="width:${moy}%;background:${none?'transparent':barFill(moy)}"></span></div>
     </button>`;
   }).join('') + `</div>`;
   home.querySelectorAll('.mcard .num[data-to]').forEach(countUp);   // grand % qui s'incrémente de 0
@@ -3535,7 +3552,7 @@ function chapCard(ci,c,pos){
       ${done?`<span class="cdone">${ic('check',16)}</span>`:''}
       <span class="cpct" style="color:${couleurTxt(c.pct)}">${c.pct}%</span>
     </div>
-    <div class="bar"><span style="width:${c.pct}%;background:${col}"></span></div>
+    <div class="bar"><span style="width:${c.pct}%;background:${barFill(c.pct)}"></span></div>
     <div class="ctrl">
       <input type="range" min="0" max="100" step="5" value="${c.pct}" aria-label="Niveau de maîtrise : ${escapeH(c.nom)}"
              oninput="setPct(${ci},this.value)" onchange="commitPct(${ci},this.value)">
@@ -3576,7 +3593,7 @@ function setPct(ci,v){
   const card=document.querySelector(`#detail .chap[data-ci="${ci}"]`);
   if(card){
     const p=card.querySelector('.cpct'); p.textContent=v+'%'; p.style.color=couleurTxt(v);
-    const bar=card.querySelector('.bar>span'); bar.style.width=v+'%'; bar.style.background=col;
+    const bar=card.querySelector('.bar>span'); bar.style.width=v+'%'; bar.style.background=barFill(v);
   }
   recordToday(c,v);
   redrawCharts(ci);
@@ -3625,6 +3642,7 @@ function avgSeries(list){
 }
 // Trace la courbe : fond neutre (pas de bandes colorées), mais la LIGNE change de couleur
 // en traversant les paliers de maîtrise (rouge→orange→jaune→vert) pour visualiser la progression.
+let chartGradN=0;
 function lineChart(points, color, o){
   o=o||{};
   const [tmin,tmax]=chartDom, W=o.w, H=o.h, labels=!!o.labels;
@@ -3658,23 +3676,14 @@ function lineChart(points, color, o){
   if(pts.length){
     const xy=pts.map(pt=>({x:X(new Date(pt.t).getTime()), p:pt.p}));
     const sw=labels?2.6:2.2;
-    // la ligne est découpée aux seuils 20/40/60 : chaque morceau prend la couleur de son palier
-    let segs='';
-    for(let i=0;i+1<xy.length;i++){
-      const a=xy[i], b=xy[i+1];
-      const cuts=[0,1];
-      [20,40,60,80].forEach(bd=>{ if((a.p-bd)*(b.p-bd)<0) cuts.push((bd-a.p)/(b.p-a.p)); });
-      cuts.sort((u,v)=>u-v);
-      for(let k=0;k+1<cuts.length;k++){
-        const f0=cuts[k], f1=cuts[k+1];
-        const p0=a.p+(b.p-a.p)*f0, p1=a.p+(b.p-a.p)*f1;
-        const x0=a.x+(b.x-a.x)*f0, x1=a.x+(b.x-a.x)*f1;
-        segs+=`<path d="M${x0.toFixed(1)} ${Y(p0).toFixed(1)} L${x1.toFixed(1)} ${Y(p1).toFixed(1)}" fill="none" stroke="${couleur((p0+p1)/2)}" stroke-width="${sw}" stroke-linecap="round"/>`;
-      }
-    }
-    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${couleur(q.p)}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p}%</title></circle>`).join('');
+    // une seule ligne en DÉGRADÉ vertical : la couleur suit le niveau (rouge en bas → vert en haut)
+    const gid='mg'+(++chartGradN);
+    const grad=`<defs><linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="0" y1="${Y(0).toFixed(1)}" x2="0" y2="${Y(100).toFixed(1)}">${denseStops().map(([c,col])=>`<stop offset="${c}%" stop-color="${col}"/>`).join('')}</linearGradient></defs>`;
+    const line=xy.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+' '+Y(q.p).toFixed(1)).join(' ');
+    const segs=grad+(xy.length>1?`<path d="${line}" fill="none" stroke="url(#${gid})" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`:'');
+    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${couleurLisse(q.p)}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p}%</title></circle>`).join('');
     const last=xy[xy.length-1];
-    const lastDot=`<circle cx="${last.x.toFixed(1)}" cy="${Y(last.p).toFixed(1)}" r="${labels?4:3}" fill="${couleur(last.p)}" stroke="var(--card)" stroke-width="2"/>`;
+    const lastDot=`<circle cx="${last.x.toFixed(1)}" cy="${Y(last.p).toFixed(1)}" r="${labels?4:3}" fill="${couleurLisse(last.p)}" stroke="var(--card)" stroke-width="2"/>`;
     path=segs+dots+lastDot;
   }
   return `<svg viewBox="0 0 ${W} ${H}" class="chartsvg">${grid}${xl}${path}</svg>`;
