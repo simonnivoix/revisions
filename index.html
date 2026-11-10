@@ -24,7 +24,7 @@
     --muted:#4F5E6C;       /* texte secondaire / labels (assombri pour le contraste AA) */
     --line:#D8E2EC;        /* bordures fines */
     --primary:#0369A1;     /* 10% accent : liens, focus, CTA */
-    --rouge:#DC2626; --orange:#F97316; --jaune:#CA8A04; --vert:#16A34A;
+    --rouge:#DC2626; --orange:#F97316; --jaune:#EAB308; --vert:#15803D; --vertc:#84CC16;
     --shadow:0 1px 3px rgba(15,23,42,.08);
     --ring:rgba(3,105,161,.16);
   }
@@ -1528,7 +1528,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261110-124119';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261110-124746';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1589,7 +1589,7 @@ const THEMES = {
                                 '--shadow':'0 1px 3px rgba(32,39,28,.09)','--ring':'rgba(79,122,82,.18)'}},
   sombre:{label:"Sombre", vars:{'--bg':'#09090B','--bg2':'#27272A','--card':'#18181B','--ink':'#FAFAFA',
                                 '--muted':'#A1A1AA','--line':'#3F3F46','--primary':'#38BDF8',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.4)','--ring':'rgba(56,189,248,.20)','--onp':'#0B0F14'}},
   lavande:{label:"Lavande", vars:{'--bg':'#EEEBF7','--bg2':'#DDD7EE','--card':'#FFFFFF','--ink':'#1E1B2E',
                                 '--muted':'#5E5873','--line':'#DDD7EE','--primary':'#6D4FC2',
@@ -1602,33 +1602,33 @@ const THEMES = {
                                 '--shadow':'0 1px 3px rgba(42,24,32,.09)','--ring':'rgba(184,50,106,.18)'}},
   nuit:  {label:"Nuit",   vars:{'--bg':'#0B1120','--bg2':'#1E293B','--card':'#111A2E','--ink':'#F1F5F9',
                                 '--muted':'#94A3B8','--line':'#334155','--primary':'#818CF8',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(129,140,248,.22)','--onp':'#0B0F14'}},
   foret: {label:"Forêt",  vars:{'--bg':'#0C1410','--bg2':'#1E2B24','--card':'#131D18','--ink':'#ECF3EE',
                                 '--muted':'#9AAFA2','--line':'#2E3F35','--primary':'#22A55A',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(34,165,90,.22)','--onp':'#0B0F14'}},
   aubergine:{label:"Aubergine", vars:{'--bg':'#120B1A','--bg2':'#2A1F36','--card':'#1A1224','--ink':'#F3EEF8',
                                 '--muted':'#AE9FBF','--line':'#3B2D4A','--primary':'#9B6BE0',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(155,107,224,.22)','--onp':'#0B0F14'}},
   ocean:{label:"Océan", vars:{'--bg':'#071417','--bg2':'#18303A','--card':'#0D1E23','--ink':'#E9F6F8',
                                 '--muted':'#93B4BC','--line':'#24414B','--primary':'#14A3B8',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(20,163,184,.22)','--onp':'#0B0F14'}},
   braise:{label:"Braise", vars:{'--bg':'#16100B','--bg2':'#2F241B','--card':'#1E1711','--ink':'#F8F0E8',
                                 '--muted':'#BBA796','--line':'#3F3125','--primary':'#E07A2E',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,122,46,.22)','--onp':'#0B0F14'}},
   cerise:{label:"Cerise", vars:{'--bg':'#170B10','--bg2':'#331C25','--card':'#201117','--ink':'#F9EEF2',
                                 '--muted':'#BF9DAA','--line':'#452A35','--primary':'#E0457B',
-                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399',
+                                '--rouge':'#F87171','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#34D399','--vertc':'#BEF264',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,69,123,.22)','--onp':'#0B0F14'}},
 };
 // Base claire complète : permet de revenir proprement après le mode sombre (couleurs maîtrise incluses).
 const LIGHT_DEFAULTS = {
   '--bg':'#EAF0F6','--bg2':'#D8E2EC','--card':'#FFFFFF','--ink':'#0F172A','--muted':'#4F5E6C','--line':'#D8E2EC',
-  '--primary':'#0369A1','--rouge':'#DC2626','--orange':'#F97316','--jaune':'#CA8A04','--vert':'#16A34A',
+  '--primary':'#0369A1','--rouge':'#DC2626','--orange':'#F97316','--jaune':'#EAB308','--vert':'#15803D','--vertc':'#84CC16',
   '--shadow':'0 1px 3px rgba(15,23,42,.08)','--ring':'rgba(3,105,161,.16)','--onp':'#fff'
 };
 
@@ -1676,14 +1676,14 @@ const ARENAS=[
  {k:'brutal', nom:'Arène 1', d:20, desc:'Contours et couleurs vives.', wc:'#FFD43B', hl:'#FF4FA3', fx:['#FFD43B','#FF90E8','#7FB8FF','#7CF5A5','#000000'], swatch:'linear-gradient(135deg,#FFD43B 50%,#FF90E8 50%)',
   // Élément 0 : appli grise et vide. Chaque élément ajoute un gros morceau du style néo-brutal ; au 10ᵉ, il est complet.
   look:{vars:{'--bg':'#CFCFCF','--bg2':'#C2C2C2','--card':'#DCDCDC','--ink':'#2E2E2E','--muted':'#454545','--line':'#C4C4C4',
-    '--primary':'#4A4A4A','--shadow':'none','--ring':'rgba(0,0,0,.12)','--rouge':'#B91C1C','--orange':'#C2410C','--jaune':'#A16207','--vert':'#15803D'}},
+    '--primary':'#4A4A4A','--shadow':'none','--ring':'rgba(0,0,0,.12)','--rouge':'#B91C1C','--orange':'#C2410C','--jaune':'#EAB308','--vert':'#15803D','--vertc':'#84CC16'}},
   lv:{1:{'--bg':'#FFFDF5','--bg2':'#F0EBDD','--card':'#FFFFFF','--ink':'#111111','--muted':'#4A4A4A','--line':'#D9D3C3','--primary':'#4A4A4A'},
       2:{'--ink':'#000000','--line':'#000000','--primary':'#000000','--ring':'rgba(255,212,59,.55)'}},
   intro:'Elle commence grise et vide. À chaque élément, un morceau du style arrive : le papier, les contours, les ombres… jusqu\'au relief complet.',
   steps:['Le papier','Les contours','Les ombres','Le gras','Le jaune','Les couleurs','Le gros bouton','Le surligneur','Les barres','Le relief']},
  {k:'widgets', nom:'Arène 2', d:25, desc:'Verre dépoli et dégradés.', wc:'#A78BFA', fx:['#FF7A59','#6A5CFF','#00B3A4','#FFD76A','#FFFFFF'], swatch:'linear-gradient(135deg,#FF7A59,#6A5CFF,#00B3A4)',
   look:{vars:{'--bg':'#2C2C2E','--bg2':'#3A3A3C','--card':'#3A3A3C','--ink':'#E5E5EA','--muted':'#A1A1A6','--line':'#48484A',
-    '--primary':'#7C7C80','--rouge':'#FF8A8A','--orange':'#FFB067','--jaune':'#FFE066','--vert':'#5EEAB0','--shadow':'none','--ring':'rgba(255,255,255,.14)'}},
+    '--primary':'#7C7C80','--rouge':'#FF8A8A','--orange':'#FFB067','--jaune':'#FFE066','--vert':'#5EEAB0','--vertc':'#D9F99D','--shadow':'none','--ring':'rgba(255,255,255,.14)'}},
   lv:{1:{'--bg':'#2A1F4A','--bg2':'#43386B','--card':'#382D5E','--ink':'#FFFFFF','--muted':'rgba(255,255,255,.74)','--line':'#4E4378','--primary':'#6A5CFF'},
       3:{'--bg2':'rgba(255,255,255,.16)','--card':'rgba(255,255,255,.14)','--line':'rgba(255,255,255,.22)','--shadow':'0 10px 30px rgba(0,0,0,.16)'},
       4:{'--primary':'#FFD76A','--ring':'rgba(255,215,106,.28)'}},
@@ -1691,11 +1691,11 @@ const ARENAS=[
   steps:['La nuit','Les couleurs','Le verre','Les gros chiffres','Le reflet','Le mouvement','Les widgets','Les bulles','Les étoiles','L\'aurore']},
  {k:'arcade', nom:'Arène 3', d:30, desc:'Néons et pixels.', wc:'#FF4FD8', fx:['#3DFF8B','#FFE14D','#FF4FD8','#4DE1FF','#FFFFFF'], swatch:'linear-gradient(135deg,#0B0F1A 50%,#FF4FD8 50%)',
   look:{vars:{'--bg':'#2C2C2E','--bg2':'#3A3A3C','--card':'#3A3A3C','--ink':'#E5E5EA','--muted':'#B0B0B5','--line':'#48484A',
-    '--primary':'#7C7C80','--rouge':'#FF8A8A','--orange':'#FFB067','--jaune':'#FFE066','--vert':'#5EEAB0','--shadow':'none','--ring':'rgba(255,255,255,.14)'}},
+    '--primary':'#7C7C80','--rouge':'#FF8A8A','--orange':'#FFB067','--jaune':'#FFE066','--vert':'#5EEAB0','--vertc':'#D9F99D','--shadow':'none','--ring':'rgba(255,255,255,.14)'}},
   lv:{1:{'--bg':'#0B0F1A','--bg2':'#1C2438','--card':'#121829','--ink':'#E6F1FF','--muted':'#8A94AD','--line':'#2A3350','--primary':'#8A94AD'},
       2:{'--muted':'#8FB8A0'},
       4:{'--primary':'#3DFF8B','--ring':'rgba(61,255,139,.22)'},
-      6:{'--rouge':'#FF5C7A','--orange':'#FFB347','--jaune':'#FFE14D','--vert':'#3DFF8B'}},
+      6:{'--rouge':'#FF5C7A','--orange':'#FFB347','--jaune':'#FFE14D','--vert':'#3DFF8B','--vertc':'#D4FF3D'}},
   intro:'Elle commence grise et vide. À chaque élément, un morceau du style arrive : la nuit, le terminal, les pixels, le néon… jusqu\'à la borne complète.',
   steps:['La nuit','Le terminal','Les pixels','Le néon','Le titre','Les couleurs','Les barres','Le bouton qui clignote','Les lignes d\'écran','La borne']}
 ];
@@ -2820,11 +2820,12 @@ async function submitAuth(kind){
 }
 
 // Même couleur, mais lisible en TEXTE : sur fond clair, orange et jaune sont assombris (≈2,8:1 → ≥4,5:1). Barres inchangées.
-function couleurTxt(p){ const c=couleur(p); if(p<=20||p>60) return c;
+function couleurTxt(p){ const c=couleur(p); if(p<=20||p>80) return c;
   const bg=getCSS('--card').replace('#',''); if(bg.length<6) return c;
   const L=(parseInt(bg.slice(0,2),16)*299+parseInt(bg.slice(2,4),16)*587+parseInt(bg.slice(4,6),16)*114)/1000;
-  return L>150 ? `color-mix(in srgb, ${c} 66%, #000)` : c; }
-function couleur(p){ if(p<=20)return getCSS('--rouge'); if(p<=40)return getCSS('--orange'); if(p<=60)return getCSS('--jaune'); return getCSS('--vert'); }
+  if(L<=150) return c;                       // fond sombre : couleur vive telle quelle
+  return p<=40 ? '#C2410C' : p<=60 ? 'var(--ink)' : '#4D7C0F'; } // fond clair : jaune assombri = marron → texte neutre
+function couleur(p){ if(p<=20)return getCSS('--rouge'); if(p<=40)return getCSS('--orange'); if(p<=60)return getCSS('--jaune'); if(p<=80)return getCSS('--vertc')||getCSS('--vert'); return getCSS('--vert'); }
 function getCSS(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 function moyenne(ch){ return ch.length?Math.round(ch.reduce((s,c)=>s+(+c.pct||0),0)/ch.length):0; }
 function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):''; }
@@ -3541,7 +3542,7 @@ function chapCard(ci,c,pos){
       <button class="seegraph" onclick="toggleChap(${ci})">${ic('chart',18)}<span>Graphe</span></button>
       <button class="delc" title="Supprimer" aria-label="Supprimer le chapitre" onclick="delChapitre(${ci})">${ic('x',18)}</button>
     </div>
-    <div class="minichart" id="mc-${ci}">${lineChart(c.hist, matCol(), {w:480,h:165,labels:true})}</div>
+    <div class="minichart" id="mc-${ci}">${lineChart(c.hist, col, {w:480,h:165,labels:true})}</div>
   </div>`;
 }
 
@@ -3562,7 +3563,7 @@ function recordToday(c,v){
 function redrawCharts(ci){
   const c=data.matieres[current].chapitres[ci];
   const mc=document.getElementById('mc-'+ci);
-  if(mc) mc.innerHTML=lineChart(c.hist, matCol(), {w:480,h:165,labels:true});
+  if(mc) mc.innerHTML=lineChart(c.hist, couleur(c.pct), {w:480,h:165,labels:true});
   renderChartAvg();
 }
 // Pendant le glissement (oninput) : patch DOM en place (pas de re-render qui casserait le
@@ -3657,22 +3658,30 @@ function lineChart(points, color, o){
   if(pts.length){
     const xy=pts.map(pt=>({x:X(new Date(pt.t).getTime()), p:pt.p}));
     const sw=labels?2.6:2.2;
-    // une seule couleur : celle de la matière (avant : rouge/orange/jaune/vert selon le palier)
-    const line=xy.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+' '+Y(q.p).toFixed(1)).join(' ');
-    const base=Y(0).toFixed(1);
-    const area=xy.length>1?`<path d="${line} L${xy[xy.length-1].x.toFixed(1)} ${base} L${xy[0].x.toFixed(1)} ${base} Z" fill="${color}" fill-opacity="0.12" stroke="none"/>`:'';
-    const segs=area+`<path d="${line}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`;
-    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${color}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p}%</title></circle>`).join('');
+    // la ligne est découpée aux seuils 20/40/60 : chaque morceau prend la couleur de son palier
+    let segs='';
+    for(let i=0;i+1<xy.length;i++){
+      const a=xy[i], b=xy[i+1];
+      const cuts=[0,1];
+      [20,40,60,80].forEach(bd=>{ if((a.p-bd)*(b.p-bd)<0) cuts.push((bd-a.p)/(b.p-a.p)); });
+      cuts.sort((u,v)=>u-v);
+      for(let k=0;k+1<cuts.length;k++){
+        const f0=cuts[k], f1=cuts[k+1];
+        const p0=a.p+(b.p-a.p)*f0, p1=a.p+(b.p-a.p)*f1;
+        const x0=a.x+(b.x-a.x)*f0, x1=a.x+(b.x-a.x)*f1;
+        segs+=`<path d="M${x0.toFixed(1)} ${Y(p0).toFixed(1)} L${x1.toFixed(1)} ${Y(p1).toFixed(1)}" fill="none" stroke="${couleur((p0+p1)/2)}" stroke-width="${sw}" stroke-linecap="round"/>`;
+      }
+    }
+    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${couleur(q.p)}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p}%</title></circle>`).join('');
     const last=xy[xy.length-1];
-    const lastDot=`<circle cx="${last.x.toFixed(1)}" cy="${Y(last.p).toFixed(1)}" r="${labels?4:3}" fill="${color}" stroke="var(--card)" stroke-width="2"/>`;
+    const lastDot=`<circle cx="${last.x.toFixed(1)}" cy="${Y(last.p).toFixed(1)}" r="${labels?4:3}" fill="${couleur(last.p)}" stroke="var(--card)" stroke-width="2"/>`;
     path=segs+dots+lastDot;
   }
   return `<svg viewBox="0 0 ${W} ${H}" class="chartsvg">${grid}${xl}${path}</svg>`;
 }
-function matCol(){ const m=data.matieres[current]; return (m&&m.color)||getCSS('--primary'); }
 function avgChartSVG(list){
   if(!list.length) return '<p class="chartempty">Ajoute un chapitre pour suivre ta progression.</p>';
-  return lineChart(avgSeries(list), matCol(), {w:600,h:210,labels:true});
+  return lineChart(avgSeries(list), getCSS('--primary'), {w:600,h:210,labels:true});
 }
 function renderChartAvg(){ const el=document.getElementById('chart'); if(el) el.innerHTML=avgChartSVG(data.matieres[current].chapitres); }
 function refreshBadge(){
