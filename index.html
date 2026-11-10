@@ -1378,6 +1378,10 @@
   @media (max-width:520px){ body[data-arena=brutal].as4 .statcard .big{font-size:38px} body[data-arena=widgets].as4 .statcard .big{font-size:42px}
     body[data-arena=widgets].as4 :is(.hello h1,.ptitle h1){font-size:40px} body[data-arena=widgets].as4 .sesshead h2{font-size:30px} }
   @media (prefers-reduced-motion:reduce){ .ar-orb,.ar-rise,.ar-shoot,.ar-shape{animation:none} }
+  .reauthbar{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:46;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 32px);
+             background:var(--card);color:var(--ink);border:2px solid var(--orange);border-radius:14px;padding:10px 12px 10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:14px;font-weight:600}
+  .reauthbar button{min-height:44px;padding:0 14px;border:0;border-radius:10px;background:var(--primary);color:var(--onp,#fff);font:inherit;font-weight:700;cursor:pointer;flex-shrink:0}
+  @media (min-width:821px){ .reauthbar{bottom:24px;left:calc(50% + var(--sbw)/2)} }
   .hidden{display:none}
   .fade{animation:fade .25s ease}
   @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -1528,7 +1532,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261110-125637';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261110-130309';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -2518,16 +2522,35 @@ function parseRecoveryHash(){
   if(p.get('type')!=='recovery' || !p.get('access_token')) return null;
   return {access_token:p.get('access_token'), refresh_token:p.get('refresh_token'), expires_in:+(p.get('expires_in')||3600)};
 }
-async function refreshSession(){
-  if(!supaConfigured() || !authSession || !authSession.refresh_token) return;
-  try{
-    const r=await fetch(SUPA_REST+'/auth/v1/token?grant_type=refresh_token', {method:'POST',
-      headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({refresh_token:authSession.refresh_token})});
-    const j=await r.json().catch(()=>({}));
-    if(r.ok && j.access_token){ applySession(j); if(syncPending) flushSync(); }
-    else authState='offline';
-  }catch(e){ authState='offline'; }
+// Renouvellement du jeton (10/11) : un seul à la fois ; si un autre onglet l'a déjà renouvelé, on reprend le sien
+// (renvoyer un ancien jeton de renouvellement fait révoquer la session par Supabase → « Compte hors ligne » pour toujours).
+let refreshing=null, authExpired=false, reauthUid=null;
+function adoptStoredAuth(){
+  const st=loadAuth();
+  if(st && authSession && st.user && st.user.id===authSession.user.id && st.refresh_token!==authSession.refresh_token && st.expires_at>Date.now()+60000){
+    authSession=st; authState='online'; authExpired=false; scheduleRefresh(); if(syncPending) flushSync(); return true; }
+  return false;
 }
+function refreshSession(){
+  if(!supaConfigured() || !authSession || !authSession.refresh_token) return Promise.resolve();
+  if(refreshing) return refreshing;
+  refreshing=(async()=>{
+    try{
+      if(adoptStoredAuth()) return;
+      const r=await fetch(SUPA_REST+'/auth/v1/token?grant_type=refresh_token', {method:'POST',
+        headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'}, body:JSON.stringify({refresh_token:authSession.refresh_token})});
+      const j=await r.json().catch(()=>({}));
+      if(r.ok && j.access_token){ applySession(j); authExpired=false; if(syncPending) flushSync(); }
+      else if(!adoptStoredAuth()){ authState='offline'; if(r.status>=400 && r.status<500){ authExpired=true; updateSbFoot(); } }
+    }catch(e){ authState='offline'; }   // pas de réseau : on réessaiera
+    finally{ refreshing=null; }
+  })();
+  return refreshing;
+}
+// Jeton expiré ou presque (tel resté verrouillé, Mac en veille : le minuteur de renouvellement n'a pas tourné) → on le renouvelle AVANT d'appeler le cloud.
+async function freshToken(){ if(authSession && authSession.expires_at < Date.now()+60000) await refreshSession(); return !!authSession && authSession.expires_at > Date.now(); }
+function reauth(){ reauthUid=authSession&&authSession.user.id; authErr=''; showAuthGate('login');
+  const e=document.getElementById('agEmail'); if(e && authSession) e.value=authSession.user.email; }
 function scheduleRefresh(){
   clearTimeout(refreshTimer);
   if(!authSession) return;
@@ -2558,6 +2581,7 @@ function markSynced(){ syncedJSON=JSON.stringify(data); syncPending=false; clear
 function flushSync(){ clearTimeout(syncTimer); if(syncPending) pushToCloud(); }
 async function pushToCloud(){
   if(!authSession) return;
+  if(!(await freshToken())){ syncPending=true; return; }
   syncPending=false; pushing++;
   const now=new Date().toISOString();
   try{
@@ -2573,7 +2597,10 @@ async function pushToCloud(){
   finally{ pushing--; }
 }
 async function pullFromCloud(){
-  const r=await fetch(SUPA_REST+'/rest/v1/user_data?user_id=eq.'+encodeURIComponent(authSession.user.id)+'&select=data,updated_at', {headers:authHeaders()});
+  await freshToken();
+  const url=SUPA_REST+'/rest/v1/user_data?user_id=eq.'+encodeURIComponent(authSession.user.id)+'&select=data,updated_at';
+  let r=await fetch(url, {headers:authHeaders()});
+  if(r.status===401){ await refreshSession(); r=await fetch(url, {headers:authHeaders()}); }
   if(!r.ok) throw new Error('pull failed');
   const j=await r.json();
   return (j && j[0]) ? j[0] : null;
@@ -2697,6 +2724,7 @@ function renderAuthGate(mode){
     ${isLogin?`<div class="authforgot"><button onclick="authErr='';showAuthGate('forgot')">Mot de passe oublié ?</button></div>`:''}
     ${authErr?`<p class="autherr">${escapeH(authErr)}</p>`:''}
     <button class="authcta" id="agSubmit" onclick="submitAuth('${isLogin?'login':'signup'}')">${isLogin?'Se connecter':'Créer mon compte'}</button>
+    ${reauthUid&&isLogin?`<div class="authswitch"><button onclick="reauthUid=null;hideAuthGate();render()">Plus tard</button></div>`:''}
     <div class="authswitch">${isLogin?'Pas encore de compte ?':'Déjà un compte ?'}
       <button onclick="authErr='';showAuthGate('${isLogin?'signup':'login'}')">${isLogin?"S'inscrire":'Se connecter'}</button>
     </div>`}
@@ -2809,7 +2837,10 @@ async function submitAuth(kind){
       if(res==='pending'){ renderAuthPending(email); return; }
     } else {
       await login(email,pw);
+      if(reauthUid && authSession.user.id!==reauthUid){   // reconnexion sur un AUTRE compte : ne jamais mélanger les données
+        data=prepare(clone(DEFAULT)); current=null; try{ localStorage.removeItem(SYNC_KEY); }catch(e){} syncedJSON=null; }
     }
+    reauthUid=null; authExpired=false; document.getElementById('reauthBar')?.remove();
     hideAuthGate();
     await reconcileOnLogin();
     render();
@@ -2904,7 +2935,12 @@ function updateSbFoot(){
   if(!dot||!txt) return;
   if(!authSession){ dot.style.background='var(--vert)'; txt.textContent='Mode hors-ligne'; }
   else if(authState==='online'){ dot.style.background='var(--vert)'; txt.textContent='Synchronisé'; }
-  else { dot.style.background='var(--orange)'; txt.textContent='Compte hors ligne'; }
+  else { dot.style.background='var(--orange)'; txt.textContent=authExpired?'Connexion expirée':'Compte hors ligne'; }
+  let bar=document.getElementById('reauthBar');
+  if(authExpired && authSession){
+    if(!bar){ bar=document.createElement('div'); bar.id='reauthBar'; bar.className='reauthbar'; document.body.appendChild(bar); }
+    bar.innerHTML=`<span>Ta connexion a expiré : tes changements ne vont plus sur tes autres appareils.</span><button onclick="reauth()">Se reconnecter</button>`;
+  } else if(bar) bar.remove();
 }
 // Barre du haut (desktop) : série + temps du jour, toujours visibles quelle que soit la page.
 function updateTopbar(){
@@ -4793,6 +4829,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape'){
 // jamais passer par le cloud ni afficher le moindre message (incident du 06/09, 3 fenêtres ouvertes
 // avec le même compte : un onglet périmé a écrasé les données fraîches d'un autre onglet).
 window.addEventListener('storage', e=>{
+  if(e.key===AUTH_KEY && e.newValue && authSession){ const st=loadAuth(); if(st && st.user && st.user.id===authSession.user.id){ authSession=st; authExpired=false; authState='online'; scheduleRefresh(); updateSbFoot(); } return; }
   if(e.key!==STORE_KEY || e.newValue==null || (data.active && ownSession)) return;   // session pilotée par CET onglet : ne rien toucher
   try{ data = backfillDaily(prepare(JSON.parse(e.newValue))); markSynced(); current=null; render(); refreshFocus(); }catch(err){}   // l'autre onglet s'occupe de l'envoi
 });
