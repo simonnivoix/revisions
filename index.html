@@ -1528,7 +1528,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261109-171411';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261110-124119';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -3541,7 +3541,7 @@ function chapCard(ci,c,pos){
       <button class="seegraph" onclick="toggleChap(${ci})">${ic('chart',18)}<span>Graphe</span></button>
       <button class="delc" title="Supprimer" aria-label="Supprimer le chapitre" onclick="delChapitre(${ci})">${ic('x',18)}</button>
     </div>
-    <div class="minichart" id="mc-${ci}">${lineChart(c.hist, col, {w:480,h:165,labels:true})}</div>
+    <div class="minichart" id="mc-${ci}">${lineChart(c.hist, matCol(), {w:480,h:165,labels:true})}</div>
   </div>`;
 }
 
@@ -3562,7 +3562,7 @@ function recordToday(c,v){
 function redrawCharts(ci){
   const c=data.matieres[current].chapitres[ci];
   const mc=document.getElementById('mc-'+ci);
-  if(mc) mc.innerHTML=lineChart(c.hist, couleur(c.pct), {w:480,h:165,labels:true});
+  if(mc) mc.innerHTML=lineChart(c.hist, matCol(), {w:480,h:165,labels:true});
   renderChartAvg();
 }
 // Pendant le glissement (oninput) : patch DOM en place (pas de re-render qui casserait le
@@ -3657,30 +3657,22 @@ function lineChart(points, color, o){
   if(pts.length){
     const xy=pts.map(pt=>({x:X(new Date(pt.t).getTime()), p:pt.p}));
     const sw=labels?2.6:2.2;
-    // la ligne est découpée aux seuils 20/40/60 : chaque morceau prend la couleur de son palier
-    let segs='';
-    for(let i=0;i+1<xy.length;i++){
-      const a=xy[i], b=xy[i+1];
-      const cuts=[0,1];
-      [20,40,60].forEach(bd=>{ if((a.p-bd)*(b.p-bd)<0) cuts.push((bd-a.p)/(b.p-a.p)); });
-      cuts.sort((u,v)=>u-v);
-      for(let k=0;k+1<cuts.length;k++){
-        const f0=cuts[k], f1=cuts[k+1];
-        const p0=a.p+(b.p-a.p)*f0, p1=a.p+(b.p-a.p)*f1;
-        const x0=a.x+(b.x-a.x)*f0, x1=a.x+(b.x-a.x)*f1;
-        segs+=`<path d="M${x0.toFixed(1)} ${Y(p0).toFixed(1)} L${x1.toFixed(1)} ${Y(p1).toFixed(1)}" fill="none" stroke="${couleur((p0+p1)/2)}" stroke-width="${sw}" stroke-linecap="round"/>`;
-      }
-    }
-    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${couleur(q.p)}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p}%</title></circle>`).join('');
+    // une seule couleur : celle de la matière (avant : rouge/orange/jaune/vert selon le palier)
+    const line=xy.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+' '+Y(q.p).toFixed(1)).join(' ');
+    const base=Y(0).toFixed(1);
+    const area=xy.length>1?`<path d="${line} L${xy[xy.length-1].x.toFixed(1)} ${base} L${xy[0].x.toFixed(1)} ${base} Z" fill="${color}" fill-opacity="0.12" stroke="none"/>`:'';
+    const segs=area+`<path d="${line}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    const dots=xy.map((q,i)=>`<circle cx="${q.x.toFixed(1)}" cy="${Y(q.p).toFixed(1)}" r="${labels?3:2.4}" fill="${color}"><title>${fmtDate(new Date(pts[i].t).toISOString())} · ${pts[i].p}%</title></circle>`).join('');
     const last=xy[xy.length-1];
-    const lastDot=`<circle cx="${last.x.toFixed(1)}" cy="${Y(last.p).toFixed(1)}" r="${labels?4:3}" fill="${couleur(last.p)}" stroke="var(--card)" stroke-width="2"/>`;
+    const lastDot=`<circle cx="${last.x.toFixed(1)}" cy="${Y(last.p).toFixed(1)}" r="${labels?4:3}" fill="${color}" stroke="var(--card)" stroke-width="2"/>`;
     path=segs+dots+lastDot;
   }
   return `<svg viewBox="0 0 ${W} ${H}" class="chartsvg">${grid}${xl}${path}</svg>`;
 }
+function matCol(){ const m=data.matieres[current]; return (m&&m.color)||getCSS('--primary'); }
 function avgChartSVG(list){
   if(!list.length) return '<p class="chartempty">Ajoute un chapitre pour suivre ta progression.</p>';
-  return lineChart(avgSeries(list), getCSS('--primary'), {w:600,h:210,labels:true});
+  return lineChart(avgSeries(list), matCol(), {w:600,h:210,labels:true});
 }
 function renderChartAvg(){ const el=document.getElementById('chart'); if(el) el.innerHTML=avgChartSVG(data.matieres[current].chapitres); }
 function refreshBadge(){
