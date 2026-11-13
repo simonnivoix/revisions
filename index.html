@@ -785,6 +785,10 @@
   .agnew{margin:0;min-height:52px;background:var(--bg2);color:var(--primary);border:1.5px dashed color-mix(in srgb,var(--primary) 45%,var(--line));font-size:15px;font-weight:700;padding:14px}
   .agpanel{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:14px;border-bottom:1px solid var(--line)}
   .agpanel .matchip.mini,.agpanel .agdaypick,.agpanel .optchip{background:var(--card)}
+  /* matière choisie bien visible (avant : seul un contour fin la distinguait) */
+  .agpanel .matchip.mini{border-color:var(--line)}
+  .agpanel .matchip.mini.on{background:color-mix(in srgb,var(--c) 22%,var(--card));border:2px solid var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent)}
+  .agpanel .matchip.mini.on .dot{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--c)}
   @media (max-width:520px){ .agadd.agtop.agpanel{margin:0 -10px 14px;padding:12px 6px} .agpanel .agdays{gap:2px} }   /* jours ≥ 44 px de large sur iPhone */
   /* Mobile : bouton « + Nouvelle tâche » toujours à portée (l'agenda est sous le lanceur) */
   .agfab{display:none}
@@ -1532,7 +1536,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261110-130309';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261113-115030';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
