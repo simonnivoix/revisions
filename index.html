@@ -1538,7 +1538,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261113-191751';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261113-193351';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1606,13 +1606,23 @@ const LIGHT_DEFAULTS = {
   '--shadow':'0 1px 3px rgba(15,23,42,.08)','--ring':'rgba(3,105,161,.16)','--onp':'#fff'
 };
 
+// Thèmes des arènes terminées (13/11, Eric : « tu les débloques et tu peux revenir dessus sans être dans le mode arène ») :
+// 'arene-1', 'arene-2'… = le style COMPLET (élément 10) d'une arène finie, fixe, quel que soit l'endroit où l'on en est.
+function arenaDone(j){ return typeof data!=='undefined' && !!ARENAS[j] && (j<arenaIdx() || (j===arenaIdx() && arenaStep(j)>=10)); }
+function arFixOf(name){ const m=/^arene-(\d+)$/.exec(name||''); if(!m) return null; const j=+m[1]-1; return arenaDone(j)?j:null; }
+function curTheme(){ try{ return localStorage.getItem(THEME_KEY)||'slate'; }catch(e){ return 'slate'; } }
+function arFixed(){ const v=document.body.dataset.arfix; return v===undefined?null:+v; }   // arène terminée affichée en style fixe (sinon null)
 function applyTheme(name){
-  if(!THEMES[name]) name='slate';
-  const t = name==='arene' ? {vars:arenaVars(arenaIdx(),arenaVisStep())} : THEMES[name];   // « Arène » = le look de l'arène où l'on est, à l'élément atteint
+  const fix=arFixOf(name);
+  if(!THEMES[name] && fix===null) name='slate';
+  const t = fix!==null ? {vars:arenaVars(fix,10)}   // arène terminée : son style complet
+    : name==='arene' ? {vars:arenaVars(arenaIdx(),arenaVisStep())} : THEMES[name];   // « Arène » = le look de l'arène où l'on est, à l'élément atteint
   const root = document.documentElement;
   Object.entries(LIGHT_DEFAULTS).forEach(([k,v])=>root.style.setProperty(k,v)); // base claire
   Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));          // puis l'ambiance
-  if(name==='arene') document.body.dataset.arena=ARENAS[arenaIdx()].k; else delete document.body.dataset.arena;
+  if(fix!==null){ document.body.dataset.arena=ARENAS[fix].k; document.body.dataset.arfix=fix; }
+  else { delete document.body.dataset.arfix; if(name==='arene') document.body.dataset.arena=ARENAS[arenaIdx()].k; else delete document.body.dataset.arena; }
+  delete document.body.dataset.arv;   // recalcul des couleurs d'étape par updateArena()
   try{ localStorage.setItem(THEME_KEY, name); }catch(e){}
   document.querySelectorAll('.topt[data-t]').forEach(s=>s.classList.toggle('on', s.dataset.t===name));
   if(typeof data!=='undefined') updateArena();
@@ -1630,7 +1640,11 @@ function buildThemeOpts(active){
       <span class="tdot" style="background:${A.swatch}"></span>
       <span class="tlabel">${A.nom} <span style="color:var(--muted);font-weight:500">(suit ta progression)</span></span>
       <span class="tcheck">${ic('check',18)}</span>
-    </button>`:'') + THEME_OPTS.map(([k,label])=>{
+    </button>`+ARENAS.map((B,j)=>{ const k='arene-'+(j+1);
+      return arenaDone(j) ? `<button class="topt${active===k?' on':''}" data-t="${k}" onclick="applyTheme('${k}');render()">
+      <span class="tdot" style="background:${B.swatch}"></span>
+      <span class="tlabel">${B.nom} <span style="color:var(--muted);font-weight:500">· style complet</span></span>
+      <span class="tcheck">${ic('check',18)}</span></button>` : ''; }).join('')   /* seules les arènes terminées apparaissent (Eric : pas de lignes verrouillées) */:'') + THEME_OPTS.map(([k,label])=>{
     const bg = THEMES[k].vars['--bg']||LIGHT_DEFAULTS['--bg'];
     const ac = THEMES[k].vars['--primary']||LIGHT_DEFAULTS['--primary'];
     return `<button class="topt${k===active?' on':''}" data-t="${k}" onclick="applyTheme('${k}');render()">
@@ -1694,7 +1708,7 @@ function arenaVisStep(){ const i=arenaIdx(), S=arenaStep(i), v=typeof data!=='un
 // Couleurs de l'arène à l'étape n : base grise + ce qu'ajoutent les éléments atteints (cumulés).
 function arenaVars(i,n){ const A=ARENAS[i], v={...A.look.vars}; for(let k=1;k<=n;k++) Object.assign(v,(A.lv||{})[k]||{}); return v; }
 // Une étape de l'arène est-elle visible ? (look de l'arène actif + étape atteinte et révélée)
-function arOn(k,n){ return arenaLook()===k && (arHoldLook?arHoldVis:arenaVisStep())>=n; }
+function arOn(k,n){ return arenaLook()===k && (arFixed()!==null?10:arHoldLook?arHoldVis:arenaVisStep())>=n; }
 
 // Bannière d'une arène (Accueil + route) : chaque arène a son propre habillage, quel que soit le thème choisi.
 function arenaBanner(i, inner){
@@ -1707,7 +1721,7 @@ function arenasOn(){ try{ return localStorage.getItem(ARENA_OFF_KEY)!=='1'; }cat
 function setArenasOn(on){
   try{ on?localStorage.removeItem(ARENA_OFF_KEY):localStorage.setItem(ARENA_OFF_KEY,'1'); }catch(e){}
   let th=''; try{ th=localStorage.getItem(THEME_KEY)||''; }catch(e){}
-  if(!on && th==='arene') applyTheme('slate');
+  if(!on && (th==='arene' || /^arene-/.test(th))) applyTheme('slate');
   render(); if(on) queueStepReveal();
 }
 // Bannière de l'arène en haut de l'Accueil → ouvre la route.
@@ -1821,8 +1835,10 @@ function arenaWidgets(){
 // Décor global (fond + éléments posés sur l'écran) et classes d'étapes sur <body>. Appelée à chaque render().
 function updateArena(){
   if(arHoldLook) return;   // portail en cours : l'ancien look reste affiché jusqu'à la transformation
-  if(arenaLook() && arenaLook()!==ARENAS[arenaIdx()].k){ applyTheme('arene'); return; }   // data a changé d'arène sans passer par applyTheme
-  const k=arenaLook(), i=arenaIdx(), S=k?arenaVisStep():0;
+  const fx=arFixed();
+  if(fx!==null && !arenaDone(fx)){ applyTheme('slate'); return; }   // style d'une arène plus débloquée (autre compte, remise à zéro…)
+  if(fx===null && arenaLook() && arenaLook()!==ARENAS[arenaIdx()].k){ applyTheme('arene'); return; }   // data a changé d'arène sans passer par applyTheme
+  const k=arenaLook(), i=fx!==null?fx:arenaIdx(), S=!k?0:fx!==null?10:arenaVisStep();
   for(let n=1;n<=10;n++) document.body.classList.toggle('as'+n, !!k && n<=S);
   if(k && document.body.dataset.arv!==String(S)){   // couleurs de l'étape (base grise + éléments atteints)
     const root=document.documentElement; Object.entries(LIGHT_DEFAULTS).forEach(([a,b])=>root.style.setProperty(a,b));
@@ -2072,7 +2088,7 @@ function enterNextArena(){
   const commit=()=>{ if(committed) return; committed=true;
     arHoldVis=arenaVisStep();   // l'ancienne arène reste affichée telle quelle jusqu'à la transformation
     data.arena=n; try{ localStorage.setItem(ARENA_SEEN_KEY, JSON.stringify({i:n,s:arenaStep(n)})); }catch(e){}
-    arHoldLook=arenaLook()!==null;   // le look changera sous tes yeux après « Entrer dans l'arène » (arenaMorph)
+    arHoldLook=curTheme()==='arene';   // le look changera sous tes yeux après « Entrer dans l'arène » (arenaMorph) ; un style d'arène finie choisi reste tel quel
     render(); window.scrollTo({top:0});
   };
   const go=()=>{ phase=2; ready=false; flush(); stg.classList.add('out'); $('.wcard').classList.add('hot'); $('.wtilt').classList.add('rattle');
@@ -4824,7 +4840,7 @@ window.addEventListener('storage', e=>{
 
 let savedTheme = localStorage.getItem(THEME_KEY);
 if(['nuit','foret','aubergine','ocean','braise','cerise'].includes(savedTheme)) savedTheme='sombre';   // thèmes retirés le 13/11 : les sombres → Sombre
-if(!THEMES[savedTheme]) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…, ou l'ancien « auto ») → clair
+if(!THEMES[savedTheme] && arFixOf(savedTheme)===null) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…, ou l'ancien « auto ») → clair
 applyTheme(savedTheme);
 recoverStaleSession();
 ownSession = !!data.active && !otherDevice(data.active);   // session reprise au chargement : cet onglet la pilote (sauf si lancée sur un autre appareil)
