@@ -1537,7 +1537,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261113-115614';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261113-155954';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1590,49 +1590,13 @@ const ICONS = {
 };
 function ic(name,size){ size=size||20; return `<svg class="ic" viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`; }
 
-// ---- Ambiances : clair (slate) par défaut, + sauge (chaud) + sombre (zinc) ----
+// ---- Ambiances : clair (slate) par défaut + sombre (zinc) ; « Arène » ajoutée plus bas (THEMES.arene) ----
 const THEMES = {
   slate: {label:"Clair",  vars:{}},
-  sauge: {label:"Sauge",  vars:{'--bg':'#E7EEE0','--bg2':'#D3DEC6','--card':'#FBFCF9','--ink':'#20271C',
-                                '--muted':'#67735C','--line':'#D3DEC6','--primary':'#4F7A52',
-                                '--shadow':'0 1px 3px rgba(32,39,28,.09)','--ring':'rgba(79,122,82,.18)'}},
   sombre:{label:"Sombre", vars:{'--bg':'#09090B','--bg2':'#27272A','--card':'#18181B','--ink':'#FAFAFA',
                                 '--muted':'#A1A1AA','--line':'#3F3F46','--primary':'#38BDF8',
                                 '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
                                 '--shadow':'0 1px 3px rgba(0,0,0,.4)','--ring':'rgba(56,189,248,.20)','--onp':'#0B0F14'}},
-  lavande:{label:"Lavande", vars:{'--bg':'#EEEBF7','--bg2':'#DDD7EE','--card':'#FFFFFF','--ink':'#1E1B2E',
-                                '--muted':'#5E5873','--line':'#DDD7EE','--primary':'#6D4FC2',
-                                '--shadow':'0 1px 3px rgba(30,27,46,.09)','--ring':'rgba(109,79,194,.18)'}},
-  peche: {label:"Pêche",  vars:{'--bg':'#F8EEE6','--bg2':'#EEDCCD','--card':'#FFFCFA','--ink':'#2B1E16',
-                                '--muted':'#6E5C50','--line':'#EEDCCD','--primary':'#C2562B',
-                                '--shadow':'0 1px 3px rgba(43,30,22,.09)','--ring':'rgba(194,86,43,.18)'}},
-  rose:  {label:"Rose",   vars:{'--bg':'#F8ECF0','--bg2':'#EDD8E0','--card':'#FFFBFC','--ink':'#2A1820',
-                                '--muted':'#6F5762','--line':'#EDD8E0','--primary':'#B8326A',
-                                '--shadow':'0 1px 3px rgba(42,24,32,.09)','--ring':'rgba(184,50,106,.18)'}},
-  nuit:  {label:"Nuit",   vars:{'--bg':'#0B1120','--bg2':'#1E293B','--card':'#111A2E','--ink':'#F1F5F9',
-                                '--muted':'#94A3B8','--line':'#334155','--primary':'#818CF8',
-                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(129,140,248,.22)','--onp':'#0B0F14'}},
-  foret: {label:"Forêt",  vars:{'--bg':'#0C1410','--bg2':'#1E2B24','--card':'#131D18','--ink':'#ECF3EE',
-                                '--muted':'#9AAFA2','--line':'#2E3F35','--primary':'#22A55A',
-                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(34,165,90,.22)','--onp':'#0B0F14'}},
-  aubergine:{label:"Aubergine", vars:{'--bg':'#120B1A','--bg2':'#2A1F36','--card':'#1A1224','--ink':'#F3EEF8',
-                                '--muted':'#AE9FBF','--line':'#3B2D4A','--primary':'#9B6BE0',
-                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(155,107,224,.22)','--onp':'#0B0F14'}},
-  ocean:{label:"Océan", vars:{'--bg':'#071417','--bg2':'#18303A','--card':'#0D1E23','--ink':'#E9F6F8',
-                                '--muted':'#93B4BC','--line':'#24414B','--primary':'#14A3B8',
-                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(20,163,184,.22)','--onp':'#0B0F14'}},
-  braise:{label:"Braise", vars:{'--bg':'#16100B','--bg2':'#2F241B','--card':'#1E1711','--ink':'#F8F0E8',
-                                '--muted':'#BBA796','--line':'#3F3125','--primary':'#E07A2E',
-                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,122,46,.22)','--onp':'#0B0F14'}},
-  cerise:{label:"Cerise", vars:{'--bg':'#170B10','--bg2':'#331C25','--card':'#201117','--ink':'#F9EEF2',
-                                '--muted':'#BF9DAA','--line':'#452A35','--primary':'#E0457B',
-                                '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.45)','--ring':'rgba(224,69,123,.22)','--onp':'#0B0F14'}},
 };
 // Base claire complète : permet de revenir proprement après le mode sombre (couleurs maîtrise incluses).
 const LIGHT_DEFAULTS = {
@@ -1652,9 +1616,7 @@ function applyTheme(name){
   document.querySelectorAll('.topt[data-t]').forEach(s=>s.classList.toggle('on', s.dataset.t===name));
   if(typeof data!=='undefined') updateArena();
 }
-const THEME_OPTS = [['slate','Clair'],['sauge','Sauge'],['lavande','Lavande'],['peche','Pêche'],['rose','Rose'],
-                    ['sombre','Sombre'],['nuit','Nuit'],['foret','Forêt'],
-                    ['aubergine','Aubergine'],['ocean','Océan'],['braise','Braise'],['cerise','Cerise']];
+const THEME_OPTS = [['slate','Clair'],['sombre','Sombre']];
 function buildThemeOpts(active){
   const box = document.getElementById('themeOpts');
   if(!box) return;
@@ -2856,11 +2818,7 @@ async function submitAuth(kind){
 }
 
 // Même couleur, mais lisible en TEXTE : sur fond clair, orange et jaune sont assombris (≈2,8:1 → ≥4,5:1). Barres inchangées.
-function couleurTxt(p){ const c=couleur(p); if(p<=20||p>80) return c;
-  const bg=getCSS('--card').replace('#',''); if(bg.length<6) return c;
-  const L=(parseInt(bg.slice(0,2),16)*299+parseInt(bg.slice(2,4),16)*587+parseInt(bg.slice(4,6),16)*114)/1000;
-  if(L<=150) return c;                       // fond sombre : couleur vive telle quelle
-  return p<=40 ? '#EA580C' : p<=60 ? '#D9A006' : '#3E9A68'; } // fond clair : même teinte que la barre, juste un peu plus soutenue (Eric 13/11 : « 48 % noir, 40 % rouge » → plus de noir ni d'orange qui tire au rouge)
+function couleurTxt(p){ return couleurLisse(p); }   // le chiffre prend EXACTEMENT la couleur du bout de sa barre (même dégradé) — Eric 13/11 : « le jaune assombri fait caca »
 function couleur(p){ if(p<=20)return getCSS('--rouge'); if(p<=40)return getCSS('--orange'); if(p<=60)return getCSS('--jaune'); if(p<=80)return getCSS('--vertc')||getCSS('--vert'); return getCSS('--vert'); }
 // Dégradé : couleur interpolée entre les centres des paliers (10, 30, 50, 70, 90 %).
 function masteryStops(){ return [[10,getCSS('--rouge')],[30,getCSS('--orange')],[50,getCSS('--jaune')],[70,getCSS('--vertc')||getCSS('--vert')],[90,getCSS('--vert')]]; }
@@ -4852,6 +4810,7 @@ window.addEventListener('storage', e=>{
 })();
 
 let savedTheme = localStorage.getItem(THEME_KEY);
+if(['nuit','foret','aubergine','ocean','braise','cerise'].includes(savedTheme)) savedTheme='sombre';   // thèmes retirés le 13/11 : les sombres → Sombre
 if(!THEMES[savedTheme]) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…, ou l'ancien « auto ») → clair
 applyTheme(savedTheme);
 recoverStaleSession();
