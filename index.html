@@ -788,6 +788,8 @@
   /* matière choisie bien visible (avant : seul un contour fin la distinguait) */
   .agpanel .matchip.mini{border-color:var(--line)}
   .agpanel .matchip.mini.on{background:color-mix(in srgb,var(--c) 22%,var(--card));border:2px solid var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent)}
+  .agpanel .optchip{border-color:var(--line)}
+  .agpanel .optchip.on{background:color-mix(in srgb,var(--primary) 16%,var(--card));border:2px solid var(--primary)}
   .agpanel .matchip.mini.on .dot{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--c)}
   @media (max-width:520px){ .agadd.agtop.agpanel{margin:0 -10px 14px;padding:12px 6px} .agpanel .agdays{gap:2px} }   /* jours ≥ 44 px de large sur iPhone */
   /* Mobile : bouton « + Nouvelle tâche » toujours à portée (l'agenda est sous le lanceur) */
@@ -1303,7 +1305,6 @@
   /* Arène 1 · Les couleurs : chaque carte prend la couleur de SA matière (Réglages : rien) */
   body[data-arena=brutal].as6 :is(.grid .mcard,.prevrow.bosser,.agbox,.agtxt:not(.aghd),#detail .chap,#detail .chartbox)[style*="--mc"],
   body[data-arena=brutal].as6 #detail[style*="--mc"] :is(.chap,.chartbox){background:color-mix(in srgb,var(--mc) 30%,#fff)}
-  body[data-arena=brutal].as6 :is(.grid .mcard .pct,.prevrow.bosser .ppct,#detail .chap .cpct){filter:brightness(.72)}   /* % lisibles sur fond teinté (≥ 4,5:1) */
   /* Arène 1 · Les barres : grosses barres cerclées avec relief, partout (cartes, bannière, graphe, session) */
   body[data-arena=brutal].as9 :is(.mcard .pbar,.chap .bar,.prevrow .pbar2,.rgbar){height:26px;border:3px solid #000;border-radius:10px;background:#fff;box-shadow:3px 3px 0 #000}
   body[data-arena=brutal].as9 :is(.mcard .pbar,.chap .bar,.prevrow .pbar2,.rgbar)>:is(span,i){border-radius:0;border-right:3px solid #000;box-shadow:inset 0 5px 0 rgba(255,255,255,.45),inset 0 -5px 0 rgba(0,0,0,.18)}
@@ -1536,7 +1537,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261113-115030';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261113-115614';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -2859,7 +2860,7 @@ function couleurTxt(p){ const c=couleur(p); if(p<=20||p>80) return c;
   const bg=getCSS('--card').replace('#',''); if(bg.length<6) return c;
   const L=(parseInt(bg.slice(0,2),16)*299+parseInt(bg.slice(2,4),16)*587+parseInt(bg.slice(4,6),16)*114)/1000;
   if(L<=150) return c;                       // fond sombre : couleur vive telle quelle
-  return p<=40 ? '#C2410C' : p<=60 ? 'var(--ink)' : '#1E7A52'; } // fond clair : jaune assombri = marron → texte neutre
+  return p<=40 ? '#EA580C' : p<=60 ? '#D9A006' : '#3E9A68'; } // fond clair : même teinte que la barre, juste un peu plus soutenue (Eric 13/11 : « 48 % noir, 40 % rouge » → plus de noir ni d'orange qui tire au rouge)
 function couleur(p){ if(p<=20)return getCSS('--rouge'); if(p<=40)return getCSS('--orange'); if(p<=60)return getCSS('--jaune'); if(p<=80)return getCSS('--vertc')||getCSS('--vert'); return getCSS('--vert'); }
 // Dégradé : couleur interpolée entre les centres des paliers (10, 30, 50, 70, 90 %).
 function masteryStops(){ return [[10,getCSS('--rouge')],[30,getCSS('--orange')],[50,getCSS('--jaune')],[70,getCSS('--vertc')||getCSS('--vert')],[90,getCSS('--vert')]]; }
