@@ -1463,6 +1463,7 @@
   .qmoreopt i{font-style:normal;font-weight:500;color:var(--muted);margin-left:4px}
   .qopts{margin-top:8px;border-top:1px solid var(--line);padding-top:4px}
   .qopts .agpicklbl span{font-weight:500;color:var(--muted)}
+  .arstep .wskip{position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom));text-align:center;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.6);pointer-events:none;z-index:2}
 </style>
 </head>
 <body>
@@ -1537,7 +1538,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261113-155954';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261113-191751';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1644,7 +1645,7 @@ function buildThemeOpts(active){
 // Chaque arène est un univers (look complet de l'appli) qui se remplit en 10 étapes avec tes heures de travail
 // (toutes les sessions comptent). Arène remplie → portail vers la suivante. data.arena = arène où l'on est entré.
 const ARENAS=[
- {k:'brutal', nom:'Arène 1', d:20, desc:'Contours et couleurs vives.', wc:'#FFD43B', hl:'#FF4FA3', fx:['#FFD43B','#FF90E8','#7FB8FF','#7CF5A5','#000000'], swatch:'linear-gradient(135deg,#FFD43B 50%,#FF90E8 50%)',
+ {k:'brutal', nom:'Arène 1', d:8, desc:'Contours et couleurs vives.', wc:'#FFD43B', hl:'#FF4FA3', fx:['#FFD43B','#FF90E8','#7FB8FF','#7CF5A5','#000000'], swatch:'linear-gradient(135deg,#FFD43B 50%,#FF90E8 50%)',
   // Élément 0 : appli grise et vide. Chaque élément ajoute un gros morceau du style néo-brutal ; au 10ᵉ, il est complet.
   look:{vars:{'--bg':'#CFCFCF','--bg2':'#C2C2C2','--card':'#DCDCDC','--ink':'#2E2E2E','--muted':'#454545','--line':'#C4C4C4',
     '--primary':'#4A4A4A','--shadow':'none','--ring':'rgba(0,0,0,.12)','--rouge':'#E11D48','--orange':'#F97316','--jaune':'#EAB308','--vert':'#1E7A52','--vertc':'#52A97A'}},
@@ -1652,7 +1653,7 @@ const ARENAS=[
       2:{'--ink':'#000000','--line':'#000000','--primary':'#000000','--ring':'rgba(255,212,59,.55)'}},
   intro:'Elle commence grise et vide. À chaque élément, un morceau du style arrive : le papier, les contours, les ombres… jusqu\'au relief complet.',
   steps:['Le papier','Les contours','Les ombres','Le gras','Le jaune','Les couleurs','Le gros bouton','Le surligneur','Les barres','Le relief']},
- {k:'widgets', nom:'Arène 2', d:25, desc:'Verre dépoli et dégradés.', wc:'#A78BFA', fx:['#FF7A59','#6A5CFF','#00B3A4','#FFD76A','#FFFFFF'], swatch:'linear-gradient(135deg,#FF7A59,#6A5CFF,#00B3A4)',
+ {k:'widgets', nom:'Arène 2', d:10, desc:'Verre dépoli et dégradés.', wc:'#A78BFA', fx:['#FF7A59','#6A5CFF','#00B3A4','#FFD76A','#FFFFFF'], swatch:'linear-gradient(135deg,#FF7A59,#6A5CFF,#00B3A4)',
   look:{vars:{'--bg':'#2C2C2E','--bg2':'#3A3A3C','--card':'#3A3A3C','--ink':'#E5E5EA','--muted':'#A1A1A6','--line':'#48484A',
     '--primary':'#7C7C80','--rouge':'#FF8A8A','--orange':'#FFB067','--jaune':'#FFE066','--vert':'#5EEAB0','--vertc':'#D9F99D','--shadow':'none','--ring':'rgba(255,255,255,.14)'}},
   lv:{1:{'--bg':'#2A1F4A','--bg2':'#43386B','--card':'#382D5E','--ink':'#FFFFFF','--muted':'rgba(255,255,255,.74)','--line':'#4E4378','--primary':'#6A5CFF'},
@@ -1660,7 +1661,7 @@ const ARENAS=[
       4:{'--primary':'#FFD76A','--ring':'rgba(255,215,106,.28)'}},
   intro:'Elle commence grise et vide. À chaque élément, un morceau arrive : la nuit, les couleurs, le verre… jusqu\'à l\'aurore.',
   steps:['La nuit','Les couleurs','Le verre','Les gros chiffres','Le reflet','Le mouvement','Les widgets','Les bulles','Les étoiles','L\'aurore']},
- {k:'arcade', nom:'Arène 3', d:30, desc:'Néons et pixels.', wc:'#FF4FD8', fx:['#3DFF8B','#FFE14D','#FF4FD8','#4DE1FF','#FFFFFF'], swatch:'linear-gradient(135deg,#0B0F1A 50%,#FF4FD8 50%)',
+ {k:'arcade', nom:'Arène 3', d:12, desc:'Néons et pixels.', wc:'#FF4FD8', fx:['#3DFF8B','#FFE14D','#FF4FD8','#4DE1FF','#FFFFFF'], swatch:'linear-gradient(135deg,#0B0F1A 50%,#FF4FD8 50%)',
   look:{vars:{'--bg':'#2C2C2E','--bg2':'#3A3A3C','--card':'#3A3A3C','--ink':'#E5E5EA','--muted':'#B0B0B5','--line':'#48484A',
     '--primary':'#7C7C80','--rouge':'#FF8A8A','--orange':'#FFB067','--jaune':'#FFE066','--vert':'#5EEAB0','--vertc':'#D9F99D','--shadow':'none','--ring':'rgba(255,255,255,.14)'}},
   lv:{1:{'--bg':'#0B0F1A','--bg2':'#1C2438','--card':'#121829','--ink':'#E6F1FF','--muted':'#8A94AD','--line':'#2A3350','--primary':'#8A94AD'},
@@ -1670,7 +1671,9 @@ const ARENAS=[
   intro:'Elle commence grise et vide. À chaque élément, un morceau du style arrive : la nuit, le terminal, les pixels, le néon… jusqu\'à la borne complète.',
   steps:['La nuit','Le terminal','Les pixels','Le néon','Le titre','Les couleurs','Les barres','Le bouton qui clignote','Les lignes d\'écran','La borne']}
 ];
-// Prévu à terme : 10 arènes, de plus en plus longues (20 · 25 · 30 · 35 · 40 · 50 · 60 · 70 · 85 · 100 h).
+// Prévu à terme : 10 arènes, de plus en plus longues (8 · 10 · 12 · 15 · 18 · 22 · 26 · 30 · 35 · 40 h) — 13/11, Eric : « trop long ».
+// Dans chaque arène, les éléments arrivent vite au début puis ralentissent (Arène 1 : 15 min, 30 min, 1 h, 1 h 30, 2 h 15, 3 h, 4 h, 5 h, 6 h 30, 8 h).
+const ARENA_CURVE=[0,.03125,.0625,.125,.1875,.28125,.375,.5,.625,.8125,1];   // part de la durée de l'arène à laquelle l'élément n est atteint
 THEMES.arene={label:'Arène', vars:{}};
 const ARENA_SEEN_KEY="suivi-revisions-bac-arenaseen2";   // 2 : nouvel ordre des arènes (le Cahier est sorti), révélations repartent de zéro
 // Arènes : seules les heures faites APRÈS la mise en ligne des arènes comptent (demande d'Eric : tout le monde part de 0).
@@ -1680,7 +1683,11 @@ function totalWorkH(){
 }
 function arenaIdx(){ const i=(typeof data!=='undefined'&&data.arena)||0; return Math.min(Math.max(0,i),ARENAS.length-1); }
 function arenaStart(i){ return ARENAS.slice(0,i).reduce((s,a)=>s+a.d,0); }
-function arenaStep(i){ return Math.max(0,Math.min(10,Math.floor((totalWorkH()-arenaStart(i))/ARENAS[i].d*10+1e-9))); }
+// Heure (cumulée) où l'élément n de l'arène i est atteint, et position continue 0…10 dans l'arène pour h heures (courbe ARENA_CURVE).
+function arenaAt(i,n){ return arenaStart(i)+ARENAS[i].d*ARENA_CURVE[Math.max(0,Math.min(10,n))]; }
+function arenaPos(i,h){ const f=(h-arenaStart(i))/ARENAS[i].d; if(!(f>0)) return 0; if(f>=1-1e-12) return 10;
+  let n=0; while(n<9 && ARENA_CURVE[n+1]<=f+1e-12) n++; return Math.min(10, n+(f-ARENA_CURVE[n])/(ARENA_CURVE[n+1]-ARENA_CURVE[n])); }
+function arenaStep(i){ return Math.max(0,Math.min(10,Math.floor(arenaPos(i,totalWorkH())+1e-9))); }
 function arenaLook(){ return document.body.dataset.arena||null; }
 // Étape affichée : un élément gagné n'apparaît dans l'appli qu'une fois révélé (carte « ??? »), pas avant.
 function arenaVisStep(){ const i=arenaIdx(), S=arenaStep(i), v=typeof data!=='undefined'?readArenaSeen():null; return v&&v.i===i?Math.min(S,v.s):S; }
@@ -1707,9 +1714,9 @@ function setArenasOn(on){
 function arenaCard(){
   const i=arenaIdx(), A=ARENAS[i], S=arenaVisStep(), last=i===ARENAS.length-1;
   // éléments pas encore révélés : la pastille et le texte ne les annoncent pas (surprise de la carte qui se retourne)
-  const into=Math.min((totalWorkH()-arenaStart(i))/A.d*10, 10);   // la barre suit les heures (un segment atteint mais pas encore révélé reste plein : il ne redescend plus)
+  const into=Math.min(arenaPos(i,totalWorkH()), 10);   // la barre suit les heures (un segment atteint mais pas encore révélé reste plein : il ne redescend plus)
   const seg=Array.from({length:10},(_,k)=>`<i><b style="width:${Math.max(0,Math.min(1,into-k))*100}%"></b></i>`).join('');
-  const left=arenaStart(i)+(arenaStep(i)+1)*A.d/10-totalWorkH();
+  const left=arenaAt(i,arenaStep(i)+1)-totalWorkH();
   const foot = S<arenaStep(i) ? `<b>Nouvel élément à découvrir !</b>` : S>=10 ? (last?'<b>Arène complète !</b> La suivante arrive bientôt.':`<b>Arène complète !</b> Le portail est ouvert.`)
     : `<b>Élément ${S} / 10</b> · prochain élément dans ${fmtDur(left*3600000).replace(/ /g,'\u00a0')}`;
   const look=arenaLook()===A.k;
@@ -1749,14 +1756,14 @@ function renderArenes(){
   const el=document.getElementById('arenes');
   const cur=arenaIdx(), H=totalWorkH(), last=ARENAS.length-1;
   const capH=Math.max(arenaStart(cur), Math.min(H, arenaStart(cur)+ARENAS[cur].d));   // on ne dépasse pas le portail tant qu'on ne l'a pas passé
-  const S=arenaStep(cur), left=arenaStart(cur)+(S+1)*ARENAS[cur].d/10-H;
+  const S=arenaStep(cur), left=arenaAt(cur,S+1)-H;
   const vis=arenaVisStep();
   let html=arenaBanner(-1,`<div class="rbtop"><small>Arène ${ARENAS.length+1}</small><span class="rbpill">${ic('lock',14)} bientôt</span></div>
     <div class="rbname">???</div><div class="rbsub">La suivante arrive bientôt.</div>`);
   for(let i=last;i>=0;i--){
     const A=ARENAS[i], st=arenaStart(i), known=i<=cur;
     for(let n=10;n>=1;n--){
-      const lo=st+(n-1)*A.d/10, hi=st+n*A.d/10, ok=known && capH>=hi-1e-9 && (i<cur || n<=vis);   // pas révélé = pas de nom (surprise gardée)
+      const lo=arenaAt(i,n-1), hi=arenaAt(i,n), ok=known && capH>=hi-1e-9 && (i<cur || n<=vis);   // pas révélé = pas de nom (surprise gardée)
       html+=`<div class="rrow ${n%2?'l':'r'}${ok?' ok':''}" data-i="${i}" data-n="${n}" data-lo="${lo}" data-hi="${hi}">
         <span class="rnode">${ok?ic('check',16):n}</span>
         <span class="rlab"><b>${ok?escapeH(A.steps[n-1]):'???'}</b><small>${fmtH(hi)}</small></span></div>`;
@@ -2078,7 +2085,7 @@ function enterNextArena(){
   };
   // ---- 3) Révélation ----
   const reveal=()=>{ phase=3;
-    const H=totalWorkH(), S1=Math.min(10,arenaStep(n)), left=arenaStart(n)+(S1+1)*A.d/10-H;
+    const H=totalWorkH(), S1=Math.min(10,arenaStep(n)), left=arenaAt(n,S1+1)-H;
     const next = S1>=10 ? 'Elle est déjà remplie.' : `${S1>0?`Déjà <b>${S1}</b> élément${S1>1?'s':''} d'avance · `:''}Prochain élément dans <b>${fmtDur(left*3600000)}</b>`;
     stg.className='stg';
     stg.innerHTML=`<div class="wkick">Nouvelle arène</div>
@@ -2125,7 +2132,7 @@ function arenaMorph(n){
 // Carte d'accueil de l'arène : bienvenue + comment elle se remplit + le prochain élément.
 function openArenaIntro(i){
   const A=ARENAS[i]; if(!A || document.querySelector('.arintro')) return;
-  const H=totalWorkH(), S=Math.min(10,arenaStep(i)), left=arenaStart(i)+(S+1)*A.d/10-H;
+  const H=totalWorkH(), S=Math.min(10,arenaStep(i)), left=arenaAt(i,S+1)-H;
   const o=document.createElement('div'); o.className='arintro'; o.setAttribute('role','dialog'); o.setAttribute('aria-modal','true'); o.setAttribute('aria-label',`Bienvenue dans ${A.nom}`);
   const look=arenaLook()===A.k;
   const btns = look ? `<button class="aibtn" data-done>C'est parti</button>`
@@ -2134,7 +2141,7 @@ function openArenaIntro(i){
     <div class="aitop"><small>Nouvelle arène</small></div>
     <div class="aibody"><div class="aiemb">${ARENA_EMBLEMS[A.k]||''}</div>
       <h3 class="ait">Bienvenue dans ${escapeH(A.nom)}</h3><p class="aip">${escapeH(A.intro||A.desc)}</p>
-      <div class="aifacts"><div><b>${A.d} h</b><small>pour la remplir</small></div><div><b>${fmtH(A.d/10)}</b><small>par élément</small></div>
+      <div class="aifacts"><div><b>${A.d} h</b><small>pour la remplir</small></div><div><b>${fmtH(arenaAt(i,1)-arenaStart(i))}</b><small>pour le 1er élément</small></div>
         <div><b>${S>=10?'—':fmtDur(left*3600000)}</b><small>avant le prochain</small></div></div>
       <div class="arseg">${Array.from({length:10},(_,j)=>`<i><b style="width:${j<S?100:0}%"></b></i>`).join('')}</div></div>
     <div class="aibtns">${btns}</div></div>`;
@@ -2148,7 +2155,7 @@ function openArenaIntro(i){
   document.addEventListener('keydown',onKey);
   requestAnimationFrame(()=>o.classList.add('show'));
 }
-// ---------- Mini-révélation d'un nouvel élément (toutes les ~2 h de travail) ----------
+// ---------- Mini-révélation d'un nouvel élément (de plus en plus espacés, voir ARENA_CURVE) ----------
 // Une carte « ??? » tremble et se retourne sur l'élément gagné, puis l'élément gagné s'illumine 5 s dans l'appli.
 // Attend que l'écran soit libre (pas de session plein écran, de bilan, de saisie, de portail…).
 let stepRevealT=null;
@@ -2166,7 +2173,7 @@ function openStepReveal(i,n){
   arAudio();
   const w=document.createElement('div'); w.className='arwarp arstep'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true');
   w.setAttribute('aria-label',`Nouvel élément : ${A.steps[n-1]}`); w.style.setProperty('--c',A.wc);
-  const left=arenaStart(i)+(n+1)*A.d/10-H, more=S>n;
+  const left=arenaAt(i,n+1)-H, more=S>n;
   const sub = n>=10 ? (last?'Arène complète ! La suivante arrive bientôt.':'Arène complète : <b>le portail est ouvert</b>')
     : more ? `Et ce n'est pas tout : <b>${S-n}</b> autre${S-n>1?'s':''} élément${S-n>1?'s':''} à découvrir`
     : `Prochain élément dans <b>${fmtDur(Math.max(0,left)*3600000)}</b>`;
@@ -2185,7 +2192,8 @@ function openStepReveal(i,n){
           <div class="bq">?</div><div class="rbsub">Élément ${n}</div><i class="sheen"></i></div></div>
       </div></div></div></div>
       <div class="winfo"><div class="wnext">${sub}</div></div>
-      <div class="wbtns">${btns}</div></div><div class="flash"></div>`;
+      <div class="wbtns">${btns}</div></div><div class="flash"></div>
+      <div class="wskip">${matchMedia('(hover:none)').matches?'Touche deux fois':'Double-clic'} pour passer${more?' tout':''}</div>`;
   document.body.appendChild(w); requestAnimationFrame(()=>w.classList.add('show'));
   const fx=prefersReduced()?{embers(){},burst(){},stop(){}}:arParticles(w);
   fx.embers(A.fx||[A.wc]);
@@ -2207,7 +2215,12 @@ function openStepReveal(i,n){
     w.classList.remove('show'); setTimeout(()=>{ w.remove(); if(then) then(); else queueStepReveal(); },450); };
   const skip=()=>{ T.forEach(clearTimeout); T=[]; $('.wenter').classList.add('on'); $('.wcard').classList.add('lk1'); flip(); };
   const onKey=e=>{ if(e.key==='Escape') close(); else if(e.key==='Enter'){ e.preventDefault(); if(!ready) skip(); else w.querySelector('.wbtns .wbtn')?.click(); } };
+  // Double-clic / deux touchers rapides : on passe tout (cet élément + ceux qui attendent), sans animation (13/11, Eric : « c'est chiant »)
+  let lastTap=0;
+  const skipAll=()=>{ writeArenaSeen({i, s:Math.max(n, arenaStep(i))}); close(()=>render()); };
   w.addEventListener('click',e=>{
+    const now=Date.now(), dbl=now-lastTap<400; lastTap=now;
+    if(dbl && !e.target.closest('.wbtns button')) return skipAll();
     if(!ready){ if(!$('.flipc').classList.contains('open')) skip(); return; }
     if(e.target.closest('[data-portal]')) return close(()=>enterNextArena());
     if(e.target.closest('[data-spot]')) return close(()=>arSpotlight(i,n));
@@ -4061,7 +4074,7 @@ function debriefArena(d){
   const i=arenaIdx(), A=ARENAS[i], t0=Date.parse(d.start);
   // temps réellement enregistré depuis le début de la session (en Pomodoro : tous les blocs comptés)
   const gained=(data.sessions||[]).filter(x=>x.end && !x.sim && Date.parse(x.start)>=t0-1000).reduce((s,x)=>s+Math.max(0,Date.parse(x.end)-Math.max(ARENA_FROM,Date.parse(x.start))),0)/3600000;
-  const H=totalWorkH(), pos=h=>Math.max(0,Math.min(10,(h-arenaStart(i))/A.d*10));
+  const H=totalWorkH(), pos=h=>arenaPos(i,h);
   return {i, from:pos(H-gained), to:pos(H), gained, H, mat:d.mat, done:false};
 }
 // Après le bilan : grande colonne d'énergie qui monte vers la carte « ??? » du prochain élément.
@@ -4070,9 +4083,9 @@ function debriefArena(d){
 // Fin : « encore N sessions comme celle-là » + bouton « Relancer une session » (donner envie d'en refaire une).
 function openGauge(r){
   if(!r || !(r.gained>0) || !arenasOn() || document.querySelector('.argauge') || r.from>=10-1e-9) return;   // arène déjà complète : rien à remplir (le portail attend sur l'Accueil)
-  const A=ARENAS[r.i], last=r.i===ARENAS.length-1, per=A.d/10*3600000;
+  const A=ARENAS[r.i], last=r.i===ARENAS.length-1, per=n=>(arenaAt(r.i,n+1)-arenaAt(r.i,n))*3600000;   // durée de l'élément n (courbe : de plus en plus long)
   const S0=Math.floor(r.from+1e-9), S1=Math.min(10,Math.floor(r.to+1e-9)), crossed=S1-S0;
-  const leftMs=Math.max(0,(arenaStart(r.i)+(S1+1)*A.d/10-r.H)*3600000), gMs=r.gained*3600000;
+  const leftMs=Math.max(0,(arenaAt(r.i,S1+1)-r.H)*3600000), gMs=r.gained*3600000;
   const w=document.createElement('div'); w.className='argauge'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true');
   w.setAttribute('aria-label',`${A.nom} : +${fmtDur(gMs)}`); w.style.setProperty('--c',A.wc);
   const wave=`<svg viewBox="0 0 240 22" preserveAspectRatio="none"><path d="M0 12 Q30 2 60 12 T120 12 T180 12 T240 12 V22 H0Z"/></svg>`;
@@ -4112,7 +4125,7 @@ function openGauge(r){
     const dur=calm?0:2200*Math.max(.4,L.z-L.a), t0=performance.now(), base=shown;
     try{ arTone(180+L.a*400,0,dur/1000,.045,'triangle',180+L.z*700,.25); arNoise(0,dur/1000,.05,300,300+L.z*3000,'bandpass',.6); }catch(e){}   // le son monte avec l'énergie
     const step=now=>{ const k=Math.min(1,(now-t0)/(dur||1)), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2, v=L.a+(L.z-L.a)*e;
-      setV(v); shown=base+(L.z-L.a)*e*per; const sv=Math.min(gMs,shown);
+      setV(v); shown=base+(L.z-L.a)*e*per(L.n); const sv=Math.min(gMs,shown);
       cnt.textContent='+'+fmtDur(sv); const sec=Math.floor(sv/300000);   // un petit « tic » toutes les 5 min gagnées
       if(sec!==lastSec){ lastSec=sec; cnt.classList.remove('pop'); void cnt.offsetWidth; cnt.classList.add('pop'); try{ arSfx.tick(Math.min(9,Math.floor(v*10))); }catch(e){} }
       if(k<1){ raf=requestAnimationFrame(step); return; }
