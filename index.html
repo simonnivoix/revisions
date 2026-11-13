@@ -177,7 +177,7 @@
   .plabel{font-size:12px;font-weight:600;color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em}
   .topt{display:flex;align-items:center;gap:10px;width:100%;background:none;border:1px solid transparent;border-radius:10px;
         padding:9px 10px;cursor:pointer;font-family:inherit;font-size:14px;color:var(--ink);min-height:44px;transition:.12s;margin-bottom:2px}
-  .topt:hover{background:var(--bg2)}
+  @media (hover:hover){ .topt:hover{background:var(--bg2)} }   /* au doigt, le survol restait collé : la ligne touchée avait l'air choisie */
   .topt.on{border-color:var(--primary)}
   .tdot{width:18px;height:18px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);flex-shrink:0}
   .tlabel{flex:1;text-align:left}
@@ -990,8 +990,8 @@
   .arwarp .winfo.on{opacity:1;transform:none}
   .arwarp .winfo .wmeta{font-size:13px;opacity:.6;letter-spacing:.04em}
   .arwarp .winfo .wnext{font-size:15px}.arwarp .winfo .wnext b{color:color-mix(in srgb,var(--c) 75%,#fff);font-weight:600}
-  .arwarp .wbtns{display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;transform:translateY(10px);transition:opacity .7s,transform .7s cubic-bezier(.16,1,.3,1)}
-  .arwarp .wbtns.on{opacity:1;transform:none}
+  .arwarp .wbtns{display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .7s,transform .7s cubic-bezier(.16,1,.3,1)}
+  .arwarp .wbtns.on{opacity:1;transform:none;pointer-events:auto}
   .arwarp .wbtn{min-height:50px;padding:0 30px;border:0;border-radius:14px;background:#fff;color:#0B0B12;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;
           box-shadow:0 0 0 1px rgba(255,255,255,.3),0 10px 40px color-mix(in srgb,var(--c) 45%,transparent);transition:transform .2s}
   .arwarp .wbtn:active{transform:scale(.97)}
@@ -1463,6 +1463,7 @@
   .qmoreopt i{font-style:normal;font-weight:500;color:var(--muted);margin-left:4px}
   .qopts{margin-top:8px;border-top:1px solid var(--line);padding-top:4px}
   .qopts .agpicklbl span{font-weight:500;color:var(--muted)}
+  .arwarp{touch-action:manipulation}   /* deux touchers rapides = « tout passer », pas un zoom (iPhone) */
   .arstep .wskip{position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom));text-align:center;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.6);pointer-events:none;z-index:2}
 </style>
 </head>
@@ -1538,7 +1539,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261113-193351';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261113-201649';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1608,12 +1609,12 @@ const LIGHT_DEFAULTS = {
 
 // Thèmes des arènes terminées (13/11, Eric : « tu les débloques et tu peux revenir dessus sans être dans le mode arène ») :
 // 'arene-1', 'arene-2'… = le style COMPLET (élément 10) d'une arène finie, fixe, quel que soit l'endroit où l'on en est.
-function arenaDone(j){ return typeof data!=='undefined' && !!ARENAS[j] && (j<arenaIdx() || (j===arenaIdx() && arenaStep(j)>=10)); }
+function arenaDone(j){ return typeof data!=='undefined' && !!ARENAS[j] && j<arenaIdx(); }   // arène quittée par le portail : tous ses éléments ont été révélés
 function arFixOf(name){ const m=/^arene-(\d+)$/.exec(name||''); if(!m) return null; const j=+m[1]-1; return arenaDone(j)?j:null; }
 function curTheme(){ try{ return localStorage.getItem(THEME_KEY)||'slate'; }catch(e){ return 'slate'; } }
 function arFixed(){ const v=document.body.dataset.arfix; return v===undefined?null:+v; }   // arène terminée affichée en style fixe (sinon null)
 function applyTheme(name){
-  const fix=arFixOf(name);
+  const fix=arFixOf(name), keep=fix===null && /^arene-\d+$/.test(name||'');   // style d'arène finie pas (ou plus) disponible ici : Clair à l'écran, choix gardé (revient après « Annuler », reconnexion…)
   if(!THEMES[name] && fix===null) name='slate';
   const t = fix!==null ? {vars:arenaVars(fix,10)}   // arène terminée : son style complet
     : name==='arene' ? {vars:arenaVars(arenaIdx(),arenaVisStep())} : THEMES[name];   // « Arène » = le look de l'arène où l'on est, à l'élément atteint
@@ -1623,7 +1624,7 @@ function applyTheme(name){
   if(fix!==null){ document.body.dataset.arena=ARENAS[fix].k; document.body.dataset.arfix=fix; }
   else { delete document.body.dataset.arfix; if(name==='arene') document.body.dataset.arena=ARENAS[arenaIdx()].k; else delete document.body.dataset.arena; }
   delete document.body.dataset.arv;   // recalcul des couleurs d'étape par updateArena()
-  try{ localStorage.setItem(THEME_KEY, name); }catch(e){}
+  if(!keep) try{ localStorage.setItem(THEME_KEY, name); }catch(e){}
   document.querySelectorAll('.topt[data-t]').forEach(s=>s.classList.toggle('on', s.dataset.t===name));
   if(typeof data!=='undefined') updateArena();
 }
@@ -1632,6 +1633,7 @@ function buildThemeOpts(active){
   const box = document.getElementById('themeOpts');
   if(!box) return;
   const A=ARENAS[arenaIdx()], on=arenasOn();
+  if(/^arene-/.test(active||'') && arFixOf(active)===null) active='slate';   // style pas disponible ici : c'est Clair qui est affiché
   box.innerHTML = `<button class="topt arentoggle${on?' on':''}" onclick="setArenasOn(${!on})" aria-pressed="${on}">
       <span class="tdot" style="background:${A.swatch}"></span>
       <span class="tlabel">Afficher les arènes <span style="color:var(--muted);font-weight:500">(progression et récompenses)</span></span>
@@ -1689,6 +1691,7 @@ const ARENAS=[
 // Dans chaque arène, les éléments arrivent vite au début puis ralentissent (Arène 1 : 15 min, 30 min, 1 h, 1 h 30, 2 h 15, 3 h, 4 h, 5 h, 6 h 30, 8 h).
 const ARENA_CURVE=[0,.03125,.0625,.125,.1875,.28125,.375,.5,.625,.8125,1];   // part de la durée de l'arène à laquelle l'élément n est atteint
 THEMES.arene={label:'Arène', vars:{}};
+const ARENA_PEND_KEY="suivi-revisions-bac-arenapend";   // carte « ??? » ouverte mais pas encore fermée : rouverte au prochain lancement (appli fermée pendant la carte)
 const ARENA_SEEN_KEY="suivi-revisions-bac-arenaseen2";   // 2 : nouvel ordre des arènes (le Cahier est sorti), révélations repartent de zéro
 // Arènes : seules les heures faites APRÈS la mise en ligne des arènes comptent (demande d'Eric : tout le monde part de 0).
 const ARENA_FROM=Date.parse('2026-11-08T01:00:00');
@@ -1742,7 +1745,7 @@ function arenaCard(){
       <div class="rbsub">${foot}</div>`)}</button>
     <div class="arbtns">
       ${S>=10&&!last?`<button class="arbtn portal" onclick="enterNextArena()">Passer le portail →</button>`:''}
-      ${!look?`<button class="arbtn soft" onclick="applyTheme('arene');render()">Mettre le style de l'arène</button>`:''}
+      ${!look&&arFixed()===null?`<button class="arbtn soft" onclick="applyTheme('arene');render()">Mettre le style de l'arène</button>`:''}
     </div>`;
 }
 // Emblème dessiné de chaque arène (au centre de la bannière de l'Accueil, comme l'arène de Clash).
@@ -1835,8 +1838,9 @@ function arenaWidgets(){
 // Décor global (fond + éléments posés sur l'écran) et classes d'étapes sur <body>. Appelée à chaque render().
 function updateArena(){
   if(arHoldLook) return;   // portail en cours : l'ancien look reste affiché jusqu'à la transformation
-  const fx=arFixed();
-  if(fx!==null && !arenaDone(fx)){ applyTheme('slate'); return; }   // style d'une arène plus débloquée (autre compte, remise à zéro…)
+  const fx=arFixed(), chosen=curTheme();
+  if(fx!==null && !arenaDone(fx)){ applyTheme(chosen); return; }   // style plus débloqué (remise à zéro, autre compte…) : Clair à l'écran, choix gardé
+  if(fx===null && arFixOf(chosen)!==null){ applyTheme(chosen); return; }   // il redevient disponible (Annuler, reconnexion) : on le remet
   if(fx===null && arenaLook() && arenaLook()!==ARENAS[arenaIdx()].k){ applyTheme('arene'); return; }   // data a changé d'arène sans passer par applyTheme
   const k=arenaLook(), i=fx!==null?fx:arenaIdx(), S=!k?0:fx!==null?10:arenaVisStep();
   for(let n=1;n<=10;n++) document.body.classList.toggle('as'+n, !!k && n<=S);
@@ -2178,14 +2182,17 @@ let stepRevealT=null;
 function queueStepReveal(){ clearTimeout(stepRevealT); stepRevealT=setTimeout(tryStepReveal,700); }
 function tryStepReveal(){
   if(!arenasOn() || arHoldLook || document.querySelector('.arwarp,.arintro,.arspot,.argauge')) return;
-  if(document.hidden || focusShown || uiBusy()){ queueStepReveal(); return; }
+  if(document.hidden || focusShown || uiBusy() || arSpotBusy){ queueStepReveal(); return; }
   const i=arenaIdx(), seen=readArenaSeen(), Sx=arenaStep(i);
+  let pend=null; try{ pend=JSON.parse(localStorage.getItem(ARENA_PEND_KEY)||'null'); }catch(e){}
+  if(pend && pend.i===i && seen && seen.i===i && pend.n<=seen.s && pend.n>=1){ openStepReveal(i, pend.n); return; }   // carte restée ouverte quand l'appli a été fermée
   if(!seen || seen.i!==i || Sx<=seen.s) return;
   openStepReveal(i, seen.s+1);
 }
 function openStepReveal(i,n){
   const A=ARENAS[i], last=i===ARENAS.length-1, H=totalWorkH(), S=arenaStep(i);
   writeArenaSeen({i,s:n}); render();   // l'élément apparaît dans l'appli, derrière la carte floutée
+  try{ localStorage.setItem(ARENA_PEND_KEY, JSON.stringify({i,n})); }catch(e){}
   arAudio();
   const w=document.createElement('div'); w.className='arwarp arstep'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true');
   w.setAttribute('aria-label',`Nouvel élément : ${A.steps[n-1]}`); w.style.setProperty('--c',A.wc);
@@ -2209,7 +2216,7 @@ function openStepReveal(i,n){
       </div></div></div></div>
       <div class="winfo"><div class="wnext">${sub}</div></div>
       <div class="wbtns">${btns}</div></div><div class="flash"></div>
-      <div class="wskip">${matchMedia('(hover:none)').matches?'Touche deux fois':'Double-clic'} pour passer${more?' tout':''}</div>`;
+      <div class="wskip">${matchMedia('(hover:none)').matches?'Touche deux fois':'Double-clic'} pour ${more?'tout passer':'passer'}</div>`;
   document.body.appendChild(w); requestAnimationFrame(()=>w.classList.add('show'));
   const fx=prefersReduced()?{embers(){},burst(){},stop(){}}:arParticles(w);
   fx.embers(A.fx||[A.wc]);
@@ -2228,6 +2235,7 @@ function openStepReveal(i,n){
   at(700,()=>{ $('.wtilt').classList.add('rattle'); $('.wcard').classList.add('lk2'); arNoise(0,.55,.16,300,2600,'bandpass',.9); });
   at(1150,flip);
   const close=then=>{ if(done) return; done=true; T.forEach(clearTimeout); fx.stop(); document.removeEventListener('keydown',onKey);
+    try{ localStorage.removeItem(ARENA_PEND_KEY); }catch(e){}
     w.classList.remove('show'); setTimeout(()=>{ w.remove(); if(then) then(); else queueStepReveal(); },450); };
   const skip=()=>{ T.forEach(clearTimeout); T=[]; $('.wenter').classList.add('on'); $('.wcard').classList.add('lk1'); flip(); };
   const onKey=e=>{ if(e.key==='Escape') close(); else if(e.key==='Enter'){ e.preventDefault(); if(!ready) skip(); else w.querySelector('.wbtns .wbtn')?.click(); } };
@@ -2239,8 +2247,8 @@ function openStepReveal(i,n){
     if(dbl && !e.target.closest('.wbtns button')) return skipAll();
     if(!ready){ if(!$('.flipc').classList.contains('open')) skip(); return; }
     if(e.target.closest('[data-portal]')) return close(()=>enterNextArena());
-    if(e.target.closest('[data-spot]')) return close(()=>arSpotlight(i,n));
-    if(e.target.closest('[data-look]')){ applyTheme('arene'); render(); return close(()=>setTimeout(()=>arSpotlight(i,n),250)); }
+    if(e.target.closest('[data-spot]')){ arSpotBusy=true; return close(()=>arSpotlight(i,n)); }   // la carte suivante attend la fin du projecteur
+    if(e.target.closest('[data-look]')){ arSpotBusy=true; applyTheme('arene'); render(); return close(()=>setTimeout(()=>arSpotlight(i,n),250)); }
     if(e.target.closest('[data-close]')) return close();
   });
   document.addEventListener('keydown',onKey);
@@ -2259,15 +2267,16 @@ function arHlTargets(k,n){
   return [...document.querySelectorAll(q)].filter(el=>{ const r=el.getBoundingClientRect(); return r.width>0 && r.height>0 && getComputedStyle(el).visibility!=='hidden'; });
 }
 // L'élément gagné s'illumine 5 s (contour lumineux qui pulse), sans assombrir le reste ; toucher pour fermer plus tôt.
+let arSpotBusy=false;   // « Voir le changement » en préparation : la carte suivante attend qu'il soit fini
 function arSpotlight(i,n,stay){
-  const A=ARENAS[i];
+  const A=ARENAS[i]; arSpotBusy=true;
   if(page!=='accueil'&&!stay){ goPage('accueil'); }
   setTimeout(()=>{
     const els=arHlTargets(A.k,n), bg=!els.length, c=A.hl||A.wc;
     if(els.length){ const r=els[0].getBoundingClientRect(); if(r.top<80||r.bottom>innerHeight-160) window.scrollTo({top:Math.max(0,scrollY+r.top-innerHeight/3),behavior:'instant'}); }
     const o=document.createElement('div'); o.className='arspot'; o.style.setProperty('--c',c);
     o.innerHTML=`<div class="spbub"><small>Nouveau dans ${escapeH(A.nom)}</small><b>${escapeH(A.steps[n-1])}</b><span>${bg?'Regarde le fond.':'Ça s\'illumine.'}</span><i></i></div>`;
-    document.body.appendChild(o);
+    document.body.appendChild(o); arSpotBusy=false;   // la bulle .arspot est là : tryStepReveal la voit
     const anims=[], calm=prefersReduced();
     if(bg) document.querySelectorAll('.wrap, .tabbar').forEach(el=>{ try{ anims.push(el.animate([{opacity:1},{opacity:.06,offset:.1},{opacity:.06,offset:.9},{opacity:1}],{duration:5000,easing:'ease-in-out'})); }catch(e){} });
     els.forEach(el=>{ try{
@@ -2562,7 +2571,7 @@ async function logout(){
   sessPlan=[]; planDraft=''; agEst=null; agItems=[]; agDraft=''; agTitle=''; agOpen=false; agMat=null; agDayISO=null; tachesOpen=false; agUrg=agImp=agMore=false; qOpen={}; pendingTask=null; taskGoal=null; debrief=null; armed=null; goalMin=null; pomoCount=null; sessMode='libre'; pomoMin=25;   // rien du compte précédent dans le lanceur
   try{ localStorage.removeItem(LASTSESS_KEY); localStorage.removeItem(DEBRIEF_KEY); }catch(e){}
   render();
-  try{ localStorage.removeItem(ARENA_SEEN_KEY); }catch(e){}   // après render() : sinon il réécrit {0,0} et la reconnexion rejouerait toutes les révélations
+  try{ localStorage.removeItem(ARENA_SEEN_KEY); localStorage.removeItem(ARENA_PEND_KEY); }catch(e){}   // après render() : sinon il réécrit {0,0} et la reconnexion rejouerait toutes les révélations
   showAuthGate('login');
 }
 
@@ -4122,7 +4131,7 @@ function openGauge(r){
   const legs=[]; for(let n=S0;n<=Math.min(S1,9);n++){ const a=n===S0?r.from-S0:0, z=n<S1?1:r.to-n; legs.push({n,a,z}); }
   let done=false, closed=false, raf, timers=[], li=0, shown=0, lastSec=-1;
   const sessions=Math.ceil(leftMs/Math.max(gMs,1)-1e-9);
-  const msg = crossed>0 ? `<b>${crossed>1?crossed+' nouveaux éléments':'Nouvel élément'} débloqué${crossed>1?'s':''} !</b><small>Il t'attend juste après.</small>`
+  const msg = crossed>0 ? `<b>${crossed>1?crossed+' nouveaux éléments':'Nouvel élément'} débloqué${crossed>1?'s':''} !</b><small>${crossed>1?'Ils t\'attendent':'Il t\'attend'} juste après.</small>`
     : S1>=10 ? (last?'<b>Arène complète !</b><small>La suivante arrive bientôt.</small>':'<b>Arène complète !</b><small>Le portail est ouvert.</small>')
     : sessions<=1 ? `<b>Plus que ${fmtDur(leftMs)} !</b><small>Encore une session comme celle-là et c'est débloqué.</small>`
     : `<b>Plus que ${fmtDur(leftMs)}</b><small>Encore ${sessions} sessions comme celle-là.</small>`;
@@ -4597,7 +4606,7 @@ function daySessionsHTML(){
     return `<div class="sessrow">
       <span class="sessdot" style="background:${mat?mat.color:'var(--muted)'}"></span>
       <span class="sessname">${escapeH(mat?mat.nom:'—')}</span>
-      <span class="sesstime">${t1}–${t2} · ${fmtDur(Date.parse(s.end)-Date.parse(s.start))}</span>
+      <span class="sesstime">${t1}–${t2} · ${fmtDur(Date.parse(s.end)-Date.parse(s.start)).replace(/ /g,'\u00a0')}</span>
       <button class="iconbtn" aria-label="Supprimer cette session" title="Supprimer" onclick="delSession(${idx})">${ic('trash',16)}</button>
     </div>`;
   }).join('');
@@ -4840,7 +4849,7 @@ window.addEventListener('storage', e=>{
 
 let savedTheme = localStorage.getItem(THEME_KEY);
 if(['nuit','foret','aubergine','ocean','braise','cerise'].includes(savedTheme)) savedTheme='sombre';   // thèmes retirés le 13/11 : les sombres → Sombre
-if(!THEMES[savedTheme] && arFixOf(savedTheme)===null) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…, ou l'ancien « auto ») → clair
+if(!THEMES[savedTheme] && !/^arene-\d+$/.test(savedTheme||'')) savedTheme='slate';   // migration des anciens thèmes (bleu/bleuvert…, ou l'ancien « auto ») → clair
 applyTheme(savedTheme);
 recoverStaleSession();
 ownSession = !!data.active && !otherDevice(data.active);   // session reprise au chargement : cet onglet la pilote (sauf si lancée sur un autre appareil)
