@@ -1465,7 +1465,28 @@
   .qopts .agpicklbl span{font-weight:500;color:var(--muted)}
   .arwarp{touch-action:manipulation}   /* deux touchers rapides = « tout passer », pas un zoom (iPhone) */
   .arstep .wskip{position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom));text-align:center;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.6);pointer-events:none;z-index:2}
-</style>
+
+  /* ===== OUTILS DE TEST (local seulement, jamais sur le site en ligne) ===== */
+  .simbtn{display:inline-flex;align-items:center;gap:6px;margin:14px auto 0;background:none;border:1px dashed var(--line);color:var(--muted);border-radius:999px;padding:8px 14px;min-height:44px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .simrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px} .simrow .simbtn{margin:0}
+  .agdemo{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.agdemo .arbtn{margin:0;font-size:13.5px}
+  .mqtest{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0}
+  .mqt{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:50;font:13px -apple-system,BlinkMacSystemFont,sans-serif;color:#fff}
+  .mqt .mqopen{writing-mode:vertical-rl;min-width:36px;min-height:110px;border:0;border-radius:12px 0 0 12px;background:rgba(20,24,34,.82);color:#fff;font:700 13px -apple-system,sans-serif;cursor:pointer;letter-spacing:.04em}
+  .mqt .mqp{width:272px;max-width:calc(100vw - 16px);background:rgba(20,24,34,.94);border-radius:16px 0 0 16px;padding:12px;box-shadow:0 10px 40px rgba(0,0,0,.35);max-height:90vh;overflow:auto}
+  .mqt .mqh{display:flex;align-items:center;justify-content:space-between;font-weight:800;margin-bottom:8px}
+  .mqt .mqh small{display:block;font-weight:500;opacity:.7;font-size:11.5px}
+  .mqt button{min-height:44px;border:0;border-radius:10px;background:rgba(255,255,255,.14);color:#fff;font:600 13px -apple-system,sans-serif;cursor:pointer;padding:0 10px}
+  .mqt button.on{background:#fff;color:#141822}
+  .mqt button:disabled{opacity:.35;cursor:default}
+  .mqt .mqrow{display:flex;gap:6px;margin:6px 0}.mqt .mqrow>*{flex:1}
+  .mqt .mqcur{display:flex;align-items:center;gap:6px;margin:6px 0}
+  .mqt .mqcur div{flex:1;text-align:center;line-height:1.25}.mqt .mqcur b{display:block;font-size:14px}.mqt .mqcur small{opacity:.75}
+  .mqt .mqcur button{flex:0 0 44px;font-size:20px}
+  .mqt .mqgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:6px 0}
+  .mqt .mqgrid button{padding:0;min-height:38px}
+  .mqt .mqlbl{opacity:.7;font-size:11.5px;margin:10px 0 2px;text-transform:uppercase;letter-spacing:.06em}
+  .mqt .mqinfo{opacity:.8;font-size:12px;margin:4px 0}</style>
 </head>
 <body>
 <div class="wrap">
@@ -1539,7 +1560,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261114-121115';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261114-121904';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -2917,7 +2938,7 @@ function updateReevalBanner(){
   const b=document.getElementById('reevalBanner'); if(!b) return;
   const due=reevalDue();
   b.classList.toggle('hidden', !due);
-  if(due) b.innerHTML = `${ic('reset',17)}<span>Ça fait ${REEVAL_DAYS} jours — pense à repasser réévaluer tes chapitres</span>`;
+  if(due) b.innerHTML = `${ic('reset',17)}<span>Ça fait ${REEVAL_TXT} — pense à repasser réévaluer tes chapitres</span>`;
 }
 // Popup au tout premier chargement du jour où le rappel est dû (pas à chaque render, une seule
 // fois par jour — sinon ça interromprait sans arrêt). « Plus tard » n'efface rien : bannière et
@@ -2929,7 +2950,7 @@ async function maybeShowReevalPopup(){
   // localStorage protégé (quota/navigation privée) : au pire on redemande le lendemain, jamais de crash.
   try{ if(localStorage.getItem(REEVAL_POPUP_KEY)===today) return;
     localStorage.setItem(REEVAL_POPUP_KEY, today); }catch(e){}
-  const go=await uiConfirm('Pense à repasser réévaluer tes chapitres.', {title:`Ça fait ${REEVAL_DAYS} jours`, ok:"J'y vais", danger:false});
+  const go=await uiConfirm('Pense à repasser réévaluer tes chapitres.', {title:`Ça fait ${REEVAL_TXT}`, ok:"J'y vais", danger:false});
   if(go) goReeval();
 }
 // Pied de sidebar : reflète l'état du compte (pas de compte / synchronisé / hors ligne).
@@ -3005,7 +3026,8 @@ function aBosser(){
 // « À réévaluer » : simple rappel périodique tous les REEVAL_DAYS jours (« pense à repasser
 // réévaluer tes chapitres »), pas un suivi par chapitre — demandé volontairement simple par Eric,
 // une logique par chapitre (touché/pas touché) a été essayée puis jugée trop compliquée.
-const REEVAL_DAYS = 4;
+const REEVAL_DAYS = 7;   // 14/11, Eric : « au lieu de tous les 4 jours, mets 1 semaine »
+const REEVAL_TXT = REEVAL_DAYS===7 ? 'une semaine' : REEVAL_DAYS+' jours';
 const REEVAL_KEY = "suivi-revisions-bac-lastreeval";
 // localStorage protégé par try/catch (comme load()/loadSyncMeta()) : appelée à CHAQUE render(),
 // pas juste au boot — une exception non catchée ici (quota/navigation privée) ferait planter
@@ -5026,6 +5048,181 @@ function qEdit(id){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return;
     +'<div class="mdactions"><button class="mdbtn" onclick="closeModal(null);reschedulePick(\''+id+'\')">'+ic('calendar',16)+'<span>'+(t.date?'Changer le jour':'Caler un jour')+'</span></button><button class="mdbtn primary" onclick="closeModal(null)">OK</button></div></div>';
   modalResolve=null; m.classList.remove('hidden'); }
 function qFlip(id,k){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return; if(t[k]) delete t[k]; else t[k]=true; save(); qEdit(id); refreshTodos(); }
+if(location.hostname!=='simonnivoix.github.io'){   // jamais sur le site en ligne
+
+// ===================== OUTILS DE TEST (LOCAL SEULEMENT) =====================
+// Demande d'Eric (14/11) : un seul fichier ; en local (file://, localhost…) les outils sont toujours là, sur le site en ligne jamais.
+// Panneau « Outils » à droite (arènes : aller à l'élément voulu, +1 h/+5 h ; remplir/vider les données), « Tester : +5 min » en session,
+// « Tester : le bilan » sur l'Accueil, « Tester : tâches d'exemple » dans l'agenda. Heures fictives d'arène = MQ_H_KEY, ajoutées à totalWorkH().
+const MQ_H_KEY='suivi-revisions-bac-outils-h', MQ_OPEN_KEY='suivi-revisions-bac-outils-panel';
+function mqExtra(){ try{ return +localStorage.getItem(MQ_H_KEY)||0; }catch(e){ return 0; } }
+function mqSetExtra(v){ try{ localStorage.setItem(MQ_H_KEY, String(v)); }catch(e){} }
+const _mqTotal=totalWorkH;
+totalWorkH=function(){ return Math.max(0,_mqTotal()+mqExtra()); };
+
+// --- Arènes : aller directement à l'élément voulu (en avant comme en arrière), sans carte de révélation ---
+function arenaJump(i,n){
+  if(typeof arHoldLook!=='undefined' && arHoldLook) return;
+  i=Math.max(0,Math.min(ARENAS.length-1,i)); n=Math.max(0,Math.min(10,n));
+  try{ localStorage.removeItem(ARENA_OFF_KEY); }catch(e){}
+  data.arena=i;
+  mqSetExtra(arenaAt(i,n)+1e-6-_mqTotal());
+  writeArenaSeen({i,s:n});
+  applyTheme('arene'); save(); render();
+}
+function mqAddH(x){ mqSetExtra(mqExtra()+x); render(); }
+function mqRealH(){ mqSetExtra(0); data.arena=0; writeArenaSeen({i:0,s:arenaStep(0)}); save(); render(); }
+function mqToggle(){ try{ localStorage.setItem(MQ_OPEN_KEY, localStorage.getItem(MQ_OPEN_KEY)==='1'?'0':'1'); }catch(e){} mqPaint(); }
+function mqPaint(){
+  let p=document.getElementById('mqTools');
+  if(!p){ p=document.createElement('div'); p.id='mqTools'; p.className='mqt'; document.body.appendChild(p); }
+  let open=false; try{ open=localStorage.getItem(MQ_OPEN_KEY)==='1'; }catch(e){}
+  if(!open){ p.innerHTML='<button class="mqopen" onclick="mqToggle()" aria-label="Ouvrir les outils de test">Outils</button>'; return; }
+  const i=arenaIdx(), A=ARENAS[i], n=arenaStep(i);
+  const name=n>0?A.steps[n-1]:'Départ (gris)';
+  p.innerHTML='<div class="mqp"><div class="mqh"><div>Outils de test<small>Local seulement · pas en ligne</small></div><button onclick="mqToggle()" aria-label="Replier">✕</button></div>'
+    +'<div class="mqlbl">Données</div><div class="mqrow"><button onclick="mqFillAsk()">Remplir l\'appli</button><button onclick="mqEmpty()">Tout vider</button></div>'
+    +'<div class="mqlbl">Arène</div><div class="mqrow">'+ARENAS.map((a,k)=>'<button class="'+(k===i?'on':'')+'" onclick="arenaJump('+k+',0)">Arène '+(k+1)+'</button>').join('')+'</div>'
+    +'<div class="mqcur"><button onclick="arenaJump('+i+','+(n-1)+')" '+(n<=0?'disabled':'')+' aria-label="Élément précédent">‹</button>'
+    +'<div><b>Élément '+n+' / 10</b><small>'+escapeH(name)+'</small></div>'
+    +'<button onclick="arenaJump('+i+','+(n+1)+')" '+(n>=10?'disabled':'')+' aria-label="Élément suivant">›</button></div>'
+    +'<div class="mqgrid">'+Array.from({length:11},(_,k)=>'<button class="'+(k===n?'on':'')+'" onclick="arenaJump('+i+','+k+')">'+k+'</button>').join('')+'</div>'
+    +'<div class="mqrow"><button onclick="arSpotlight('+i+','+n+',true)" '+(n<1?'disabled':'')+'>Voir le changement</button></div>'
+    +'<div class="mqlbl">Heures d\'arène · '+fmtDur(totalWorkH()*3600000)+'</div>'
+    +'<div class="mqrow"><button onclick="mqAddH(1)">+1 h</button><button onclick="mqAddH(5)">+5 h</button><button onclick="mqRealH()">Remettre à 0</button></div>'
+    +'<div class="mqlbl">Ailleurs dans l\'appli</div>'
+    +'<p class="mqinfo">Session en cours : « Tester : +5 min ».<br>Accueil : « Tester : le bilan ».<br>Travail → agenda : « Tester : tâches d\'exemple ».</p></div>';
+}
+
+// --- Session : faire avancer le temps ---
+function simSession(m){
+  const a=data.active; if(!a || !ownSession) return;
+  const back=x=>new Date(Date.parse(x)-m*60000).toISOString();
+  a.began=back(a.began||a.start); if(!(a.mode==='pomo' && (a.phase==='ready'||a.phase==='done'))) a.start=back(a.start);
+  save(); if(advanceSession()){ sessBell(); refreshFocus(); } else paintTimer();
+}
+const _mqFocus=focusCard;
+focusCard=function(){
+  const html=_mqFocus();
+  if(!ownSession) return html;
+  const b='<div class="simrow"><button class="simbtn" onclick="simSession(5)">'+ic('clock',15)+'<span>Tester : +5 min</span></button>'
+    +'<button class="simbtn" onclick="simSession(25)">'+ic('clock',15)+'<span>+25 min</span></button></div>';
+  return html.replace(/<\/div>\s*$/, b+'</div>');
+};
+
+// --- Bilan + jauge sans faire de session (+45 min d'arène) ---
+function demoDebriefBar(){
+  const g=.75; mqSetExtra(mqExtra()+g);
+  const i=arenaIdx(), A=ARENAS[i], H=totalWorkH(), pos=x=>arenaPos(i,x);
+  const now=new Date().toISOString(), m=data.matieres[0];
+  debrief={mat:m?m.id:null, start:now, end:now, mood:null, recorded:true, demo:true, plan:[{txt:'Tâche d\'essai', done:false}]};
+  debrief._ar={i, from:pos(H-g), to:pos(H), gained:g, H, mat:m?m.id:null, done:false};
+  paintDebrief();
+}
+const _mqArena=arenaCard;
+arenaCard=function(){ return _mqArena()+'<div class="mqtest"><button class="arbtn soft" onclick="demoDebriefBar()">Tester : le bilan (+45 min)</button></div>'; };
+
+// --- Agenda : tâches d'exemple ---
+function demoTasks(){
+  if(!data.matieres.length) data.matieres.push({nom:'Maths (exemple)', id:'demo-m1', color:'#2F5DA8', chapitres:[], demo:true});
+  const m1=data.matieres[0].id, m2=(data.matieres[1]||data.matieres[0]).id, t0=localDay(Date.now()), d=n=>dateKey(addDays(t0,n));
+  const st=a=>a.map(txt=>({txt, done:false}));
+  [{txt:'Exos chapitre 3', named:true, mat:m1, date:d(0), est:45, steps:st(['Exo 1','Exo 2','Exo 3'])},
+   {txt:'Fiche de révision', mat:m2, date:d(0), est:20},
+   {txt:'Relire le cours', mat:m1, date:d(0)},
+   {txt:'Partie 1, Partie 2', mat:m2, date:d(1), est:60, steps:st(['Partie 1','Partie 2'])},
+   {txt:'Quiz de 10 questions', mat:m1, date:d(2), est:10}
+  ].forEach((o,k)=>data.todos.push({id:'demo'+Date.now().toString(36)+k, done:false, doneAt:null, created:new Date().toISOString(), demo:true, ...o}));
+  save(); render();
+}
+function demoTasksOff(){
+  data.todos=(data.todos||[]).filter(t=>!t.demo);
+  data.matieres=data.matieres.filter(m=>!(m.id==='demo-m1' && !(m.chapitres||[]).length));
+  if(typeof forgetTask==='function') forgetTask(); armed=null; sessPlan=[];
+  save(); render();
+}
+const _mqAgenda=agendaCard;
+agendaCard=function(){
+  const off=(data.todos||[]).some(t=>t.demo)?'<button class="arbtn soft" onclick="demoTasksOff()">Retirer l\'exemple</button>':'';
+  return _mqAgenda().replace('<h3>Mon agenda</h3></div>', '<h3>Mon agenda</h3></div><div class="agdemo"><button class="arbtn soft" onclick="demoTasks()">Tester : tâches d\'exemple</button>'+off+'</div>');
+};
+
+
+// --- Données d'exemple : remplir toute l'appli (matières, chapitres + historique, 4 semaines de sessions, bilans, agenda, priorités) ---
+function mqDemoData(){
+  let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; };
+  const pick=a=>a[Math.floor(rnd()*a.length)], ri=(a,b)=>a+Math.floor(rnd()*(b-a+1));
+  const t0=localDay(Date.now()), day=k=>addDays(t0,k), key=k=>dateKey(day(k)), now=Date.now();
+  const at=(k,h,m)=>{ const d=new Date(day(k)); d.setHours(h,m,0,0); return d; };
+  const M=[
+    ['Droit civil','#2F5DA8',10,['Les contrats','La responsabilité','Les obligations','La preuve','Les régimes matrimoniaux']],
+    ['Droit constitutionnel','#C2410C',24,['La Ve République','Le Conseil constitutionnel','Le Parlement','Le Président']],
+    ['Droit administratif','#15803D',38,['Le service public','Les actes administratifs','La responsabilité de l\'État','Le juge administratif','La police administrative']],
+    ['Histoire du droit','#7C3AED',52,['Le droit romain','L\'Ancien Régime','La Révolution','Le Code civil']],
+    ['Anglais juridique','#DB2777',null,['Vocabulaire des contrats','Common law','Rédaction']]
+  ];
+  const matieres=M.map(([nom,color,ex,chs],mi)=>({nom, color, id:'m'+mi, ...(ex?{exam:key(ex)}:{}),
+    chapitres:chs.map(nm=>{ let p=ri(0,35); const hist=[];
+      for(let k=-27;k<=0;k++){ if(k===-27||rnd()<.15){ p=Math.min(95,p+ri(3,14)); hist.push({t:key(k)+'T12:00:00.000Z', p}); } }
+      return {nom:nm, pct:p, hist}; })}));
+  matieres[0].chapitres[0].pct=100; matieres[0].chapitres[0].hist.push({t:key(0)+'T12:00:00.000Z',p:100});
+  matieres[2].chapitres[4]={nom:'La police administrative', pct:10, hist:[{t:key(-20)+'T12:00:00.000Z',p:10}]};
+  const sessions=[], debriefs=[], W=[3,2,2,1,1];
+  const wm=()=>{ let r=rnd()*W.reduce((a,b)=>a+b,0); for(let i=0;i<W.length;i++){ if((r-=W[i])<0) return 'm'+i; } return 'm0'; };
+  const plans=['Relire le cours','Faire la fiche','Exos du TD','Annale 2024','Apprendre les définitions','Cas pratique','Commentaire d\'arrêt','Flashcards'];
+  for(let k=-27;k<=0;k++){
+    if(k<-5 && rnd()<.3) continue;
+    const n=k===0?1:ri(1,3); let h=ri(9,14);
+    for(let j=0;j<n;j++){
+      const mat=wm(), dur=pick([25,30,45,50,60,75,90]), m0=pick([0,10,20,30,40]);
+      const s=at(k,h,m0), e=new Date(s.getTime()+dur*60000);
+      if(e.getTime()>now-5*60000) break;
+      sessions.push({mat, start:s.toISOString(), end:e.toISOString()});
+      if(k>-12 && rnd()<.7){ const pl=Array.from({length:ri(1,3)},()=>({txt:pick(plans), done:rnd()<.7}));
+        const mood=pl.every(x=>x.done)?'ok':pl.some(x=>x.done)?'mid':'ko';
+        debriefs.push({mat, start:s.toISOString(), end:e.toISOString(), mood, recorded:true, plan:pl}); }
+      h+=Math.ceil(dur/60)+ri(1,3); if(h>21) break;
+    }
+  }
+  const T=[]; let c=0; const id=()=>'d'+(c++);
+  const cr=k=>at(k,ri(8,20),0).toISOString();
+  const add=o=>T.push({id:id(), done:false, doneAt:null, created:cr(-1), ...o});
+  add({txt:'Fiche : les vices du consentement', mat:'m0', date:key(0), est:45});
+  add({txt:'Exos TD 6', mat:'m2', date:key(0), est:60, steps:[{txt:'Exo 1',done:true},{txt:'Exo 2',done:false},{txt:'Exo 3',done:false}], named:true, spent:20});
+  add({txt:'Relire le cours de mardi', mat:'m1', date:key(0), est:20, done:true, doneAt:at(0,10,15).toISOString()});
+  add({txt:'Vocabulaire chapitre 2', mat:'m4', date:key(-1), est:15});
+  add({txt:'Annale 2024', mat:'m0', date:key(1), est:90});
+  add({txt:'Plan du commentaire', mat:'m3', date:key(1), est:30});
+  add({txt:'Cas pratique, Correction', mat:'m2', date:key(2), est:75, steps:[{txt:'Cas pratique',done:false},{txt:'Correction',done:false}]});
+  add({txt:'Flashcards', mat:'m1', date:key(3), est:20});
+  add({txt:'Révision générale', mat:'m0', date:key(5), est:120});
+  const q=(txt,mat,ago,urg,imp,est,date)=>T.push({id:id(), txt, mat, date:date||null, queue:true, urg, imp, est, done:false, doneAt:null, created:cr(-ago)});
+  q('Rattraper le cours d\'amphi 4','m1',9,true,true,60);
+  q('Préparer l\'exposé','m3',3,false,true,90,key(4));
+  q('Fiche sur les arrêts du semestre','m0',6,false,true,45);
+  q('Rendre le DM','m2',1,true,false,30);
+  q('Imprimer le polycopié','m4',2,true,false,10);
+  q('Ranger mes fiches','m0',12,false,false,20);
+  q('Regarder le documentaire conseillé','m3',4,false,false,60);
+  return {matieres, sessions, debriefs, todos:T, active:null};
+}
+function mqFill(){
+  const ar=data.arena||0;
+  data=backfillDaily(prepare(mqDemoData())); data.arena=ar; current=null;
+  if(typeof forgetTask==='function') forgetTask(); armed=null; sessPlan=[];
+  writeArenaSeen({i:arenaIdx(), s:arenaStep(arenaIdx())});   // pas de cartes « nouvel élément » pour les heures d'exemple
+  save(); render();
+}
+window.mqFillAsk=async function(){ if(!data.matieres.length || await uiConfirm('Remplacer tes données locales par l\'exemple ?',{title:'Remplir l\'appli',ok:'Remplir'})) mqFill(); }
+window.mqEmpty=async function(){
+  if(!await uiConfirm('Vider toutes les données locales (matières, sessions, tâches) ?',{title:'Tout vider',ok:'Vider',danger:true})) return;
+  const ar=data.arena||0; data=prepare(clone(DEFAULT)); data.arena=ar; current=null; armed=null; sessPlan=[];
+  save(); render();
+}
+
+const _mqRender=render;
+render=function(){ _mqRender.apply(this,arguments); mqPaint(); };
+try{ render(); }catch(e){ console.error(e); }}
 </script>
 </body>
 </html>
