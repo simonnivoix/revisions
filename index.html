@@ -10,23 +10,24 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Révisions">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#EAF0F6">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230369A1'/%3E%3Ctext x='90' y='128' font-size='104' text-anchor='middle'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#F2F4F0">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%231E5B47'/%3E%3Ctext x='90' y='128' font-size='104' text-anchor='middle'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
 <style>
   /* Palette neutre « slate » : fond neutre clair, un seul accent bleu.
      Règle 60-30-10 — les couleurs rouge/orange/jaune/vert ne servent QUE l'indicateur
      de maîtrise (barres, %, courbe), jamais la décoration ou la navigation. */
   :root{
-    --bg:#EAF0F6;          /* 60% fond (bleu-gris frais, fait ressortir les cartes) */
-    --bg2:#D8E2EC;         /* pistes de barres / sliders */
+    /* Design « Code annoté » (19/11, skill impeccable) : fond gris-vert, accent vert reliure */
+    --bg:#F2F4F0;          /* 60% fond (gris-vert frais, pas crème) */
+    --bg2:#E3E8E2;         /* pistes de barres / sliders */
     --card:#FFFFFF;        /* 30% surfaces */
-    --ink:#0F172A;         /* texte principal */
-    --muted:#4F5E6C;       /* texte secondaire / labels (assombri pour le contraste AA) */
-    --line:#D8E2EC;        /* bordures fines */
-    --primary:#0369A1;     /* 10% accent : liens, focus, CTA */
+    --ink:#13201A;         /* texte principal */
+    --muted:#56645C;       /* texte secondaire / labels */
+    --line:#D9DFD8;        /* bordures fines */
+    --primary:#1E5B47;     /* 10% accent : liens, focus, CTA */
     --rouge:#E11D48; --orange:#F97316; --jaune:#EAB308; --vert:#1E7A52; --vertc:#52A97A;
-    --shadow:0 1px 3px rgba(15,23,42,.08);
-    --ring:rgba(3,105,161,.16);
+    --shadow:0 1px 2px rgba(19,32,26,.06),0 4px 14px rgba(19,32,26,.05);
+    --ring:rgba(30,91,71,.14);
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -199,7 +200,7 @@
             padding:36px 28px 28px;box-shadow:0 20px 60px rgba(15,23,42,.14);animation:rise .3s cubic-bezier(.22,.61,.36,1)}
   .authbrand{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:28px;text-align:center}
   .authbrand .logo{width:56px;height:56px;border-radius:16px;background:var(--primary);color:var(--onp,#fff);
-                    display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(3,105,161,.25);flex-shrink:0}
+                    display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(30,91,71,.25);flex-shrink:0}
   .authbrand h1{font-size:20px;font-weight:800;letter-spacing:-.01em;margin:0;color:var(--ink)}
   .authbrand p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.4}
   .authinput{width:100%;border:1px solid var(--line);background:var(--bg2);color:var(--ink);border-radius:12px;
@@ -272,67 +273,87 @@
              font-size:15px;line-height:1.4;color:var(--ink)}
   .focusplan li{padding:3px 0;word-break:break-word}
   /* Jauge après le bilan : colonne d'énergie qui monte vers la carte « ??? » du prochain élément */
-  .argauge{position:fixed;inset:0;z-index:94;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px 16px;
-           background:radial-gradient(60% 45% at 50% 42%,color-mix(in srgb,var(--c) calc(var(--p,0) * 30%),transparent),transparent 72%),#06060B;
-           color:#fff;opacity:0;transition:opacity .4s;cursor:pointer;-webkit-tap-highlight-color:transparent;overflow:hidden}
+  /* ===== Jauge après le bilan (refaite le 19/11 : « haut de gamme, satisfaisant, spectaculaire ») =====
+     Un anneau de lumière se referme autour de la carte mystère du prochain élément ; la tête de l'anneau est une comète
+     qui sème des étincelles ; anneau fermé = onde de choc + gerbe tout autour + la carte se retourne (« Débloqué »). */
+  .argauge{position:fixed;inset:0;z-index:94;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px 16px;
+           background:radial-gradient(55% 42% at 50% 40%,color-mix(in srgb,var(--c) calc(var(--p,0) * 34%),transparent),transparent 75%),#05050A;
+           color:#fff;opacity:0;transition:opacity .45s cubic-bezier(.23,1,.32,1);cursor:pointer;-webkit-tap-highlight-color:transparent;overflow:hidden;
+           font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif}
   .argauge.show{opacity:1}
+  .argauge:not(.show){transition-duration:.22s}
   .argauge .wcv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-  .argauge.shake{animation:gShake .5s}
-  @keyframes gShake{20%{transform:translate(-5px,3px)}40%{transform:translate(5px,-3px)}60%{transform:translate(-3px,2px)}80%{transform:translate(2px,-1px)}}
-  .gkick{position:relative;font-size:12px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--c)}
-  /* carte mystère du prochain élément, qui s'illumine à mesure que l'énergie monte */
-  .gcard{position:relative;width:118px;height:150px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-         background:linear-gradient(160deg,#20202C,#121219);border:2px solid color-mix(in srgb,var(--c) calc(25% + var(--p,0) * 75%),#333);
-         box-shadow:0 0 calc(var(--p,0) * 60px) calc(var(--p,0) * 10px) color-mix(in srgb,var(--c) 70%,transparent),inset 0 0 calc(var(--p,0) * 40px) color-mix(in srgb,var(--c) 40%,transparent)}
-  .gcard .gq{font-size:56px;font-weight:800;line-height:1;color:color-mix(in srgb,var(--c) calc(var(--p,0) * 100%),#555);text-shadow:0 0 calc(var(--p,0) * 24px) var(--c)}
-  .gcard small{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
-  .gcard.near{animation:gNear .14s linear infinite}
-  @keyframes gNear{25%{transform:translate(-1.5px,1px) rotate(-1deg)}75%{transform:translate(1.5px,-1px) rotate(1deg)}}
-  .gcard.burst{animation:gBurst .7s cubic-bezier(.3,1.6,.5,1);background:linear-gradient(160deg,color-mix(in srgb,var(--c) 45%,#222),#15151c)}
-  @keyframes gBurst{0%{transform:scale(1)}30%{transform:scale(1.25)}100%{transform:scale(1)}}
-  .gcard.burst .gq{color:#fff}
-  .gmain{position:relative;display:grid;grid-template-columns:1fr 120px 1fr;gap:20px;align-items:end;width:min(560px,100%)}
-  .gcount{text-align:right;align-self:center}
-  .gcount b{display:block;white-space:nowrap;font-size:44px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1;text-shadow:0 0 24px color-mix(in srgb,var(--c) 60%,transparent)}
-  .gcount b.pop{animation:gPop .35s cubic-bezier(.3,1.8,.5,1)}
-  @keyframes gPop{40%{transform:scale(1.18)}}
-  .gcount small{display:block;margin-top:4px;font-size:13px;opacity:.6}
-  .gside{align-self:center;font-size:14px;line-height:1.35;opacity:.8}
-  .gside b{display:block;font-size:20px;color:var(--c)}
-  /* la colonne */
-  .gtube{position:relative;width:120px;height:clamp(200px,40vh,380px);border-radius:16px;overflow:hidden;
-         background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.02) 40%,rgba(255,255,255,.07));
-         box-shadow:inset 0 0 0 2px rgba(255,255,255,.16),0 0 calc(var(--p,0) * 50px) color-mix(in srgb,var(--c) 55%,transparent)}
-  .gtube::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-         background:repeating-linear-gradient(to top,transparent 0 calc(25% - 1px),rgba(255,255,255,.14) calc(25% - 1px) 25%)}
-  .gtube::after{content:"";position:absolute;top:0;bottom:0;left:10px;width:14px;z-index:3;border-radius:8px;background:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,.04));pointer-events:none}
-  .gfill{position:absolute;left:0;right:0;bottom:0;height:calc(100% * var(--v));
-         background:linear-gradient(to top,color-mix(in srgb,var(--c) 45%,#000),var(--c) 60%,color-mix(in srgb,var(--c) 55%,#fff))}
-  .gfill .gwave{position:absolute;left:0;width:200%;height:22px;top:-20px;animation:gWave 1.6s linear infinite}
-  .gfill .gwave.b{opacity:.5;animation-duration:2.6s;animation-direction:reverse;top:-16px}
-  .gfill .gwave path{fill:color-mix(in srgb,var(--c) 55%,#fff)}
-  .gfill .gwave.b path{fill:var(--c)}
-  @keyframes gWave{to{transform:translateX(-50%)}}
-  .gfill .gb{position:absolute;bottom:-10px;border-radius:50%;background:rgba(255,255,255,.55);animation:gBub linear infinite}
-  @keyframes gBub{to{transform:translateY(-60vh);opacity:0}}
-  .gfill .glite{position:absolute;inset:0;background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.28) 50%,transparent 80%);mix-blend-mode:screen;animation:gLite 2.4s ease-in-out infinite}
-  @keyframes gLite{50%{opacity:.4}}
-  .gtube.full .gfill{box-shadow:0 0 60px 10px var(--c)}
-  .gsegs{position:relative;display:flex;gap:5px;width:min(300px,80vw)}
-  .gsegs i{flex:1;height:7px;border-radius:9px;background:rgba(255,255,255,.14);transition:background .4s,box-shadow .4s}
+  .argauge>:is(.gkick,.gstage,.gcount,.gsegs){opacity:0;transform:translateY(14px);transition:opacity .5s cubic-bezier(.23,1,.32,1),transform .7s cubic-bezier(.23,1,.32,1)}
+  .argauge.show>:is(.gkick,.gstage,.gcount,.gsegs){opacity:1;transform:none}
+  .argauge.show>.gstage{transition-delay:.05s}.argauge.show>.gcount{transition-delay:.14s}.argauge.show>.gsegs{transition-delay:.22s}
+  .gkick{position:relative;display:flex;align-items:center;gap:12px;font-size:12px;font-weight:600;letter-spacing:.38em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 70%,#fff)}
+  .gkick::before,.gkick::after{content:"";width:38px;height:1px;background:linear-gradient(90deg,transparent,currentColor)}.gkick::after{transform:scaleX(-1)}
+  .gstage{position:relative;width:min(300px,72vw);aspect-ratio:1;display:grid;place-items:center;perspective:900px}
+  .gstage.pop{animation:gStagePop .55s cubic-bezier(.23,1,.32,1)}
+  @keyframes gStagePop{30%{transform:scale(1.045)}}
+  .gstage::before{content:"";position:absolute;inset:-14%;border-radius:50%;pointer-events:none;opacity:calc(.15 + var(--p,0) * .5);
+    background:conic-gradient(from 0deg,transparent 0 20%,color-mix(in srgb,var(--c) 40%,transparent) 30%,transparent 45% 70%,color-mix(in srgb,var(--c) 30%,transparent) 82%,transparent 95%);
+    filter:blur(22px);animation:gHalo 9s linear infinite}
+  @keyframes gHalo{to{transform:rotate(1turn)}}
+  .gring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+  .gring circle{fill:none;stroke-width:9}
+  .gring .gtrack{stroke:rgba(255,255,255,.07)}
+  .gring .gtick{stroke:rgba(255,255,255,.16);stroke-width:9;stroke-dasharray:.0035 .0965}
+  .gring .garc{stroke:var(--c);stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1;
+    filter:drop-shadow(0 0 4px var(--c)) drop-shadow(0 0 calc(6px + var(--p,0) * 16px) color-mix(in srgb,var(--c) 80%,transparent))}
+  .gring .garc.reset{transition:stroke-dashoffset .5s cubic-bezier(.77,0,.175,1),opacity .5s}
+  .gring.hit .garc{stroke:#fff;filter:drop-shadow(0 0 8px #fff) drop-shadow(0 0 30px var(--c))}
+  .ghead{position:absolute;left:0;top:0;width:16px;height:16px;margin:-8px;border-radius:50%;pointer-events:none;opacity:0;
+    background:radial-gradient(circle,#fff 0 30%,color-mix(in srgb,var(--c) 70%,#fff) 45%,transparent 72%);box-shadow:0 0 18px 6px color-mix(in srgb,var(--c) 70%,transparent);
+    transition:opacity .3s}
+  .ghead.on{opacity:1}
+  .gshock{position:absolute;inset:6%;border-radius:50%;pointer-events:none;border:2px solid #fff;box-shadow:0 0 30px var(--c),inset 0 0 30px var(--c);opacity:0}
+  .gshock.go{animation:gShock .9s cubic-bezier(.23,1,.32,1)}
+  @keyframes gShock{0%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(1.65)}}
+  /* la carte mystère, au centre de l'anneau */
+  .gcard{position:relative;width:44%;aspect-ratio:3/4;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.34,1.45,.5,1)}
+  .gcard.flip{transform:rotateY(180deg)}
+  .gcard:not(.half) .gback,.gcard.half .gfront{visibility:hidden}   /* WebKit ignore backface-visibility ici : on change de face à mi-rotation */
+  .gcard.near{animation:gNear .12s linear infinite}
+  @keyframes gNear{25%{translate:-1px .6px;rotate:-.6deg}75%{translate:1px -.6px;rotate:.6deg}}
+  .gface{position:absolute;inset:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+  .gfront{background:linear-gradient(160deg,#1C1C27,#0E0E15);border:1px solid color-mix(in srgb,var(--c) calc(20% + var(--p,0) * 70%),#2A2A35);
+    box-shadow:0 0 calc(var(--p,0) * 46px) calc(var(--p,0) * 4px) color-mix(in srgb,var(--c) 60%,transparent),inset 0 0 calc(var(--p,0) * 34px) color-mix(in srgb,var(--c) 35%,transparent),0 20px 40px rgba(0,0,0,.5)}
+  .gfront::after,.gback::after{content:"";position:absolute;top:-30%;bottom:-30%;width:45%;left:-60%;transform:skewX(-18deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);animation:gSheen 3.6s cubic-bezier(.77,0,.175,1) infinite}
+  @keyframes gSheen{0%,55%{left:-60%}100%{left:130%}}
+  .gfront .gq{font-size:clamp(40px,11vw,58px);font-weight:200;line-height:1;color:color-mix(in srgb,var(--c) calc(25% + var(--p,0) * 75%),#4A4A55);
+    text-shadow:0 0 calc(var(--p,0) * 22px) var(--c)}
+  .gface small{font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.6}
+  .gback{transform:rotateY(180deg);background:radial-gradient(120% 90% at 50% 30%,color-mix(in srgb,var(--c) 70%,#fff),color-mix(in srgb,var(--c) 55%,#000) 75%);
+    color:#0B0B12;box-shadow:0 0 60px 8px color-mix(in srgb,var(--c) 70%,transparent),0 20px 40px rgba(0,0,0,.5)}
+  .gback svg{width:44%;height:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
+  .gback small{opacity:.85;font-weight:700}
+  /* compteur */
+  .gcount{position:relative;text-align:center;margin-top:4px}
+  .gcount b{display:block;font-size:clamp(40px,10vw,56px);font-weight:700;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums;
+    text-shadow:0 0 28px color-mix(in srgb,var(--c) 55%,transparent)}
+  .gcount b.pop{animation:gPop .32s cubic-bezier(.23,1,.32,1)}
+  @keyframes gPop{35%{transform:scale(1.07)}}
+  .gcount span{display:block;margin-top:8px;font-size:14px;color:rgba(255,255,255,.62)}
+  .gcount span b{display:inline;font-size:inherit;letter-spacing:0;color:color-mix(in srgb,var(--c) 75%,#fff);text-shadow:none;font-weight:600}
+  .gsegs{position:relative;display:flex;gap:6px;width:min(280px,76vw);margin-top:6px}
+  .gsegs i{flex:1;height:5px;border-radius:9px;background:rgba(255,255,255,.12);transition:background .5s,box-shadow .5s,transform .5s cubic-bezier(.34,1.56,.64,1)}
   .gsegs i.got{background:var(--c)}
-  .gsegs i.hit{box-shadow:0 0 14px var(--c);background:#fff}
-  .gmsg{position:relative;font-size:17px;text-align:center;max-width:360px;line-height:1.4;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
-  .gmsg small{display:block;font-size:14px;opacity:.7;margin-top:4px}
+  .gsegs i.hit{background:#fff;box-shadow:0 0 14px 2px var(--c);transform:scaleY(1.8)}
+  .gmsg{position:relative;font-size:17px;text-align:center;max-width:360px;line-height:1.4;margin-top:8px;opacity:0;transform:translateY(10px);transition:opacity .6s cubic-bezier(.23,1,.32,1),transform .6s cubic-bezier(.23,1,.32,1)}
+  .gmsg small{display:block;font-size:14px;opacity:.65;margin-top:4px}
   .gmsg.on{opacity:1;transform:none}
-  .gbtns{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;transform:translateY(8px);transition:opacity .5s .15s,transform .5s .15s;pointer-events:none}
+  .gbtns{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;transform:translateY(10px);transition:opacity .6s cubic-bezier(.23,1,.32,1) .12s,transform .6s cubic-bezier(.23,1,.32,1) .12s;pointer-events:none}
   .gbtns.on{opacity:1;transform:none;pointer-events:auto}
-  .gbtn{min-height:52px;padding:0 34px;border:0;border-radius:14px;background:var(--c);color:#0B0B12;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;
-        box-shadow:0 0 30px color-mix(in srgb,var(--c) 60%,transparent);animation:gGlow 2s ease-in-out infinite}
-  @keyframes gGlow{50%{box-shadow:0 0 46px 6px color-mix(in srgb,var(--c) 70%,transparent)}}
-  .gsec{min-height:44px;padding:0 16px;border:0;background:none;color:rgba(255,255,255,.7);font-family:inherit;font-size:15px;cursor:pointer}
-  @media (max-width:520px){ .gmain{grid-template-columns:1fr 92px 1fr;gap:12px} .gtube{width:92px} .gcount b{font-size:26px} .gside{font-size:13px} .gside b{font-size:17px} .gcard{width:100px;height:126px} .gcard .gq{font-size:46px} }
-  @media (max-height:700px){ .gcard{height:104px;width:84px} .gcard .gq{font-size:38px} .gtube{height:clamp(160px,32vh,300px)} }
+  .gbtn{position:relative;overflow:hidden;min-height:52px;padding:0 34px;border:0;border-radius:999px;background:#fff;color:#0B0B12;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;
+        box-shadow:0 0 0 1px rgba(255,255,255,.4),0 10px 40px color-mix(in srgb,var(--c) 45%,transparent);transition:transform .16s cubic-bezier(.23,1,.32,1)}
+  .gbtn::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--c) 45%,transparent),transparent);animation:gSheen 3s cubic-bezier(.77,0,.175,1) infinite}
+  .gbtn:active{transform:scale(.97)}
+  .gsec{min-height:44px;padding:0 16px;border:0;background:none;color:rgba(255,255,255,.62);font-family:inherit;font-size:15px;cursor:pointer}
+  @media (max-height:700px){ .gstage{width:min(230px,60vw)} .gcount b{font-size:38px} }
+  @media (prefers-reduced-motion: reduce){ .gstage::before,.gfront::after,.gback::after,.gbtn::after{animation:none} }
   .dbplan{margin:0 0 14px}
   .moods{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 16px}
   .moodbtn{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:72px;justify-content:center;background:var(--bg2);
@@ -899,6 +920,24 @@
   .arwarp{position:fixed;inset:0;z-index:95;overflow:hidden;color:#fff;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;
           background:#050508;opacity:0;transition:opacity .5s;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif}
   .arwarp.show{opacity:1}
+  .arwarp:not(.show){transition-duration:.25s}   /* sortie plus rapide que l'entrée */
+  .arwarp .shard{will-change:transform,opacity;backface-visibility:hidden;-webkit-backface-visibility:hidden}   /* éclats du portail : préparés pour la carte graphique */
+  /* Portail refait (19/11) : maintenir pour ouvrir, dissolution en tourbillon, ouverture circulaire sur la nouvelle arène */
+  .arwarp{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
+  .arwarp .wcv{z-index:1}.arwarp .stg{z-index:3}
+  .arwarp .wcard:not(.flipc){transition:transform .55s cubic-bezier(.34,1.3,.5,1)}   /* pas la carte qui se retourne (.flipc garde son .85 s) */
+  .arwarp .wcard.holding{transition:none}
+  .arwarp .whold{position:absolute;left:-12px;top:-12px;width:calc(100% + 24px);height:calc(100% + 24px);overflow:visible;pointer-events:none;z-index:6}
+  .arwarp .whold rect{fill:none;stroke:#FFF6D8;stroke-width:4;stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1;opacity:0;
+    filter:drop-shadow(0 0 6px #FFD76A) drop-shadow(0 0 18px color-mix(in srgb,var(--n) 80%,transparent));transition:stroke-dashoffset .4s cubic-bezier(.23,1,.32,1),opacity .3s}
+  .arwarp .whold.on rect{opacity:1;transition:opacity .15s}
+  .arwarp .whold.done rect{opacity:1;stroke-dashoffset:0}
+  .arwarp .whint.nudge{animation:wNudge .5s cubic-bezier(.23,1,.32,1)}
+  @keyframes wNudge{30%{transform:scale(1.08);opacity:1}}
+  .arwarp .wiris{position:absolute;inset:0;z-index:0;pointer-events:none;clip-path:circle(0px at 50% 50%);
+    background:radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--n) 45%,#fff) 0,var(--n) 14%,color-mix(in srgb,var(--n) 45%,#06060B) 42%,#06060B 78%)}
+  .arwarp .whorizon{position:absolute;left:50%;top:50%;z-index:2;border-radius:50%;pointer-events:none;transform:scale(0);
+    border:2px solid #fff;box-shadow:0 0 24px 4px #fff,0 0 80px 18px var(--n),inset 0 0 50px 8px color-mix(in srgb,var(--n) 80%,#fff)}
   .arwarp::before{content:"";position:absolute;inset:0;pointer-events:none;transition:background 1s;
           background:radial-gradient(60% 50% at 50% 44%,color-mix(in srgb,var(--c) 26%,transparent) 0%,transparent 70%),radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.85) 100%)}
   .arwarp::after{content:"";position:absolute;inset:-50%;pointer-events:none;opacity:.06;mix-blend-mode:overlay;animation:wGrain .5s steps(4) infinite;
@@ -1000,6 +1039,7 @@
   .arintro{position:fixed;inset:0;z-index:94;display:grid;place-items:center;padding:16px;background:rgba(5,5,10,.5);
           -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);opacity:0;transition:opacity .4s}
   .arintro.show{opacity:1}
+  .arintro:not(.show){transition-duration:.2s}
   .arintro .aicard{width:min(420px,100%);box-sizing:border-box;padding:18px 22px 18px 26px;border-radius:24px;transform:translateY(26px) scale(.97);
           transition:transform .55s cubic-bezier(.16,1,.3,1);box-shadow:0 30px 80px rgba(0,0,0,.45)}
   .arintro.show .aicard{transform:none}
@@ -1469,7 +1509,7 @@
   .qmoreopt i{font-style:normal;font-weight:500;color:var(--muted);margin-left:4px}
   .qopts{margin-top:8px;border-top:1px solid var(--line);padding-top:4px}
   .qopts .agpicklbl span{font-weight:500;color:var(--muted)}
-  .arwarp{touch-action:manipulation}   /* deux touchers rapides = « tout passer », pas un zoom (iPhone) */
+  .arwarp{touch-action:none}   /* deux touchers rapides = « tout passer », pas un zoom ; et un doigt qui glisse un peu n'annule pas l'appui long du portail (pointercancel) */
   .arstep .wskip{position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom));text-align:center;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.6);pointer-events:none;z-index:2}
 
   /* ===== OUTILS DE TEST (local seulement, jamais sur le site en ligne) ===== */
@@ -1485,14 +1525,189 @@
   .mqt button{min-height:44px;border:0;border-radius:10px;background:rgba(255,255,255,.14);color:#fff;font:600 13px -apple-system,sans-serif;cursor:pointer;padding:0 10px}
   .mqt button.on{background:#fff;color:#141822}
   .mqt button:disabled{opacity:.35;cursor:default}
-  .mqt .mqrow{display:flex;gap:6px;margin:6px 0}.mqt .mqrow>*{flex:1}
+  .mqt .mqrow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.mqt .mqrow>*{flex:1 1 auto}
   .mqt .mqcur{display:flex;align-items:center;gap:6px;margin:6px 0}
   .mqt .mqcur div{flex:1;text-align:center;line-height:1.25}.mqt .mqcur b{display:block;font-size:14px}.mqt .mqcur small{opacity:.75}
   .mqt .mqcur button{flex:0 0 44px;font-size:20px}
   .mqt .mqgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:6px 0}
   .mqt .mqgrid button{padding:0;min-height:38px}
   .mqt .mqlbl{opacity:.7;font-size:11.5px;margin:10px 0 2px;text-transform:uppercase;letter-spacing:.06em}
-  .mqt .mqinfo{opacity:.8;font-size:12px;margin:4px 0}</style>
+  .mqt .mqinfo{opacity:.8;font-size:12px;margin:4px 0}
+  /* ===================== DESIGN « CODE ANNOTÉ » (19/11, skill impeccable) + ANIMATIONS (skills Emil Kowalski) ===================== */
+:root{ --hl:#E4F26B; --rail:#173A2F; --rail2:#1F4A3C; --railink:#D5E4DB; --railmuted:#93AFA2; }
+body{font-feature-settings:"tnum" 1,"cv11" 1;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+::selection{background:var(--hl);color:#13201A}
+input,textarea{caret-color:var(--primary)}
+html{scrollbar-color:#B9C4BC transparent}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+a,.lk{text-underline-offset:3px}
+
+/* Le surligneur : le seul geste fort. Marque LA chose qui compte. */
+.mq-hl,
+body:not([data-arena]) .countdown .cdjx .jn{
+  background:linear-gradient(transparent 52%, var(--hl) 52%, var(--hl) 92%, transparent 92%);
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .14em;margin:0 -.14em;color:inherit}
+
+/* Onglet actif : coup de surligneur plein sur le rail sombre */
+body:not([data-arena]) .tab.on .tablbl{background:var(--hl);color:var(--rail)!important;padding:1px 6px;margin:-1px -6px;border-radius:3px}
+/* ---------- Rail vert (ordi) ---------- */
+@media (min-width:821px){
+  body:not([data-arena]) .tabbar{background:var(--rail);border-right:0;padding:22px 14px}
+  body:not([data-arena]) .sbbrand{color:#fff;font-size:16px;padding:4px 10px 22px}
+  body:not([data-arena]) .sbbrand .logo{background:var(--hl);color:var(--rail);border-radius:7px}
+  body:not([data-arena]) .sbsect{color:var(--railmuted)}
+  body:not([data-arena]) .tab{color:var(--railmuted);border-radius:8px;padding:10px 12px}
+  body:not([data-arena]) .tab:hover{background:rgba(255,255,255,.06);color:var(--railink)}
+  body:not([data-arena]) .tab.on{background:rgba(255,255,255,.08);color:#fff}
+  body:not([data-arena]) .tab.on .tablbl{color:var(--rail)}
+  body:not([data-arena]) .tabbadge{border-color:var(--rail)}
+  body:not([data-arena]) .sbfoot{color:var(--railmuted)}
+  body:not([data-arena]) .sbfoot .dotlive{background:var(--hl)}
+}
+/* ---------- Barre du bas (mobile) : même reliure verte ---------- */
+@media (max-width:820px){
+  body:not([data-arena]) .tabbar{background:var(--rail);border-color:var(--rail);border-radius:16px;
+    box-shadow:0 2px 4px rgba(19,32,26,.12),0 10px 28px rgba(19,32,26,.22)}
+  body:not([data-arena]) .tab,body:not([data-arena]) .tab:hover{color:var(--railmuted)}
+  body:not([data-arena]) .tab.on{color:#fff}
+  body:not([data-arena]) .tab.on .tablbl{color:var(--rail)}
+  body:not([data-arena]) .tabbadge{border-color:var(--rail)}
+}
+
+/* ---------- Barre du haut : une ligne de texte, pas des étiquettes ---------- */
+body:not([data-arena]) .topbar{padding:22px 0 16px;gap:22px;border-bottom-color:var(--line)}
+body:not([data-arena]) .tbstat{flex-direction:row-reverse;align-items:baseline;gap:6px}
+body:not([data-arena]) .tbstat .k{font-size:14px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted)}
+body:not([data-arena]) .tbstat .v{font-size:15px;font-weight:650}
+body:not([data-arena]) .tbstat+.tbstat::before{content:"·";color:var(--muted);margin-right:12px;font-weight:700;order:3}
+body:not([data-arena]) .tbcta,body:not([data-arena]) .cta,body:not([data-arena]) .addbtn{border-radius:9px;box-shadow:0 1px 2px rgba(19,32,26,.18)}
+body:not([data-arena]) .tbcta{padding:11px 18px;font-size:14px}
+body:not([data-arena]) .tbcta:hover,body:not([data-arena]) .cta:hover,body:not([data-arena]) .addbtn:hover{filter:brightness(.9)}
+
+/* ---------- Titres ---------- */
+body:not([data-arena]) .hello{margin:4px 0 20px}
+body:not([data-arena]) .hello .hdate{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--primary)}
+body:not([data-arena]) .hello h1{font-size:34px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+body:not([data-arena]) .ptitle h1{font-size:28px;letter-spacing:-.03em}
+body:not([data-arena]) .seclabel .t,
+body:not([data-arena]) .acol.right .seclabel .t,
+body:not([data-arena]) .recapw .seclabel .t{font-size:17px;font-weight:700;letter-spacing:-.015em;text-transform:none;color:var(--ink)}
+
+/* ---------- Surfaces : coins plus francs, filets, ombre douce ---------- */
+body:not([data-arena]) .panel,body:not([data-arena]) .statcard,body:not([data-arena]) .countdown,
+body:not([data-arena]) .streak,body:not([data-arena]) .chap,body:not([data-arena]) .prevrow,
+body:not([data-arena]) .agbox,body:not([data-arena]) .card,body:not([data-arena]) .chartbox,
+body:not([data-arena]) .acol.right .panel,body:not([data-arena]) .acol.right .prevrow,body:not([data-arena]) .recapw .recap{border-radius:12px}
+
+/* Compte à rebours : étiquette en phrase, chiffre surligné */
+body:not([data-arena]) .countdown .cdlbl{text-transform:none;letter-spacing:0;font-size:13px;font-weight:600}
+body:not([data-arena]) .countdown .cdic{background:var(--bg);color:var(--primary);border-radius:9px}
+body:not([data-arena]) .countdown .cdjx,body:not([data-arena]) .countdown .cdjx.soon,body:not([data-arena]) .countdown .cdjx.today{background:none;padding:0 2px}
+body:not([data-arena]) .countdown .cdjx .jn{font-size:30px;font-weight:750;letter-spacing:-.03em;color:var(--ink)}
+body:not([data-arena]) .countdown .cdjx.soon .jn,body:not([data-arena]) .countdown .cdjx.today .jn{color:var(--ink)}
+body:not([data-arena]) .countdown .cdchip{background:var(--bg);border:1px solid var(--line);border-radius:7px}
+
+/* Registre à la place des tuiles de chiffres */
+body:not([data-arena]) #accueil .statgrid,
+body:not([data-arena]) #accueil .accgrid .statgrid{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--shadow);padding:2px 18px;margin-bottom:14px}
+body:not([data-arena]) #accueil .statcard,
+body:not([data-arena]) #accueil .accgrid .statcard{display:flex!important;align-items:baseline;justify-content:space-between;gap:12px;
+  background:none;border:0;border-radius:0;box-shadow:none;padding:13px 0;animation:none}
+body:not([data-arena]) #accueil .statcard+.statcard{border-top:1px solid var(--line)}
+body:not([data-arena]) #accueil .statcard .lbl{order:0;font-size:15px;font-weight:550;text-transform:none;letter-spacing:0;color:var(--ink)}
+body:not([data-arena]) #accueil .statcard .big,
+body:not([data-arena]) #accueil .accgrid .statcard .big{font-size:26px;font-weight:750;letter-spacing:-.03em;margin:0}
+body:not([data-arena]) #accueil .statcard .big .u{font-size:15px}
+body:not([data-arena]) #accueil .accgrid .acccta{border-radius:10px;min-height:52px;font-size:16px}
+
+/* Lignes « À travailler » : plus serrées, sans carte par ligne */
+body:not([data-arena]) .acol.right .prevlist,body:not([data-arena]) .prevlist{gap:0!important;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+body:not([data-arena]) .prevlist .prevrow{border:0;border-radius:0!important;box-shadow:none;background:none}
+body:not([data-arena]) .prevlist .prevrow+.prevrow{border-top:1px solid var(--line)}
+body:not([data-arena]) .prevrow .bossgraph{border-left:1px solid var(--line)}
+body:not([data-arena]) .latebanner{border-radius:8px}
+
+/* ---------- Matières : une table des matières, pas une grille de cartes ---------- */
+body:not([data-arena]) #home .grid{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--shadow);overflow:hidden}
+body:not([data-arena]) #home .grid .mcard{display:grid;width:100%;grid-template-columns:minmax(200px,1.1fr) minmax(120px,1.6fr) 64px 20px;
+  column-gap:22px;row-gap:0;align-items:center;border:0;border-radius:0;box-shadow:none;background:none;padding:16px 20px}
+body:not([data-arena]) #home .grid .mcard+.mcard{border-top:1px solid var(--line)}
+body:not([data-arena]) #home .grid .mcard:hover{transform:none;box-shadow:none;background:var(--bg)}
+body:not([data-arena]) #home .mcard .top{grid-column:1;grid-row:1}
+body:not([data-arena]) #home .mcard .pbar{grid-column:2;grid-row:1;height:6px}
+body:not([data-arena]) #home .mcard .pct{grid-column:3;grid-row:1;font-size:22px;font-weight:750}
+body:not([data-arena]) #home .mcard .go{grid-column:4;grid-row:1}
+body:not([data-arena]) #home .mcard .name .nm{white-space:nowrap}
+@media (max-width:620px){
+  body:not([data-arena]) #home .grid .mcard{grid-template-columns:1fr auto 18px;row-gap:10px;padding:14px 16px}
+  body:not([data-arena]) #home .mcard .pbar{grid-column:1/-1;grid-row:2}
+  body:not([data-arena]) #home .mcard .pct{grid-column:2}
+  body:not([data-arena]) #home .mcard .go{grid-column:3}
+  body:not([data-arena]) #home .mcard .name .nm{white-space:normal}
+}
+
+/* Barres de maîtrise : pistes plus discrètes, bouts carrés-arrondis */
+body:not([data-arena]) .pbar,body:not([data-arena]) .bar,body:not([data-arena]) .pbar2{background:var(--bg2)}
+
+/* Puces, onglets et segments : même vocabulaire de coins */
+body:not([data-arena]) .matchip,body:not([data-arena]) .optchip,body:not([data-arena]) .segb,body:not([data-arena]) .seegraph{border-radius:8px}
+body:not([data-arena]) .todochk{border-radius:6px}
+
+/* Plus aucune étiquette en capitales espacées : des phrases normales */
+body:not([data-arena]) :is(.chartbox h3,.plabel,.sesslbl,.rphase,.dbtitle,.todoglabel,.agpicklbl,.qlbl,.sbsect){
+  text-transform:none;letter-spacing:0;font-size:14px;font-weight:600;color:var(--ink)}
+/* Chips du lanceur : sélection nette, pas un aplat gris */
+body:not([data-arena]) .matchip,body:not([data-arena]) .optchip{background:var(--card);border:1px solid var(--line)}
+body:not([data-arena]) .matchip:hover,body:not([data-arena]) .optchip:hover{border-color:var(--primary)}
+/* Choisie : teintée de sa couleur + contour plein (les autres sont blanches) — sinon on ne voit plus laquelle est choisie */
+body:not([data-arena]) .matchip.on{background:color-mix(in srgb,var(--c) 18%,var(--card));border:2px solid var(--c)}
+body:not([data-arena]) .optchip.on{background:color-mix(in srgb,var(--primary) 16%,var(--card));border:2px solid var(--primary)}
+
+/* Sombre : le surligneur devient la couleur du texte (une bande jaune sous du texte clair ne se lit pas) */
+body.isdark:not([data-arena]) .countdown .cdjx .jn{background:none;color:var(--hl)}
+body.isdark:not([data-arena]) .hello .hdate{color:var(--hl)}
+
+/* ===================== ANIMATIONS (skills d'Emil Kowalski) ===================== */
+:root{ --ease-out:cubic-bezier(.23,1,.32,1); --ease-in-out:cubic-bezier(.77,0,.175,1); }
+
+/* 1. Changement de page : un fondu court au lieu de 250 ms mou, entrées plus courtes et plus nettes */
+.fade{animation:fade .18s var(--ease-out)}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+:is(.mcard,.chap,.statcard,.prevrow,.streak,.countdown,.empty){animation-duration:.24s;animation-timing-function:var(--ease-out)}
+/* Les éléments d'une liste arrivent l'un après l'autre (décalage court et irrégulier) */
+:is(.grid,.prevlist,#detail) > :nth-child(2){animation-delay:30ms}
+:is(.grid,.prevlist,#detail) > :nth-child(3){animation-delay:65ms}
+:is(.grid,.prevlist,#detail) > :nth-child(4){animation-delay:95ms}
+:is(.grid,.prevlist,#detail) > :nth-child(n+5){animation-delay:120ms}
+
+/* 2. Plus de « transition: tout » : seulement ce qui doit bouger */
+:is(.iconbtn,.cta,.back,.seegraph,.delc,.matchip,.optchip,.tab,.tbcta,.addbtn,.segb,.todochk,.agtxt,.latebanner,.bossgraph,.bosswork,.mdbtn,.bigwork){
+  transition:color .15s ease,background-color .15s ease,border-color .15s ease,box-shadow .2s ease,opacity .15s ease,transform .16s var(--ease-out)}
+
+/* 3. Appui : même retour partout, discret (0,97), rapide */
+:is(.iconbtn,.cta,.matchip,.optchip,.tbcta,.addbtn,.segb,.mdbtn,.bigwork,.bossgraph,.delc):active{transform:scale(.97)}
+.tab:active{transform:scale(.97)}
+
+/* 4. Survol qui fait bouger : seulement avec une vraie souris */
+@media (hover:none), (pointer:coarse){
+  .mcard:hover,.chap:hover,.prevrow:hover{transform:none}
+}
+
+/* 5. Mouvement réduit : plus doux, pas zéro (on garde les fondus, on retire les déplacements) */
+@media (prefers-reduced-motion: reduce){
+  @keyframes rise{from{opacity:0}to{opacity:1}}
+  :is(.fade,.mcard,.chap,.statcard,.prevrow,.streak,.countdown,.empty,.panel){animation-duration:.15s!important;animation-delay:0s!important}
+}
+
+  /* Arène 2 (verre) sur téléphone : la barre d'onglets flottante était trop transparente (contenu lisible au travers) */
+  @media (max-width:820px){ html body[data-arena=widgets] nav.tabbar.tabbar{background:color-mix(in srgb,var(--bg) 90%,transparent)!important;-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5)} }
+  /* Portail : « Maintiens pour ouvrir » plus lisible et plus près de la carte */
+  .arwarp .whint{font-size:13px;letter-spacing:.16em;color:#fff}
+  .arwarp .whint.on{opacity:.92}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -1566,7 +1781,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261119-104249';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261119-193044';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1623,16 +1838,16 @@ function ic(name,size){ size=size||20; return `<svg class="ic" viewBox="0 0 24 2
 // ---- Ambiances : clair (slate) par défaut + sombre (zinc) ; « Arène » ajoutée plus bas (THEMES.arene) ----
 const THEMES = {
   slate: {label:"Clair",  vars:{}},
-  sombre:{label:"Sombre", vars:{'--bg':'#09090B','--bg2':'#27272A','--card':'#18181B','--ink':'#FAFAFA',
-                                '--muted':'#A1A1AA','--line':'#3F3F46','--primary':'#38BDF8',
+  sombre:{label:"Sombre", vars:{'--bg':'#0E1512','--bg2':'#1F2A25','--card':'#151E1A','--ink':'#E9EFEB',
+                                '--muted':'#9AA9A1','--line':'#26332D','--primary':'#7FD1A8',
                                 '--rouge':'#FB4F6E','--orange':'#FB923C','--jaune':'#FACC15','--vert':'#3FA877','--vertc':'#7CC49C',
-                                '--shadow':'0 1px 3px rgba(0,0,0,.4)','--ring':'rgba(56,189,248,.20)','--onp':'#0B0F14'}},
+                                '--shadow':'0 1px 2px rgba(0,0,0,.4)','--ring':'rgba(127,209,168,.16)','--onp':'#0E1512'}},
 };
 // Base claire complète : permet de revenir proprement après le mode sombre (couleurs maîtrise incluses).
 const LIGHT_DEFAULTS = {
-  '--bg':'#EAF0F6','--bg2':'#D8E2EC','--card':'#FFFFFF','--ink':'#0F172A','--muted':'#4F5E6C','--line':'#D8E2EC',
-  '--primary':'#0369A1','--rouge':'#E11D48','--orange':'#F97316','--jaune':'#EAB308','--vert':'#1E7A52','--vertc':'#52A97A',
-  '--shadow':'0 1px 3px rgba(15,23,42,.08)','--ring':'rgba(3,105,161,.16)','--onp':'#fff'
+  '--bg':'#F2F4F0','--bg2':'#E3E8E2','--card':'#FFFFFF','--ink':'#13201A','--muted':'#56645C','--line':'#D9DFD8',
+  '--primary':'#1E5B47','--rouge':'#E11D48','--orange':'#F97316','--jaune':'#EAB308','--vert':'#1E7A52','--vertc':'#52A97A',
+  '--shadow':'0 1px 2px rgba(19,32,26,.06),0 4px 14px rgba(19,32,26,.05)','--ring':'rgba(30,91,71,.14)','--onp':'#fff'
 };
 
 // Thèmes des arènes terminées (13/11, Eric : « tu les débloques et tu peux revenir dessus sans être dans le mode arène ») :
@@ -1654,6 +1869,8 @@ function applyTheme(name){
   delete document.body.dataset.arv;   // recalcul des couleurs d'étape par updateArena()
   if(!keep) try{ localStorage.setItem(THEME_KEY, name); }catch(e){}
   document.querySelectorAll('.topt[data-t]').forEach(s=>s.classList.toggle('on', s.dataset.t===name));
+  document.body.classList.toggle('isdark', name==='sombre');   // surligneur adapté au thème sombre
+  try{ document.querySelector('meta[name=theme-color]')?.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()||'#F2F4F0'); }catch(e){}   // barre de Safari assortie au fond
   if(typeof data!=='undefined') updateArena();
 }
 const THEME_OPTS = [['slate','Clair'],['sombre','Sombre']];
@@ -1852,7 +2069,7 @@ function arenaWidgets(){
   const ring=`<div class="w"><div class="ring">
       <svg width="88" height="88" viewBox="0 0 88 88"><circle cx="44" cy="44" r="36" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="10"/>
       <circle cx="44" cy="44" r="36" fill="none" stroke="#FFD76A" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p)}" transform="rotate(-90 44 44)"/></svg>
-      <div><div class="lab">Aujourd'hui</div><b>${fmtDur(w)}</b><small>${Math.round(p*100)}% de 2 h</small></div></div></div>`;
+      <div><div class="lab">Aujourd'hui</div><b>${fmtDur(w)}</b><small>${Math.round(p*100)}% de l'objectif de 2 h</small></div></div></div>`;
   let bars='';
   {
     const t0=localDay(Date.now()), days=Array.from({length:7},(_,k)=>addDays(t0,k-6));
@@ -1926,6 +2143,7 @@ function updateArena(){
   const seenRaw=readArenaSeen(), Sx=arenaStep(i);
   if(!seenRaw || seenRaw.i!==i) writeArenaSeen({i,s:Sx});   // jamais redescendu dans la même arène (heures retirées puis rendues = pas de révélations rejouées)
   else if(Sx>seenRaw.s) queueStepReveal();
+  else { try{ if(localStorage.getItem(ARENA_PEND_KEY) && !document.querySelector('.arwarp')) queueStepReveal(); }catch(e){} }   // carte restée ouverte quand l'appli a été fermée (19/11 : ne revenait plus)
 }
 // Arène 2 « Le mouvement » : le fond, les halos et l'aurore dérivent LENTEMENT vers des points tirés au hasard (plus d'aller-retour droite/gauche identique).
 function arWander(root){
@@ -1956,26 +2174,54 @@ function arBubTargets(){
     if(cs.display==='none' || cs.visibility==='hidden') return;
     const bgc=cs.backgroundColor, hasBg=(bgc && bgc!=='transparent' && !/rgba\([^)]*,\s*0\)$/.test(bgc)) || cs.backgroundImage!=='none' || (cs.backdropFilter||cs.webkitBackdropFilter||'none')!=='none' || parseFloat(cs.borderTopWidth)>0;
     const hasTxt=[...el.childNodes].some(n=>n.nodeType===3 && n.textContent.trim()) || /^(IMG|SVG|svg|INPUT|TEXTAREA|SELECT|BUTTON|CANVAS)$/.test(el.tagName);
-    if(hasBg || hasTxt){ out.push([el, parseFloat(cs.borderTopLeftRadius)||0]); return; }
+    if(hasBg || hasTxt){ out.push([el, parseFloat(cs.borderTopLeftRadius)||0, !!el.closest('#topbar,.reevalbanner')]); return; }
     for(const c of el.children) walk(c);
   };
   roots.forEach(walk);
+  const tb=document.getElementById('tabbar');   // téléphone : barre d'onglets flottante en bas → pas de bulles dessus (sur ordi la barre de gauche les laisse passer, voulu)
+  if(tb && innerWidth<=820) out.push([tb, parseFloat(getComputedStyle(tb).borderTopLeftRadius)||0, true]);
   return out;
 }
+// Masque des bulles (19/11, corrigé le même jour — Eric : « quand je descends ou monte, les bulles buguent »).
+// AVANT : à chaque défilement, une NOUVELLE image SVG (en coordonnées d'écran) remplaçait le masque → Safari la
+// redécodait à chaque image : masque en retard / absent un instant = bulles qui clignotent et passent sur le contenu.
+// MAINTENANT : 2 images construites seulement quand le contenu change (render, redimensionnement, contrôle 1,5 s) :
+//  - une à l'échelle de la PAGE (blocs qui défilent), simplement décalée de -scrollY au défilement (mask-position),
+//  - une à l'échelle de l'ÉCRAN pour ce qui reste collé en haut (barre du haut, bandeau de réévaluation).
+// Une image n'est remplacée que si elle a vraiment changé, et seulement une fois décodée (pas de trou entre deux).
+var arBubSig='';
+function arBubSvg(W,H,rects){
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><mask id="m"><rect width="${W}" height="${H}" fill="white"/><g fill="black">${rects}</g></mask><rect width="${W}" height="${H}" fill="white" mask="url(#m)"/></svg>`)}")`;
+}
+function arBubPos(layer){ const v=`0px ${-Math.round(scrollY)}px, 0px 0px`; layer.style.webkitMaskPosition=v; layer.style.maskPosition=v; }
 function arBubMask(){
   arBubRaf=0;
   const layer=document.querySelector('#arenaBg .ar-bubzone'); if(!layer) return;
-  if(!arBubCache) arBubCache=arBubTargets();
-  const W=innerWidth, H=innerHeight, pad=6;
-  let r='';
-  for(const [el,rad] of arBubCache){
+  if(arBubCache){ arBubPos(layer); return; }   // simple défilement : on décale, on ne reconstruit rien
+  arBubCache=arBubTargets();
+  const W=innerWidth, H=innerHeight, sy=Math.round(scrollY), DH=Math.max(document.documentElement.scrollHeight, H+sy), pad=6;
+  let rd='', rv='';
+  for(const [el,rad,stuck] of arBubCache){
     const b=el.getBoundingClientRect();
-    if(!b.width || !b.height || b.bottom<-pad || b.top>H+pad) continue;
-    r+=`<rect x="${(b.left-pad).toFixed(0)}" y="${(b.top-pad).toFixed(0)}" width="${(b.width+2*pad).toFixed(0)}" height="${(b.height+2*pad).toFixed(0)}" rx="${Math.min(rad+pad,40).toFixed(0)}"/>`;
+    if(!b.width || !b.height) continue;
+    const x=(b.left-pad).toFixed(0), w=(b.width+2*pad).toFixed(0), h=(b.height+2*pad).toFixed(0), rx=Math.min(rad+pad,40).toFixed(0);
+    if(stuck) rv+=`<rect x="${x}" y="${(b.top-pad).toFixed(0)}" width="${w}" height="${h}" rx="${rx}"/>`;
+    else rd+=`<rect x="${x}" y="${(b.top+sy-pad).toFixed(0)}" width="${w}" height="${h}" rx="${rx}"/>`;
   }
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><mask id="m"><rect width="${W}" height="${H}" fill="white"/><g fill="black">${r}</g></mask><rect width="${W}" height="${H}" fill="white" mask="url(#m)"/></svg>`;
-  const url=`url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
-  layer.style.webkitMaskImage=url; layer.style.maskImage=url;
+  const sig=W+'|'+H+'|'+DH+'|'+rd+'|'+rv;
+  if(sig===arBubSig && layer.style.maskImage){ arBubPos(layer); return; }
+  arBubSig=sig;
+  const ud=arBubSvg(W,DH,rd), uv=arBubSvg(W,H,rv);
+  const apply=()=>{ if(arBubSig!==sig || !layer.isConnected) return;
+    const img=`${ud}, ${uv}`, size=`${W}px ${DH}px, ${W}px ${H}px`;
+    layer.style.webkitMaskImage=img; layer.style.maskImage=img;
+    layer.style.webkitMaskSize=size; layer.style.maskSize=size;
+    layer.style.webkitMaskRepeat='no-repeat'; layer.style.maskRepeat='no-repeat';
+    layer.style.webkitMaskComposite='source-in'; layer.style.maskComposite='intersect';   // les deux trous à la fois
+    arBubPos(layer); };
+  // décoder avant de poser : sinon Safari affiche un instant le calque sans masque
+  const pre=[ud,uv].map(u=>{ const im=new Image(); im.src=u.slice(5,-2).replace(/\\"/g,'"'); return im.decode?im.decode().catch(()=>{}):Promise.resolve(); });
+  if(layer.style.maskImage) Promise.all(pre).then(apply); else apply();
 }
 function arBubQueue(){ if(!arBubRaf && document.querySelector('#arenaBg .ar-bubzone')) arBubRaf=requestAnimationFrame(arBubMask); }
 addEventListener('scroll',arBubQueue,{passive:true,capture:true});
@@ -2067,7 +2313,7 @@ function arBuzz(p){ try{ navigator.vibrate&&navigator.vibrate(p); }catch(e){} }
 // Petit moteur de particules (canvas, mélange additif).
 function arParticles(host){
   const cv=document.createElement('canvas'); cv.className='wcv'; host.prepend(cv);
-  const g=cv.getContext('2d'), P=[]; let W=0,H=0,emb=null,warp=0,alive=true,last=performance.now(),raf;
+  const g=cv.getContext('2d'), P=[]; let W=0,H=0,emb=null,warp=0,alive=true,last=performance.now(),raf,pull=0,vx0=0,vy0=0;
   const size=()=>{ const d=Math.min(2,window.devicePixelRatio||1); W=host.clientWidth; H=host.clientHeight; cv.width=W*d; cv.height=H*d; g.setTransform(d,0,0,d,0,0); };
   size(); window.addEventListener('resize',size);
   const rgb=h=>{ h=h.replace('#',''); return [0,2,4].map(k=>parseInt(h.substr(k,2),16)).join(','); };
@@ -2082,7 +2328,26 @@ function arParticles(host){
     for(let k=P.length-1;k>=0;k--){
       const p=P[k]; p.life-=dt; if(p.life<=0){ P.splice(k,1); continue; }
       const a=Math.min(1,p.life/p.fade)*p.a;
+      if(p.t==='v'){   // tourbillon : la matière est aspirée en spirale vers le centre
+        const ox=vx0+Math.cos(p.an)*p.r, oy=vy0+Math.sin(p.an)*p.r*.82;
+        p.w*=Math.pow(1.03,dt); p.an+=p.w*dt; p.r*=Math.pow(.955,dt);
+        if(p.r<3){ P.splice(k,1); continue; }
+        const x=vx0+Math.cos(p.an)*p.r, y=vy0+Math.sin(p.an)*p.r*.82, f=Math.min(1,p.r/40)*a;
+        g.strokeStyle=`rgba(${p.c},${f})`; g.lineWidth=p.s; g.lineCap='round'; g.beginPath(); g.moveTo(ox,oy); g.lineTo(x,y); g.stroke();
+        g.fillStyle=`rgba(${p.c},${f*.18})`; g.beginPath(); g.arc(x,y,p.s*3.2,0,7); g.fill();
+        continue;
+      }
+      if(p.t==='c'){   // convergence : des particules viennent former une forme
+        const q=Math.min(1,(now-p.t0)/p.d); if(q<0){ continue; } const e=1-Math.pow(1-q,3), bend=Math.sin(q*Math.PI)*p.bend;
+        const dx=p.x1-p.x0, dy=p.y1-p.y0, L=Math.hypot(dx,dy)||1;
+        const x=p.x0+dx*e-dy/L*bend, y=p.y0+dy*e+dx/L*bend, f=(q<.15?q/.15:1)*(q>.92?(1-q)/.08:1);
+        g.fillStyle=`rgba(${p.c},${f*.16})`; g.beginPath(); g.arc(x,y,p.s*3.5,0,7); g.fill();
+        g.fillStyle=`rgba(${p.c},${f})`; g.beginPath(); g.arc(x,y,p.s,0,7); g.fill();
+        if(q>=1) P.splice(k,1);
+        continue;
+      }
       if(p.t==='e'){
+        if(pull>0){ p.vx+=(cx-p.x)*pull*.00025*dt; p.vy+=(cy-p.y)*pull*.00025*dt; p.vx*=Math.pow(.985,dt); p.vy*=Math.pow(.985,dt); }
         p.x+=p.vx*dt+Math.sin(now/900+p.ph)*.22*dt; p.y+=p.vy*dt;
         const fl=a*(.65+.35*Math.sin(now/170+p.ph));
         g.fillStyle=`rgba(${p.c},${fl*.14})`; g.beginPath(); g.arc(p.x,p.y,p.s*4,0,7); g.fill();
@@ -2107,6 +2372,22 @@ function arParticles(host){
     burst(x,y,cols,n){ const cs=cols.map(rgb); for(let k=0;k<n;k++){ const an=Math.random()*Math.PI*2, sp=2.5+Math.pow(Math.random(),.6)*13;
       P.push({t:'s',x,y,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp-1.5,w:.8+Math.random()*(k%9?1.2:2.6),life:45+Math.random()*60,fade:30,a:1,c:cs[k%cs.length]}); } },
     warp(v){ warp=v; },
+    pull(v){ pull=v; },   // les braises sont attirées vers le centre (portail qui se charge)
+    // une forme (rect écran) qui se dissout en tourbillon vers son centre
+    dissolve(r,cols,n){ const cs=cols.map(rgb); vx0=r.left+r.width/2; vy0=r.top+r.height/2;
+      for(let k=0;k<n;k++){ const x=r.left+Math.random()*r.width, y=r.top+Math.random()*r.height, dx=x-vx0, dy=(y-vy0)/.82;
+        P.push({t:'v',an:Math.atan2(dy,dx),r:Math.hypot(dx,dy),w:.012+Math.random()*.02,s:.7+Math.random()*1.6,life:400,fade:30,a:.55+Math.random()*.45,c:cs[k%cs.length]}); } },
+    // des particules venues des bords forment la forme (rect écran) en d ms
+    converge(r,cols,n,d){ const cs=cols.map(rgb), t=performance.now(), R=Math.max(W,H)*.75, cx2=r.left+r.width/2, cy2=r.top+r.height/2;
+      for(let k=0;k<n;k++){ const an=Math.random()*Math.PI*2, rr=R*(.6+Math.random()*.5);
+        P.push({t:'c',x0:cx2+Math.cos(an)*rr,y0:cy2+Math.sin(an)*rr,x1:r.left+Math.random()*r.width,y1:r.top+Math.random()*r.height,
+          t0:t+Math.random()*d*.35,d:d*(.55+Math.random()*.45),bend:(Math.random()-.5)*160,s:.6+Math.random()*1.5,life:9999,fade:1,a:1,c:cs[k%cs.length]}); } },
+    // gerbe d'étincelles tout autour d'un cercle
+    ringBurst(x,y,R,cols,n){ const cs=cols.map(rgb); for(let k=0;k<n;k++){ const an=k/n*Math.PI*2+Math.random()*.08, sp=2+Math.pow(Math.random(),.7)*8;
+      P.push({t:'s',x:x+Math.cos(an)*R,y:y+Math.sin(an)*R,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp-.6,w:.7+Math.random()*(k%7?1.1:2.4),life:40+Math.random()*55,fade:28,a:1,c:cs[k%cs.length]}); } },
+    // petite traînée (tête de comète)
+    spark(x,y,cols){ const cs=cols.map(rgb); for(let k=0;k<2;k++){ const an=Math.random()*Math.PI*2, sp=.3+Math.random()*1.4;
+      P.push({t:'s',x,y,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,w:.6+Math.random()*1.1,life:18+Math.random()*22,fade:16,a:.9,c:cs[k%cs.length]}); } },
     stop(){ alive=false; cancelAnimationFrame(raf); window.removeEventListener('resize',size); }
   };
 }
@@ -2141,7 +2422,7 @@ function enterNextArena(){
   w.setAttribute('aria-label',`${O.nom} complète`); w.style.setProperty('--c',O.wc); w.style.setProperty('--n',A.wc);
   w.innerHTML=`<div class="stg"></div><div class="wcore"></div><div class="wflare"></div><div class="flash"></div>`;
   document.body.appendChild(w); requestAnimationFrame(()=>w.classList.add('show'));
-  const fx=calm?{embers(){},retint(){},burst(){},warp(){},stop(){}}:arParticles(w);
+  const fx=calm?{embers(){},retint(){},burst(){},warp(){},pull(){},dissolve(){},converge(){},ringBurst(){},spark(){},stop(){}}:arParticles(w);
   const stg=w.querySelector('.stg'), $=q=>w.querySelector(q);
   let pend=[], phase=1, ready=false, committed=false;
   const plan=list=>list.forEach(([ms,f])=>{ const it={f,done:false}; it.id=setTimeout(()=>{ it.done=true; f(false); },ms); pend.push(it); });
@@ -2158,10 +2439,10 @@ function enterNextArena(){
     p.style.transform=`rotateX(${((e.clientY/innerHeight)-.5)*-14}deg) rotateY(${((e.clientX/innerWidth)-.5)*18}deg)`; });
   // ---- 1) Arène complétée ----
   stg.innerHTML=`<div class="wkick">Arène complète</div>
-    <div class="wenter"><div class="wptr"><div class="wtilt"><div class="wcard">${face(n-1,0)}</div></div></div></div>
+    <div class="wenter"><div class="wptr"><div class="wtilt"><div class="wcard">${face(n-1,0)}<svg class="whold" aria-hidden="true"><rect x="2" y="2" rx="32" pathLength="1"/></svg></div></div></div></div>
     <div class="wstats"><div><b data-h>0 h</b><small>De travail</small></div><div><b data-e>0</b><small>Éléments</small></div>
       <div class="lk"><b><svg class="lksv" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="lksh" d="M8 11V8a4 4 0 018 0v3"/><rect x="5" y="11" width="14" height="10" rx="2"/><circle class="lkkey" cx="12" cy="16" r="1.2"/></svg></b><small>Arène ${n+1}</small></div></div>
-    <div class="whint"><i></i>${matchMedia('(hover:hover) and (pointer:fine)').matches?'Clique':'Touche'} pour franchir le portail</div>`;
+    <div class="whint"><i></i>${calm?(matchMedia('(hover:hover) and (pointer:fine)').matches?'Clique':'Touche')+' pour franchir le portail':'Maintiens pour ouvrir le portail'}</div>`;
   fx.embers(O.fx||[O.wc]);
   const complete=q=>{ $('.wcard').classList.add('done'); shock('#FFD76A'); const [x,y]=center(); fx.burst(x,y,['#FFD76A','#FFFFFF',O.wc],q?70:140);
     arSfx.impact(); arBuzz([20,30,70]); };
@@ -2181,13 +2462,46 @@ function enterNextArena(){
     arHoldLook=curTheme()==='arene';   // le look changera sous tes yeux après « Entrer dans l'arène » (arenaMorph) ; un style d'arène finie choisi reste tel quel
     render(); window.scrollTo({top:0});
   };
-  const go=()=>{ phase=2; ready=false; flush(); stg.classList.add('out'); $('.wcard').classList.add('hot'); $('.wtilt').classList.add('rattle');
-    arSfx.riser(); arBuzz(60); fx.warp(.4);
-    plan([[380,()=>{ arSfx.crack(); const [x,y]=center(); fx.burst(x,y,['#FFFFFF',A.wc],120); if(calm) $('.wcard').style.visibility='hidden'; else arShatter(w,$('.wcard')); $('.wcore').classList.add('on'); fx.warp(1.6); }],
-          [800,()=>fx.warp(4)],[1150,()=>$('.wflare').classList.add('on')],
-          [1450,()=>{ $('.flash').classList.add('on'); fx.warp(0); }],
-          [1650,()=>{ commit(); $('.wcore').classList.remove('on'); $('.wcore').style.transition='none'; $('.wflare').classList.remove('on');
-            w.style.setProperty('--c',A.wc); reveal(); const f=$('.flash'); f.classList.add('slow'); requestAnimationFrame(()=>f.classList.remove('on')); }]]);
+  // Maintenir pour ouvrir (19/11, refonte « haut de gamme ») : la lumière fait le tour de la carte, la carte vient vers toi,
+  // les braises sont aspirées ; lâcher trop tôt = tout revient doucement.
+  let hold=null, swallow=false;
+  const HOLD_MS=950;
+  const holdRect=()=>{ const sv=$('.whold'), c=$('.wcard'); if(!sv||!c) return; const r=sv.querySelector('rect'); r.setAttribute('width',c.offsetWidth+20); r.setAttribute('height',c.offsetHeight+20); };
+  const holdSet=v=>{ const r=$('.whold rect'), c=$('.wcard'); if(r) r.style.strokeDashoffset=String(1-v); if(c) c.style.transform=`translateZ(${(v*70).toFixed(1)}px) scale(${(1+v*.03).toFixed(3)})`; fx.pull(v*1.6); };
+  const holdStart=()=>{ if(calm||phase!==1||!ready||hold) return; holdRect(); const c=$('.wcard'); c.classList.add('holding'); $('.whold').classList.add('on');
+    const t0=performance.now(); let lastK=-1; arSfx.rumble();
+    const tick=now=>{ if(!hold) return; const v=Math.min(1,(now-t0)/HOLD_MS); holdSet(v);
+      const k=Math.floor(v*8); if(k!==lastK){ lastK=k; try{ arTone(220*Math.pow(2,k/6),0,.18,.05,'triangle'); arTone(440*Math.pow(2,k/6),0,.12,.012); }catch(e){} arBuzz(6+k*2); }
+      if(v>=1){ hold=null; swallow=true; c.classList.remove('holding'); go(); return; }
+      hold.raf=requestAnimationFrame(tick); };
+    hold={raf:requestAnimationFrame(tick)}; };
+  const holdEnd=()=>{ if(!hold) return; cancelAnimationFrame(hold.raf); hold=null; const c=$('.wcard'); c.classList.remove('holding'); $('.whold').classList.remove('on'); holdSet(0); swallow=true;
+    const h=$('.whint'); h.classList.remove('nudge'); void h.offsetWidth; h.classList.add('nudge'); };
+  w.addEventListener('pointerdown',e=>{ swallow=false; if(phase===1&&ready&&!calm){ e.preventDefault(); holdStart(); } });
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>w.addEventListener(t,()=>{ if(hold) holdEnd(); }));
+  w.addEventListener('contextmenu',e=>{ if(phase===1) e.preventDefault(); });
+  // ---- 2) Portail : la carte se dissout en tourbillon, un portail circulaire s'ouvre sur la couleur de la nouvelle arène ----
+  const openIris=()=>{
+    const R=Math.ceil(Math.hypot(innerWidth,innerHeight)/2)+40;
+    const ir=document.createElement('div'); ir.className='wiris'; w.insertBefore(ir, w.querySelector('.wcv')?.nextSibling||stg);
+    const hz=document.createElement('div'); hz.className='whorizon'; Object.assign(hz.style,{width:2*R+'px',height:2*R+'px',marginLeft:-R+'px',marginTop:-R+'px'}); w.insertBefore(hz, stg);
+    const E='cubic-bezier(.65,0,.2,1)', D=1050;
+    ir.animate([{clipPath:'circle(0px at 50% 50%)'},{clipPath:`circle(${R}px at 50% 50%)`}],{duration:D,easing:E,fill:'forwards'});
+    hz.animate([{transform:'scale(0)',opacity:1},{transform:'scale(.85)',opacity:1,offset:.8},{transform:'scale(1)',opacity:0}],{duration:D,easing:E,fill:'forwards'});
+    try{ arNoise(0,1.1,.3,120,6000,'bandpass',.85); arTone(55,0,1.6,.18,'sine',41,.4); arTone(110,.05,1.4,.05,'triangle',220,.6); }catch(e){}
+    setTimeout(()=>hz.remove(),D+80); return ir; };
+  let iris=null;
+  const go=()=>{ if(phase!==1) return; if(hold){ cancelAnimationFrame(hold.raf); hold=null; } phase=2; ready=false; flush(); stg.classList.add('out'); fx.pull(0);
+    const c=$('.wcard'); c.classList.add('hot'); $('.whold')?.classList.add('done');
+    arSfx.riser(); arBuzz([20,30,60]);
+    plan([[170,()=>{ arSfx.crack();
+            if(calm){ c.style.visibility='hidden'; return; }
+            const r=c.getBoundingClientRect(); fx.dissolve(r,(O.fx||[O.wc]).concat(['#FFFFFF','#FFD76A']),560);
+            c.animate([{opacity:1,filter:'brightness(1.6) blur(0px)'},{opacity:0,filter:'brightness(2.6) blur(12px)'}],{duration:460,easing:'cubic-bezier(.23,1,.32,1)',fill:'forwards'}); }],
+          [720,()=>{ if(!calm){ iris=openIris(); fx.warp(1.2); } }],
+          [1150,()=>fx.warp(3)],
+          [1780,()=>{ commit(); fx.warp(0); w.style.setProperty('--c',A.wc); reveal();
+            if(iris) iris.animate([{opacity:1},{opacity:.42}],{duration:1600,easing:'cubic-bezier(.23,1,.32,1)',fill:'forwards'}); }]]);
   };
   // ---- 3) Révélation ----
   const reveal=()=>{ phase=3;
@@ -2203,6 +2517,8 @@ function enterNextArena(){
       <div class="winfo"><div class="wmeta">${A.d} h pour la remplir · 10 éléments à découvrir</div><div class="wnext">${next}</div></div>
       <div class="wbtns"><button class="wbtn" data-go>Entrer dans l'arène</button></div>`;
     fx.retint(A.fx||[A.wc]);
+    if(!calm){ const we=$('.wenter'); we.style.transition='none'; we.classList.add('on'); const tr=$('.wcard').getBoundingClientRect(); we.classList.remove('on'); void we.offsetWidth; we.style.transition='';
+      fx.converge(tr,(A.fx||[A.wc]).concat(['#FFFFFF']),420,1000); }
     const open=q=>{ $('.flipc').classList.add('open'); plan([[425,()=>$('.flipc').classList.add('half')]]); $('.wtilt').classList.remove('rattle'); $('.wcard').classList.remove('lk2');
       plan([[q?0:420,q2=>{ const [x,y]=center(); fx.burst(x,y,A.fx||[A.wc,'#fff'],q||q2?80:170); shock(A.wc); arSfx.reveal(); arBuzz([30,40,30,40,140]); $('.wkick').classList.add('on'); }]]);
       fill(S1,q,900); };
@@ -2210,11 +2526,11 @@ function enterNextArena(){
           [1100,q=>{ if(!q){ $('.wtilt').classList.add('rattle'); $('.wcard').classList.add('lk2'); arNoise(0,.7,.2,300,2400,'bandpass',.9); } }],
           [1750,open],[2700,()=>$('.winfo').classList.add('on')],[3100,()=>{ $('.wbtns').classList.add('on'); ready=true; }]]);
   };
-  const close=()=>{ flush(); fx.stop(); document.removeEventListener('keydown',onKey); w.classList.remove('show'); setTimeout(()=>w.remove(),500);
+  const close=()=>{ if(hold){ cancelAnimationFrame(hold.raf); hold=null; } flush(); fx.stop(); document.removeEventListener('keydown',onKey); w.classList.remove('show'); setTimeout(()=>w.remove(),500);
     if(committed) setTimeout(()=>arenaMorph(n),520); };
-  const act=esc=>{ if(phase===1){ if(esc) close(); else if(ready) go(); else { flush(); } } else if(phase===2){ flush(); } else if(phase===3){ if(ready||esc){ if(esc) close(false); } else flush(); } };
-  const onKey=e=>{ if(e.key==='Escape'){ e.preventDefault(); act(true); } else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(phase===3&&ready) close(false); else act(false); } };
-  w.addEventListener('click',e=>{ if(phase===3){ if(e.target.closest('[data-go]')) return close(false); } act(false); });
+  const act=esc=>{ if(phase===1){ if(esc) close(); else if(ready){ if(calm) go(); } else { flush(); } } else if(phase===2){ flush(); } else if(phase===3){ if(ready||esc){ if(esc) close(false); } else flush(); } };
+  const onKey=e=>{ if(e.key==='Escape'){ e.preventDefault(); act(true); } else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(phase===3&&ready) close(false); else if(phase===1&&ready) go(); else act(false); } };   // clavier : Entrée ouvre directement
+  w.addEventListener('click',e=>{ if(swallow){ swallow=false; return; } if(phase===3){ if(e.target.closest('[data-go]')) return close(false); } act(false); });
   document.addEventListener('keydown',onKey);
 }
 // Après le portail : l'appli se transforme sous tes yeux (cercle qui s'ouvre depuis le centre), puis une carte d'accueil.
@@ -2246,9 +2562,9 @@ function openArenaIntro(i){
   o.innerHTML=`<div class="rb rb-${A.k} aicard">
     <div class="aitop"><small>Nouvelle arène</small></div>
     <div class="aibody"><div class="aiemb">${ARENA_EMBLEMS[A.k]||''}</div>
-      <h3 class="ait">Bienvenue dans ${escapeH(A.nom)}</h3><p class="aip">${escapeH(A.intro||A.desc)}</p>
+      <h3 class="ait">Bienvenue dans ${escapeH(A.nom).replace(/ (\S+)$/,'&nbsp;$1')}</h3><p class="aip">${escapeH(A.intro||A.desc)}</p>
       <div class="aifacts"><div><b>${A.d} h</b><small>pour la remplir</small></div><div><b>${fmtH(arenaAt(i,1)-arenaStart(i))}</b><small>pour le 1er élément</small></div>
-        <div><b>${S>=10?'—':fmtDur(left*3600000)}</b><small>avant le prochain</small></div></div>
+        ${S>0?`<div><b>${S>=10?'—':fmtDur(left*3600000)}</b><small>avant le prochain</small></div>`:`<div><b>10</b><small>éléments à découvrir</small></div>`}</div>
       <div class="arseg">${Array.from({length:10},(_,j)=>`<i><b style="width:${j<S?100:0}%"></b></i>`).join('')}</div></div>
     <div class="aibtns">${btns}</div></div>`;
   document.body.appendChild(o);
@@ -2267,11 +2583,12 @@ function openArenaIntro(i){
 let stepRevealT=null;
 function queueStepReveal(){ clearTimeout(stepRevealT); stepRevealT=setTimeout(tryStepReveal,700); }
 function tryStepReveal(){
-  if(!arenasOn() || arHoldLook || document.querySelector('.arwarp,.arintro,.arspot,.argauge')) return;
+  if(!arenasOn() || arHoldLook || document.querySelector('.arwarp,.arintro,.arspot,.argauge:not(.leaving)')) return;
   if(document.hidden || focusShown || uiBusy() || arSpotBusy){ queueStepReveal(); return; }
   const i=arenaIdx(), seen=readArenaSeen(), Sx=arenaStep(i);
   let pend=null; try{ pend=JSON.parse(localStorage.getItem(ARENA_PEND_KEY)||'null'); }catch(e){}
-  if(pend && pend.i===i && seen && seen.i===i && pend.n<=seen.s && pend.n>=1){ openStepReveal(i, pend.n); return; }   // carte restée ouverte quand l'appli a été fermée
+  if(pend && pend.i===i && seen && seen.i===i && pend.n<=seen.s && pend.n>=1){ openStepReveal(i, pend.n); return; }
+  if(pend){ try{ localStorage.removeItem(ARENA_PEND_KEY); }catch(e){} }   // clé périmée (autre arène…)   // carte restée ouverte quand l'appli a été fermée
   if(!seen || seen.i!==i || Sx<=seen.s) return;
   openStepReveal(i, seen.s+1);
 }
@@ -2755,7 +3072,7 @@ function uiBusy(){   // ne jamais redessiner sous les doigts : saisie en cours, 
   // un champ vide resté sélectionné (ou caché sous le plein écran lecture seule) ne bloque pas la mise à jour
   const typing = el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) && !(focusShown && !ownSession)
     && (el.type==='range' || (el.value||'')!=='' || Date.now()-lastTypeAt<15000);
-  return typing || open('modal') || open('planScreen') || open('cpick') || open('breathe') || open('authgate') || open('arenes') || !!document.querySelector('.arwarp,.arintro,.arspot,.argauge');
+  return typing || open('modal') || open('planScreen') || open('cpick') || open('breathe') || open('authgate') || open('arenes') || !!document.querySelector('.arwarp,.arintro,.arspot,.argauge:not(.leaving)');
 }
 async function pullIfNewer(){
   if(!supaConfigured() || !authSession || pulling || document.hidden) return;
@@ -3038,6 +3355,10 @@ function updateTopbar(){
   s.innerHTML = n>0 ? `<span class="tbflame">${ic('flame',16)}</span> ${n} jour${n>1?'s':''}` : 'Aucune série';
   const w=todayWorkMs();
   document.getElementById('tbToday').textContent = w>0 ? fmtDur(w) : '0 min';
+  // « 10 jours de série · 1 h 15 aujourd'hui » (design 19/11) ; un style d'arène garde ses étiquettes d'origine
+  const ks=document.querySelectorAll('#topbar .tbstat .k'), ar=!!document.body.dataset.arena;
+  if(ks[0]) ks[0].textContent=ar?'Série actuelle':(n>0?'de série':'');
+  if(ks[1]) ks[1].textContent=ar?"Travail aujourd'hui":"aujourd'hui";
 }
 function goPage(p){ page=p; render(); window.scrollTo({top:0}); }
 
@@ -3468,7 +3789,7 @@ function renderAccueil(){
   a.classList.remove('hidden'); a.classList.remove('fade'); void a.offsetWidth; a.classList.add('fade');
   const moy=globalMoyenne();
   const work=todayWorkMs();
-  const hello=`<div class="hello"><h1>Salut 👋</h1><p>Voici où tu en es aujourd'hui.</p></div>`;
+  const hello=`<div class="hello"><p class="hdate">${(d=>d.charAt(0).toUpperCase()+d.slice(1))(new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}))}</p><h1>Salut</h1><p>Voici où tu en es aujourd'hui.</p></div>`;
 
   // — Série —
   const st=streakDays();
@@ -3570,7 +3891,7 @@ function renderAccueil(){
       <span class="bookic">${ic('book',38)}</span>
       <h2>Aucune matière</h2>
       <p>Ajoute tes matières pour suivre ta progression et chronométrer tes révisions.</p>
-      <button class="cta" onclick="goPage('matieres')">${ic('plus',20)}<span>Ajouter une matière</span></button></div>`;
+      <button class="cta" onclick="goPage('matieres'); addMatiere()">${ic('plus',20)}<span>Ajouter une matière</span></button></div>`;
   }
 
   // — Aperçu (compteurs) —
@@ -4199,63 +4520,92 @@ function openGauge(r){
   const A=ARENAS[r.i], last=r.i===ARENAS.length-1, per=n=>(arenaAt(r.i,n+1)-arenaAt(r.i,n))*3600000;   // durée de l'élément n (courbe : de plus en plus long)
   const S0=Math.floor(r.from+1e-9), S1=Math.min(10,Math.floor(r.to+1e-9)), crossed=S1-S0;
   const leftMs=Math.max(0,(arenaAt(r.i,S1+1)-r.H)*3600000), gMs=r.gained*3600000;
+  const cols=[A.wc,'#FFFFFF'].concat(A.fx||[]);
   const w=document.createElement('div'); w.className='argauge'; w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true');
   w.setAttribute('aria-label',`${A.nom} : +${fmtDur(gMs)}`); w.style.setProperty('--c',A.wc);
-  const wave=`<svg viewBox="0 0 240 22" preserveAspectRatio="none"><path d="M0 12 Q30 2 60 12 T120 12 T180 12 T240 12 V22 H0Z"/></svg>`;
-  const bubbles=Array.from({length:9},(_,k)=>`<i class="gb" style="left:${8+k*10}%;width:${3+k%3*2}px;height:${3+k%3*2}px;animation-duration:${2.2+(k*7%5)*.5}s;animation-delay:-${k*.37}s"></i>`).join('');
+  const star='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5c.5 4.9 1.9 7.9 4.1 9.2 1.2.7 3 1.1 6.4 1.3-3.4.2-5.2.6-6.4 1.3-2.2 1.3-3.6 4.3-4.1 9.2-.5-4.9-1.9-7.9-4.1-9.2C6.7 12.6 4.9 12.2 1.5 12c3.4-.2 5.2-.6 6.4-1.3C10.1 9.4 11.5 6.4 12 1.5z"/></svg>';
   w.innerHTML=`<div class="gkick">${escapeH(A.nom)}</div>
-    <div class="gcard"><div class="gq">?</div><small data-cn></small></div>
-    <div class="gmain"><div class="gcount"><b>+0 min</b><small>de travail</small></div>
-      <div class="gtube"><div class="gfill" style="--v:0"><div class="gwave b">${wave}</div><div class="gwave">${wave}</div><i class="glite"></i>${bubbles}</div></div>
-      <div class="gside"><b data-pct>0%</b><span data-side>vers le prochain élément</span></div></div>
+    <div class="gstage"><svg class="gring" viewBox="0 0 300 300" aria-hidden="true"><circle class="gtrack" cx="150" cy="150" r="132"/><circle class="gtick" cx="150" cy="150" r="132" pathLength="1"/>
+        <circle class="garc" cx="150" cy="150" r="132" pathLength="1"/></svg>
+      <i class="gshock"></i><i class="ghead"></i>
+      <div class="gcard"><div class="gface gfront"><div class="gq">?</div><small data-cn></small></div><div class="gface gback">${star}<small>Débloqué</small></div></div></div>
+    <div class="gcount"><b>+0 min</b><span><b data-pct>0%</b> <span data-side style="display:inline;margin:0">vers le prochain élément</span></span></div>
     <div class="gsegs">${Array.from({length:10},(_,k)=>`<i class="${k<S0?'got':''}"></i>`).join('')}</div>
     <div class="gmsg"></div><div class="gbtns"></div>`;
   document.body.appendChild(w); requestAnimationFrame(()=>w.classList.add('show'));
-  const calm=prefersReduced(), fx=calm?{burst(){},embers(){},stop(){}}:arParticles(w);
+  const calm=prefersReduced(), fx=calm?{burst(){},embers(){},ringBurst(){},spark(){},stop(){}}:arParticles(w);
   try{ arAudio(); }catch(e){}
-  const $=q=>w.querySelector(q), fill=$('.gfill'), tube=$('.gtube'), card=$('.gcard'), cnt=$('.gcount b');
-  const setV=v=>{ fill.style.setProperty('--v',v); w.style.setProperty('--p',v); card.classList.toggle('near',v>.8&&v<1&&!calm); $('[data-pct]').textContent=Math.floor(v*100)+'%'; };
+  if(!calm) fx.embers((A.fx||[A.wc]).concat(['#FFFFFF']));
+  const $=q=>w.querySelector(q), arc=$('.garc'), ring=$('.gring'), head=$('.ghead'), stage=$('.gstage'), card=$('.gcard'), cnt=$('.gcount b');
+  // La colonne d'avant est devenue un anneau : v (0…1) = part du trajet vers le prochain élément.
+  let lastP=-1, lastPct=-1, lastTick=-1, sparkT=0;
+  const NOTES=[523.3,587.3,659.3,784,880,1046.5,1174.7,1318.5,1568,1760];   // gamme pentatonique : chaque dixième monte d'une note
+  const setV=(v,live)=>{ arc.style.strokeDashoffset=String(1-v);
+    const sz=stage.clientWidth, an=(v*360-90)*Math.PI/180, R=sz*132/300;
+    head.style.transform=`translate(${(sz/2+Math.cos(an)*R).toFixed(1)}px,${(sz/2+Math.sin(an)*R).toFixed(1)}px)`;
+    const q=Math.round(v*40)/40; if(q!==lastP){ lastP=q; w.style.setProperty('--p',q); }
+    card.classList.toggle('near',v>.85&&v<1&&!calm);
+    const pc=Math.floor(v*100); if(pc!==lastPct){ lastPct=pc; $('[data-pct]').textContent=pc+'%'; }
+    if(live){ const tk=Math.floor(v*10); if(tk!==lastTick && tk>0){ lastTick=tk; try{ arTone(NOTES[Math.min(9,tk-1)],0,.5,.03,'sine',0,.01); arTone(NOTES[Math.min(9,tk-1)]*2,0,.25,.008); }catch(e){} }
+      const now=performance.now(); if(now-sparkT>28){ sparkT=now; const sr=stage.getBoundingClientRect(); fx.spark(sr.left+sz/2+Math.cos(an)*R, sr.top+sz/2+Math.sin(an)*R, cols); } } };
+  let flipT=0;
+  const flipCard=on=>{ clearTimeout(flipT); if(on===card.classList.contains('flip')) return; card.classList.toggle('flip',on); flipT=setTimeout(()=>card.classList.toggle('half',on),105); };
   const setCard=n=>{ $('[data-cn]').textContent = n>10 ? (last?'Arène finie':'Portail') : `Élément ${n}`; };
   const legs=[]; for(let n=S0;n<=Math.min(S1,9);n++){ const a=n===S0?r.from-S0:0, z=n<S1?1:r.to-n; legs.push({n,a,z}); }
-  let done=false, closed=false, raf, timers=[], li=0, shown=0, lastSec=-1;
+  let done=false, closed=false, raf, timers=[], li=0, shown=0, lastMin=-1;
   const sessions=Math.ceil(leftMs/Math.max(gMs,1)-1e-9);
-  const msg = crossed>0 ? `<b>${crossed>1?crossed+' nouveaux éléments':'Nouvel élément'} débloqué${crossed>1?'s':''} !</b><small>${crossed>1?'Ils t\'attendent':'Il t\'attend'} juste après.</small>`
+  const msg = crossed>0 ? `<b>${crossed>1?`Éléments ${S0+1} à ${S1} débloqués`:`Élément ${S1} débloqué`} !</b><small>${crossed>1?'Ils t\'attendent':'Il t\'attend'} juste après.</small>`
     : S1>=10 ? (last?'<b>Arène complète !</b><small>La suivante arrive bientôt.</small>':'<b>Arène complète !</b><small>Le portail est ouvert.</small>')
     : sessions<=1 ? `<b>Plus que ${fmtDur(leftMs)} !</b><small>Encore une session comme celle-là et c'est débloqué.</small>`
     : `<b>Plus que ${fmtDur(leftMs)}</b><small>Encore ${sessions} sessions comme celle-là.</small>`;
   const matId=r.mat;
   const finish=()=>{ if(done) return; done=true; cancelAnimationFrame(raf); timers.forEach(clearTimeout);
-    const L=legs[legs.length-1]; setCard(crossed>0&&L&&L.z>=1?S1:(L?L.n+1:S1+1)); if(L) setV(Math.min(1,L.z)); cnt.textContent='+'+fmtDur(gMs);
+    const L=legs[legs.length-1], hitEnd=crossed>0&&L&&L.z>=1;
+    arc.classList.remove('reset'); arc.style.opacity='';
+    if(hitEnd){ setCard(S1); setV(1); flipCard(true); ring.classList.add('hit'); head.classList.remove('on'); }
+    else { setCard(L?L.n+1:S1+1); if(L) setV(Math.min(1,L.z)); clearTimeout(flipT); card.classList.remove('flip','half'); ring.classList.remove('hit'); head.classList.toggle('on',!!L&&L.z>0&&!calm); }
+    card.classList.remove('near'); cnt.textContent='+'+fmtDur(gMs);
     w.querySelectorAll('.gsegs i').forEach((x,k)=>x.classList.toggle('got',k<S1));
     $('.gmsg').innerHTML=msg; $('.gmsg').classList.add('on');
     $('.gbtns').innerHTML = crossed>0 ? `<button class="gbtn" data-close>Découvrir</button>`
       : `<button class="gbtn" data-again>Relancer une session</button><button class="gsec" data-close>Plus tard</button>`;
     $('.gbtns').classList.add('on');
-    try{ arTone(1318.5,0,.9,.035); arTone(1975.5,.08,.8,.02); }catch(e){} };
+    try{ arTone(1318.5,0,1.2,.03); arTone(1975.5,.09,1,.016); }catch(e){} };
+  const hit=L=>{   // l'anneau se referme : onde de choc, gerbe tout autour, la carte se retourne
+    ring.classList.add('hit'); head.classList.remove('on'); card.classList.remove('near'); flipCard(true);
+    const sh=$('.gshock'); sh.classList.remove('go'); void sh.offsetWidth; sh.classList.add('go');
+    stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+    const sr=stage.getBoundingClientRect(), sz=sr.width; fx.ringBurst(sr.left+sz/2, sr.top+sz/2, sz*132/300, cols, 110); fx.burst(sr.left+sz/2, sr.top+sz/2, cols, 60);
+    try{ arSfx.impact(); arBuzz([30,40,90]); [523.3,659.3,784,1046.5,1568].forEach((f,q)=>arTone(f,.04+q*.055,2,.035,'sine',0,.02)); }catch(e){}
+    const sg=w.querySelectorAll('.gsegs i')[L.n]; if(sg) sg.classList.add('got','hit');
+  };
   const runLeg=()=>{
     if(done) return; const L=legs[li]; if(!L){ finish(); return; }
-    setCard(L.n+1); setV(L.a); tube.classList.remove('full'); card.classList.remove('burst'); $('.gq').textContent='?';
-    const dur=calm?0:2200*Math.max(.4,L.z-L.a), t0=performance.now(), base=shown;
-    try{ arTone(180+L.a*400,0,dur/1000,.045,'triangle',180+L.z*700,.25); arNoise(0,dur/1000,.05,300,300+L.z*3000,'bandpass',.6); }catch(e){}   // le son monte avec l'énergie
-    const step=now=>{ const k=Math.min(1,(now-t0)/(dur||1)), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2, v=L.a+(L.z-L.a)*e;
-      setV(v); shown=base+(L.z-L.a)*e*per(L.n); const sv=Math.min(gMs,shown);
-      cnt.textContent='+'+fmtDur(sv); const sec=Math.floor(sv/300000);   // un petit « tic » toutes les 5 min gagnées
-      if(sec!==lastSec){ lastSec=sec; cnt.classList.remove('pop'); void cnt.offsetWidth; cnt.classList.add('pop'); try{ arSfx.tick(Math.min(9,Math.floor(v*10))); }catch(e){} }
+    setCard(L.n+1); ring.classList.remove('hit'); flipCard(false); arc.classList.remove('reset'); arc.style.opacity='';
+    lastTick=Math.floor(L.a*10); setV(L.a); head.classList.add('on');
+    const span=L.z-L.a, dur=2200*Math.max(.45,span), t0=performance.now(), base=shown;
+    try{ arTone(160+L.a*300,0,dur/1000,.035,'triangle',160+L.z*600,.3); arNoise(0,dur/1000,.035,250,250+L.z*2600,'bandpass',.7); }catch(e){}   // le souffle monte avec l'énergie
+    const step=now=>{ const k=Math.min(1,(now-t0)/dur);
+      // vers un élément : accélère jusqu'à l'impact ; dernier tronçon : se pose en douceur
+      const e = L.z>=1 ? (k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2) : 1-Math.pow(1-k,4), v=L.a+span*e;
+      setV(v,true); shown=base+span*e*per(L.n); const sv=Math.min(gMs,shown);
+      cnt.textContent='+'+fmtDur(sv); const mn=Math.floor(sv/60000);
+      if(mn!==lastMin && mn%5===0){ cnt.classList.remove('pop'); void cnt.offsetWidth; cnt.classList.add('pop'); }
+      lastMin=mn;
       if(k<1){ raf=requestAnimationFrame(step); return; }
-      if(L.z>=1){   // la colonne touche la carte : explosion
-        tube.classList.add('full'); card.classList.remove('near'); card.classList.add('burst'); $('.gq').textContent='!';
-        w.classList.remove('shake'); void w.offsetWidth; w.classList.add('shake');
-        const cb=card.getBoundingClientRect(); fx.burst(cb.left+cb.width/2,cb.top+cb.height/2,[A.wc,'#FFFFFF'].concat(A.fx||[]),160);
-        try{ arSfx.impact(); arBuzz([40,40,120]); [523.3,659.3,784,1046.5].forEach((f,q)=>arTone(f,.05+q*.06,1.6,.04)); }catch(e){}
-        const sg=w.querySelectorAll('.gsegs i')[L.n]; if(sg) sg.classList.add('got','hit');
-        $('[data-cn]').textContent='Débloqué !';
-        li++; timers.push(setTimeout(runLeg,1300));
+      if(L.z>=1){
+        hit(L); $('[data-cn]').textContent=`Élément ${L.n+1}`;
+        li++;
+        if(legs[li]) timers.push(setTimeout(()=>{ arc.classList.add('reset'); arc.style.strokeDashoffset='1'; arc.style.opacity='0'; flipCard(false); lastPct=0; $('[data-pct]').textContent='0%'; },1250),
+                                 setTimeout(runLeg,1650));
+        else timers.push(setTimeout(finish,900));
       } else { li++; runLeg(); } };
     raf=requestAnimationFrame(step); };
-  setCard(S0+1); if(legs[0]) setV(legs[0].a);   // la colonne part de là où on en était, pas de 0
-  if(calm) finish(); else timers.push(setTimeout(runLeg,650));
-  const close=again=>{ if(closed) return; closed=true; cancelAnimationFrame(raf); timers.forEach(clearTimeout); fx.stop(); document.removeEventListener('keydown',onKey);
-    w.classList.remove('show'); setTimeout(()=>{ w.remove(); if(again){ armed=matById(matId)?matId:null; goPage('session'); } else queueStepReveal(); },400); };
+  setCard(S0+1); if(legs[0]) setV(legs[0].a);   // l'anneau part de là où on en était, pas de 0
+  if(calm) finish(); else timers.push(setTimeout(runLeg,700));
+  const close=again=>{ if(closed) return; closed=true; cancelAnimationFrame(raf); timers.forEach(clearTimeout); clearTimeout(flipT); fx.stop(); document.removeEventListener('keydown',onKey);
+    if(!again && crossed>0){ w.classList.add('leaving'); clearTimeout(stepRevealT); tryStepReveal(); setTimeout(()=>{ if(document.querySelector('.arwarp')) w.remove(); else { w.classList.remove('show'); setTimeout(()=>w.remove(),300); } },900); return; }   // la carte s'ouvre PAR-DESSUS la jauge : pas d'Accueil qui clignote entre les deux
+    w.classList.remove('show'); setTimeout(()=>{ w.remove(); if(again){ armed=matById(matId)?matId:null; goPage('session'); } else queueStepReveal(); },300); };
   const onKey=e=>{ if(e.key==='Escape'){ e.preventDefault(); done?close(false):finish(); } else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(!done) finish(); else (w.querySelector('.gbtn')||{click(){close(false)}}).click(); } };
   w.addEventListener('click',e=>{ if(!done) return finish(); if(e.target.closest('[data-again]')) return close(true); if(e.target.closest('[data-close]')||!e.target.closest('.gbtns')) close(false); });
   document.addEventListener('keydown',onKey);
@@ -5139,6 +5489,21 @@ function qDragEnd(){ const d=qDrag; if(!d) return; qDrag=null; cancelAnimationFr
   if(q<=1) t.imp=true; else delete t.imp;
   save(); refreshTodos(); }
 function qFlip(id,k){ const t=(data.todos||[]).find(x=>x.id===id); if(!t) return; if(t[k]) delete t[k]; else t[k]=true; save(); qEdit(id); refreshTodos(); }
+// Entrées de page (19/11, skill d'Emil Kowalski) : on ne rejoue l'entrée QUE si on a changé d'écran. Cocher une tâche,
+// déplacer un curseur, la synchro… redessinent la page : avant, toute la page disparaissait puis réapparaissait.
+(function(){
+  const viewKey=()=>{ try{ return [page, current, typeof tachesOpen!=='undefined'&&tachesOpen].join('|'); }catch(e){ return Math.random(); } };
+  let lastView=viewKey();
+  const r0=render;
+  render=function(){
+    const key=viewKey(), same=key===lastView; lastView=key;
+    const out=r0.apply(this,arguments);
+    if(same){ try{ document.getAnimations().forEach(a=>{ if(a.animationName==='rise'||a.animationName==='fade'){
+      const t=a.effect&&a.effect.target; if(t && t.closest('.wrap') && !t.closest('.overlay,#modal,.authov,.focusov,.brov,.roadov,.undotoast,.arwarp,.argauge,.arintro,.arspot')) a.finish(); } }); }catch(e){} }
+    return out;
+  };
+})();
+
 if(location.hostname!=='simonnivoix.github.io'){   // jamais sur le site en ligne
 
 // ===================== OUTILS DE TEST (LOCAL SEULEMENT) =====================
@@ -5179,10 +5544,36 @@ function mqPaint(){
     +'<button onclick="arenaJump('+i+','+(n+1)+')" '+(n>=10?'disabled':'')+' aria-label="Élément suivant">›</button></div>'
     +'<div class="mqgrid">'+Array.from({length:11},(_,k)=>'<button class="'+(k===n?'on':'')+'" onclick="arenaJump('+i+','+k+')">'+k+'</button>').join('')+'</div>'
     +'<div class="mqrow"><button onclick="arSpotlight('+i+','+n+',true)" '+(n<1?'disabled':'')+'>Voir le changement</button></div>'
+    +'<div class="mqlbl">Rejouer</div><div class="mqrow">'
+    +'<button onclick="mqReplayGauge(false)">La jauge</button><button onclick="mqReplayGauge(true)">Jauge + élément</button>'
+    +'<button onclick="mqReplayReveal()">Révélation</button><button onclick="mqReplayPortal()">Le portail</button>'
+    +'<button onclick="openArenaIntro(arenaIdx())">Arrivée</button></div>'
     +'<div class="mqlbl">Heures d\'arène · '+fmtDur(totalWorkH()*3600000)+'</div>'
     +'<div class="mqrow"><button onclick="mqAddH(1)">+1 h</button><button onclick="mqAddH(5)">+5 h</button><button onclick="mqRealH()">Remettre à 0</button></div>'
     +'<div class="mqlbl">Ailleurs dans l\'appli</div>'
     +'<p class="mqinfo">Session en cours : « Tester : +5 min ».<br>Accueil : « Tester : le bilan ».<br>Travail → agenda : « Tester : tâches d\'exemple ».</p></div>';
+}
+
+// --- Rejouer les animations des arènes (19/11, Eric : « que je puisse rejouer le passage des arènes ») ---
+// La jauge simple ne change rien ; « Jauge + élément » ajoute les heures fictives qu'il faut, puis la carte se retourne ;
+// « Le portail » remet l'arène d'avant à 10/10 (heures fictives) et repasse le portail pour de vrai.
+function mqBusy(){ return !!document.querySelector('.arwarp,.argauge:not(.leaving),.arintro,.arspot'); }
+function mqReplayGauge(unlock){
+  if(mqBusy()) return; let i=arenaIdx();
+  if(arenaStep(i)>=10) arenaJump(i,8);
+  i=arenaIdx(); const H=totalWorkH(), next=arenaAt(i,arenaStep(i)+1);
+  const g = unlock ? (next-H)+0.25 : Math.max(10/60, Math.min(0.75,(next-H)*0.6));
+  if(unlock) mqSetExtra(mqExtra()+g);   // la carte « ??? » se retournera à la fermeture de la jauge (queueStepReveal)
+  const m=data.matieres[0];
+  openGauge({i, from:arenaPos(i,H), to:arenaPos(i,H+g), gained:g, H:H+g, mat:m?m.id:null, done:false});
+}
+function mqReplayReveal(){
+  if(mqBusy()) return; const i=arenaIdx(), n=Math.max(1,Math.min(10,arenaStep(i)));
+  arenaJump(i,n); openStepReveal(i,n);
+}
+function mqReplayPortal(){
+  if(mqBusy()) return; const i=arenaIdx(), src=Math.max(0,Math.min(ARENAS.length-2, i>=1?i-1:0));
+  arenaJump(src,10); enterNextArena();
 }
 
 // --- Session : faire avancer le temps ---
