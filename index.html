@@ -1334,7 +1334,8 @@
   }
   .ar-rise{position:absolute;bottom:-160px;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.5),rgba(255,255,255,.08) 55%,rgba(255,255,255,.03));
            border:1.5px solid rgba(255,255,255,.32);animation:arRise 26s linear infinite}
-  @keyframes arRise{0%{transform:translate(0,0)}50%{transform:translate(30px,-60vh)}100%{transform:translate(-20px,-125vh)}}
+  @keyframes arRise{0%{transform:translate(0,0)}50%{transform:translate(14px,-60vh)}100%{transform:translate(-10px,-125vh)}}
+  .ar-bubzone{position:absolute;inset:0;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;transform:translateZ(0)}   /* calque propre : sans ça Safari ignore le masque sur des enfants animés */
   .ar-spk{position:absolute;color:#fff;text-shadow:0 0 10px #fff,0 0 22px #B3A8FF;animation:arTw 2.4s ease-in-out infinite}
   .ar-star.big{width:5px;height:5px;box-shadow:0 0 10px #fff,0 0 18px #fff}
   .ar-shoot{position:absolute;top:12%;left:-20%;width:180px;height:2px;background:linear-gradient(90deg,transparent,#fff);border-radius:2px;
@@ -1565,7 +1566,7 @@
 <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)">
 
 <script>
-const VERSION = '20261117-123914';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
+const VERSION = '20261119-104249';   // tampon de publication (remplacé par deploy.sh) — sert à la mise à jour auto
 const STORE_KEY = "suivi-revisions-bac";
 const THEME_KEY = "suivi-revisions-bac-theme";
 const AUTH_KEY = "suivi-revisions-bac-auth";   // session Supabase (access/refresh token) — jamais dans l'export JSON
@@ -1906,11 +1907,12 @@ function updateArena(){
       if(S>=9) b+=Array.from({length:80},(_,n)=>`<span class="ar-star${n%6?'':' big'}" style="position:absolute;left:${rnd(n)*100}%;top:${rnd(n+50)*100}%;animation-delay:${rnd(n+9)*3}s"></span>`).join('')
         +Array.from({length:9},(_,n)=>`<span class="ar-spk" style="left:${rnd(n+70)*100}%;top:${rnd(n+90)*100}%;font-size:${14+rnd(n+3)*16}px;animation-delay:${rnd(n+5)*2.4}s">✦</span>`).join('')
         +'<span class="ar-shoot"></span>';
-      if(S>=8) b+=Array.from({length:14},(_,n)=>{ const s=36+rnd(n+3)*110;   // bulles qui montent derrière le contenu, jamais par-dessus le texte
-        return `<span class="ar-rise" style="left:${rnd(n+21)*96}%;width:${s}px;height:${s}px;animation-duration:${22+rnd(n+11)*16}s;animation-delay:-${rnd(n+7)*38}s"></span>`; }).join('');
+      if(S>=8) b+='<div class="ar-bubzone">'+Array.from({length:14},(_,n)=>{ const s=36+rnd(n+3)*110;   // bulles LENTES, masquées derrière le contenu (arBubMask), visibles derrière la barre de gauche
+        return `<span class="ar-rise" style="left:${rnd(n+21)*96}%;width:${s}px;height:${s}px;animation-duration:${70+rnd(n+11)*50}s;animation-delay:-${rnd(n+7)*120}s"></span>`; }).join('')+'</div>';
     }
     bg.innerHTML=b;
     if(k==='widgets' && S>=6) arWander(bg);
+    arBubCache=null;
     dc.innerHTML=d.filter(([n])=>S>=n).map(([n,h])=>n>prevS?h.replace(/^<(\w+) class="/,'<$1 class="ardeco-new '):h).join('');
     dc.dataset.v=want;
   }
@@ -1943,6 +1945,42 @@ function arWander(root){
   root.querySelectorAll('.ar-orb').forEach(el=>go(el,'orb','none'));
   root.querySelectorAll('.ar-aur').forEach(el=>go(el,'aur','none'));
 }
+// Arène 2 « Les bulles » : elles ne passent jamais à travers le contenu (cartes translucides, textes).
+// Un masque SVG troue le calque des bulles là où il y a du contenu ; la barre de gauche n'est pas masquée (les bulles passent derrière).
+var arBubCache=null, arBubRaf=0;   // var : updateArena() peut tourner avant cette ligne au démarrage
+function arBubTargets(){
+  const out=[], roots=[document.getElementById('topbar'), ...document.querySelectorAll('.wrap > :not(#topbar)')];
+  const walk=el=>{
+    if(!el || el.nodeType!==1) return;
+    const cs=getComputedStyle(el);
+    if(cs.display==='none' || cs.visibility==='hidden') return;
+    const bgc=cs.backgroundColor, hasBg=(bgc && bgc!=='transparent' && !/rgba\([^)]*,\s*0\)$/.test(bgc)) || cs.backgroundImage!=='none' || (cs.backdropFilter||cs.webkitBackdropFilter||'none')!=='none' || parseFloat(cs.borderTopWidth)>0;
+    const hasTxt=[...el.childNodes].some(n=>n.nodeType===3 && n.textContent.trim()) || /^(IMG|SVG|svg|INPUT|TEXTAREA|SELECT|BUTTON|CANVAS)$/.test(el.tagName);
+    if(hasBg || hasTxt){ out.push([el, parseFloat(cs.borderTopLeftRadius)||0]); return; }
+    for(const c of el.children) walk(c);
+  };
+  roots.forEach(walk);
+  return out;
+}
+function arBubMask(){
+  arBubRaf=0;
+  const layer=document.querySelector('#arenaBg .ar-bubzone'); if(!layer) return;
+  if(!arBubCache) arBubCache=arBubTargets();
+  const W=innerWidth, H=innerHeight, pad=6;
+  let r='';
+  for(const [el,rad] of arBubCache){
+    const b=el.getBoundingClientRect();
+    if(!b.width || !b.height || b.bottom<-pad || b.top>H+pad) continue;
+    r+=`<rect x="${(b.left-pad).toFixed(0)}" y="${(b.top-pad).toFixed(0)}" width="${(b.width+2*pad).toFixed(0)}" height="${(b.height+2*pad).toFixed(0)}" rx="${Math.min(rad+pad,40).toFixed(0)}"/>`;
+  }
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><mask id="m"><rect width="${W}" height="${H}" fill="white"/><g fill="black">${r}</g></mask><rect width="${W}" height="${H}" fill="white" mask="url(#m)"/></svg>`;
+  const url=`url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+  layer.style.webkitMaskImage=url; layer.style.maskImage=url;
+}
+function arBubQueue(){ if(!arBubRaf && document.querySelector('#arenaBg .ar-bubzone')) arBubRaf=requestAnimationFrame(arBubMask); }
+addEventListener('scroll',arBubQueue,{passive:true,capture:true});
+addEventListener('resize',()=>{ arBubCache=null; arBubQueue(); });
+setInterval(()=>{ if(document.hidden) return; arBubCache=null; arBubQueue(); },1500);   // contenu qui change sans render (panneaux, saisie)
 // Petit widget « Aujourd'hui » dans la barre latérale (Arène 2, élément 7) : visible sur toutes les pages (ordi).
 function arenaSideWidget(on){
   const tb=document.getElementById('tabbar'); if(!tb) return;
@@ -2947,6 +2985,7 @@ function render(){
   updateTabBadge();
   updateReevalBanner();
   updateArena();
+  if(typeof arBubQueue==='function'){ arBubCache=null; arBubQueue(); }   // bulles de l'Arène 2 : masque recalé sur le nouveau contenu
   save();
 }
 // Pastille rouge sur l'onglet Accueil : rappel « à réévaluer » dû, visible depuis n'importe quel onglet.
